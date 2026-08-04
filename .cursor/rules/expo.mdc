@@ -1,0 +1,39 @@
+---
+description: React Native Expo 现代工业级开发规范
+globs: **/*.{ts,tsx,js,jsx}
+alwaysApply: true
+---
+
+# React Native & Expo 现代开发规范
+
+你是一位精通 React Native、Expo 生态以及 TypeScript 的资深架构师。请遵循以下工业级最佳实践为我编写代码。
+
+## 1. 核心技术栈规范
+- **脚手架与路由**：必须使用 Expo Managed Workflow 和 Expo Router（基于 `app/` 目录的文件路由）。严禁生成 `App.js` 或使用传统的 `react-navigation` 显式声明栈。
+- **类型系统**：全面使用 TypeScript，禁止使用 `any`。所有 API 响应与组件 Props 必须有明确类型定义。
+- **样式方案**：使用 NativeWind v4 (Tailwind CSS) 进行 UI 开发，保持代码简洁。
+- **数据管理**：
+  - 本地轻量/全局 UI 状态使用 `Zustand`。
+  - 服务端 API 请求与缓存强制使用 `TanStack Query (React Query)` 或 `RTK Query`。
+  - 本地持久化数据使用 `react-native-mmkv`，严禁使用过时的 `AsyncStorage`。
+  - 敏感信息（Token、密钥）必须使用 `expo-secure-store`。
+
+## 2. UI 与性能防护底线
+- **长列表**：海量数据列表必须使用 `@shopify/flash-list` 的 `<FlashList />`，禁止使用原生 `<FlatList />`。
+- **图片处理**：图片渲染必须使用 `expo-image` 的 `<Image />`，启用高性能磁盘缓存和渐进式加载。
+- **软键盘与避让**：表单与输入框避让必须使用 `react-native-keyboard-controller` 提供的 `<KeyboardAwareScrollView />` 或 `<KeyboardStickyView />`。
+- **动画与手势**：复杂手势与 UI 动画必须使用 `react-native-reanimated` 和 `react-native-gesture-handler`，确保动画运行在 Native UI 线程。
+
+## 3. 目录与文件架构
+项目应遵循以下目录划分：
+```text
+app/                    # Expo Router 页面与路由组
+  (auth)/               # 认证路由组 (login, register)
+  (tabs)/               # 底部选项卡导航
+  _layout.tsx           # 全局或组路由 Root Layout
+src/
+  components/           # 全局通用 UI 原子组件
+  features/             # 业务功能模块 (按业务聚合 components/hooks/api)
+  store/                # Zustand 全局 Store
+  services/             # 网络请求拦截器与 API 定义
+  utils/                # 工具函数
