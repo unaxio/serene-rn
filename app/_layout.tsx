@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { AppProviders } from '@/src/providers/AppProviders';
+import { useAuthStore } from '@/src/store/authStore';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -16,30 +18,42 @@ export const unstable_settings = {
   initialRouteName: '(tabs)',
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+  const authStatus = useAuthStore((state) => state.status);
+  const bootstrap = useAuthStore((state) => state.bootstrap);
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (!loaded) {
+      return;
     }
-  }, [loaded]);
 
-  if (!loaded) {
+    void bootstrap();
+  }, [loaded, bootstrap]);
+
+  useEffect(() => {
+    if (loaded && authStatus !== 'idle' && authStatus !== 'checking') {
+      void SplashScreen.hideAsync();
+    }
+  }, [loaded, authStatus]);
+
+  if (!loaded || authStatus === 'idle' || authStatus === 'checking') {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <AppProviders>
+      <RootLayoutNav />
+    </AppProviders>
+  );
 }
 
 function RootLayoutNav() {
