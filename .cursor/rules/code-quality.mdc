@@ -1,6 +1,6 @@
 ---
 description: 工业级代码质量与重构规范
-globs: **/*.{ts,tsx,js,jsx}
+globs: "**/*.{ts,tsx,js,jsx}"
 alwaysApply: true
 ---
 
@@ -9,6 +9,7 @@ alwaysApply: true
 你是一位严格的资深 TypeScript / React Native 代码评审专家。在生成或重构任何代码时，必须严格执行以下代码质量标准：
 
 ## 1. 可读性与代码结构
+
 - **单一职责原则 (SRP)**：单个组件文件行数尽量控制在 150 行以内。超出时必须重构，将子组件或自定义 Hook 拆分出去。
 - **命名规范**：
   - 组件与类型/接口使用 `PascalCase`（如 `UserProfileCard`）。
@@ -17,20 +18,30 @@ alwaysApply: true
 - **禁止魔数 (Magic Numbers)**：禁止在代码中直接硬编码数字或字符串，必须提取为语义清晰的常量或枚举。
 
 ## 2. 类型安全 (TypeScript)
+
 - **零 any 原则**：严禁使用 `any` 或 `unknown`（除非经过显式类型收窄）。
 - **显式导出**：所有 API 请求响应、组件 Props 必须定义明确的 `interface` 或 `type`。
 - **严谨的空值处理**：必须使用可选链（`?.`）和空值合并运算符（`??`），防范 `cannot read property of undefined` 运行时崩溃。
 
 ## 3. 性能与内存防护
+
 - **避免不必要的 Re-render**：
   - 对传入子组件的复杂对象或数组，必须使用 `useMemo`。
   - 对作为 Prop 传递给子组件的函数，必须使用 `useCallback` 包裹。
 - **资源清理**：在 `useEffect` 中注册的订阅、定时器或事件监听器，必须在 cleanup 函数中明确注销，防止内存泄漏。
 
 ## 4. 容错性与健壮性
+
 - **防御性编程**：异步函数（`async/await`）必须包含 `try-catch` 块。
 - **用户友好提示**：捕获网络或运行时错误时，不能只写 `console.log`，必须调用全局 Toast 或 Error Boundary 向用户展示优雅的错误提示。
 - **空状态处理**：任何数据列表必须显式处理 `loading`（加载中）、`error`（异常）和 `empty`（空数据）三种状态UI。
 
 ## 5. 注释与文档
+
+：异步函数（`async/await`）必须包含 `try-catch` 块。
+
+：异步函数（`async/await`）必须包含 `try-catch` 块。
+
+- **用户友好提示**：捕获网络或运行时错误时，不能只写 `console.log`，必须调用全局 Toast 或 Error Boundary 向用户展示优雅的错误提示。
+- **空状态处理**：任何数据列表必须显式处理 `loading`（加载中）、`error`（异常）和 `empty`（空数据）三种状态UI。
 - 只在**复杂业务逻辑**或**曲线救国的变通方案（Hack 代码）**旁写注释，解释“为什么这么做（Why）”，而不是“做了什么（What）”。
