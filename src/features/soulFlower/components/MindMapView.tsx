@@ -1,5 +1,3 @@
-import { FlashList } from '@shopify/flash-list';
-import { useCallback } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -11,8 +9,10 @@ import {
 import { CategoryTabs } from '@/src/features/soulFlower/components/CategoryTabs';
 import { FlowerCardItem } from '@/src/features/soulFlower/components/FlowerCardItem';
 import { useMindMap } from '@/src/features/soulFlower/hooks/useMindMap';
-import type { FlowerCard } from '@/src/features/soulFlower/types';
 
+/**
+ * 独立图谱页（若仍需）；Overview 请使用 MindMapSection。
+ */
 export function MindMapView() {
   const {
     categories,
@@ -25,15 +25,6 @@ export function MindMapView() {
     isEmpty,
     refetch,
   } = useMindMap();
-
-  const renderItem = useCallback(
-    ({ item }: { item: FlowerCard }) => (
-      <FlowerCardItem card={item} answeredQuestionIds={answeredQuestionIds} />
-    ),
-    [answeredQuestionIds],
-  );
-
-  const keyExtractor = useCallback((item: FlowerCard) => item.id, []);
 
   if (isLoading) {
     return (
@@ -72,19 +63,21 @@ export function MindMapView() {
         onSelect={setSelectedCategoryId}
       />
 
-      {filteredFlowerCards.length === 0 ? (
-        <View style={styles.center}>
-          <Text style={styles.emptyTitle}>该分类下暂无花卡</Text>
-        </View>
-      ) : (
-        <FlashList
-          data={filteredFlowerCards}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+      <View style={styles.listContent}>
+        {filteredFlowerCards.length === 0 ? (
+          <View style={styles.center}>
+            <Text style={styles.emptyTitle}>该分类下暂无花卡</Text>
+          </View>
+        ) : (
+          filteredFlowerCards.map((card) => (
+            <FlowerCardItem
+              key={card.id}
+              card={card}
+              answeredQuestionIds={answeredQuestionIds}
+            />
+          ))
+        )}
+      </View>
     </View>
   );
 }

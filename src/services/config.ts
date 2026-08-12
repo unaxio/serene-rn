@@ -20,6 +20,10 @@ export const API_PATHS = {
   SOUL_FLOWER_TODAY_TASK: "/soul-flower/app/today-task",
   SOUL_FLOWER_SUBMIT_ANSWER: "/soul-flower/app/submit-answer",
   SOUL_FLOWER_MIND_MAP: "/soul-flower/app/mind-map/full-data",
+  SOUL_FLOWER_PARTNER_STATUS: "/soul-flower/app/partner/status",
+  SOUL_FLOWER_PARTNER_INVITE: "/soul-flower/app/partner/invite",
+  SOUL_FLOWER_PARTNER_INVITES: "/soul-flower/app/partner/invites",
+  SOUL_FLOWER_PARTNER_INVITE_HANDLE: "/soul-flower/app/partner/invite/handle",
 } as const;
 
 export const STORAGE_KEYS = {

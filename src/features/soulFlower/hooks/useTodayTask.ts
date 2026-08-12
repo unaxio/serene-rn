@@ -26,6 +26,9 @@ export function useTodayTask() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: SOUL_FLOWER_QUERY_KEYS.todayTask }),
         queryClient.invalidateQueries({ queryKey: SOUL_FLOWER_QUERY_KEYS.mindMap }),
+        queryClient.invalidateQueries({
+          queryKey: SOUL_FLOWER_QUERY_KEYS.partnerStatus,
+        }),
       ]);
     },
   });
@@ -35,9 +38,17 @@ export function useTodayTask() {
       const trimmed = answerContent.trim();
       if (!trimmed) {
         showErrorToast('请先填写或选择你的回答');
-        return;
+        return false;
       }
-      await mutation.mutateAsync({ questionId, answerContent: trimmed });
+      try {
+        const result = await mutation.mutateAsync({
+          questionId,
+          answerContent: trimmed,
+        });
+        return result.success;
+      } catch {
+        return false;
+      }
     },
     [mutation],
   );

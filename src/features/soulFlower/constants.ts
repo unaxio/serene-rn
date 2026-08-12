@@ -3,7 +3,26 @@ import type { ThemeColor } from './types';
 export const SOUL_FLOWER_QUERY_KEYS = {
   todayTask: ['soulFlower', 'todayTask'] as const,
   mindMap: ['soulFlower', 'mindMap'] as const,
+  partnerStatus: ['soulFlower', 'partnerStatus'] as const,
+  partnerInvites: ['soulFlower', 'partnerInvites'] as const,
 };
+
+export const DEFAULT_FLOWER_NAME = '心灵之花';
+
+export const PETAL_SLOT_COUNT = 6;
+
+export const LIGHTED_PEOPLE_LABEL = '已有 8,326 人点亮';
+
+/** App 默认文字颜色 */
+export const APP_TEXT_COLOR = '#1F195C';
+
+export const ALL_CATEGORY_ID = 'all';
+
+export const CATEGORY_TAB_GRADIENT = ['#717BFA', '#7B6CF9'] as const;
+
+export const CATEGORY_TAB_INACTIVE_BG = '#FDFDFD';
+
+export const MIND_MAP_GRID_COLUMNS = 3;
 
 export const THEME_COLOR_STYLES: Record<
   ThemeColor,

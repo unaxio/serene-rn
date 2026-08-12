@@ -13,7 +13,7 @@ import type { Question } from '@/src/features/soulFlower/types';
 interface QuestionFormProps {
   question: Question;
   isSubmitting: boolean;
-  onSubmit: (answerContent: string) => Promise<void>;
+  onSubmit: (answerContent: string) => Promise<void> | Promise<boolean>;
 }
 
 const PLACEHOLDER_COLOR = '#9CA3AF';

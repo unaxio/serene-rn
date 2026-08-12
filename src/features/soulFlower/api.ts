@@ -3,6 +3,10 @@ import { request } from '@/src/services/request';
 
 import type {
   MindMapFullDataResponse,
+  PartnerActionResponse,
+  PartnerInviteAction,
+  PartnerInviteItem,
+  PartnerStatusResponse,
   SubmitAnswerRequest,
   SubmitAnswerResponse,
   TodayTaskResponse,
@@ -63,4 +67,49 @@ export async function getMindMapFullData(): Promise<MindMapFullDataResponse> {
     MindMapFullDataResponse | ApiEnvelope<MindMapFullDataResponse>
   >(API_PATHS.SOUL_FLOWER_MIND_MAP);
   return unwrapResponse(response, '获取认知图谱失败');
+}
+
+/**
+ * 查看伙伴及双人打卡状态 GET /soul-flower/app/partner/status
+ */
+export async function getPartnerStatus(): Promise<PartnerStatusResponse> {
+  const response = await request.get<
+    PartnerStatusResponse | ApiEnvelope<PartnerStatusResponse>
+  >(API_PATHS.SOUL_FLOWER_PARTNER_STATUS);
+  return unwrapResponse(response, '获取伙伴状态失败');
+}
+
+/**
+ * 发送伙伴邀请 POST /soul-flower/app/partner/invite
+ */
+export async function sendPartnerInvite(
+  receiverUserId: string,
+): Promise<PartnerActionResponse> {
+  const response = await request.post<
+    PartnerActionResponse | ApiEnvelope<PartnerActionResponse>
+  >(API_PATHS.SOUL_FLOWER_PARTNER_INVITE, { receiverUserId });
+  return unwrapResponse(response, '发送邀请失败');
+}
+
+/**
+ * 获取我的邀请列表 GET /soul-flower/app/partner/invites
+ */
+export async function getPartnerInvites(): Promise<PartnerInviteItem[]> {
+  const response = await request.get<
+    PartnerInviteItem[] | ApiEnvelope<PartnerInviteItem[]>
+  >(API_PATHS.SOUL_FLOWER_PARTNER_INVITES);
+  return unwrapResponse(response, '获取邀请列表失败');
+}
+
+/**
+ * 处理邀请 POST /soul-flower/app/partner/invite/handle
+ */
+export async function handlePartnerInvite(
+  inviteId: string,
+  action: PartnerInviteAction,
+): Promise<PartnerActionResponse> {
+  const response = await request.post<
+    PartnerActionResponse | ApiEnvelope<PartnerActionResponse>
+  >(API_PATHS.SOUL_FLOWER_PARTNER_INVITE_HANDLE, { inviteId, action });
+  return unwrapResponse(response, '处理邀请失败');
 }

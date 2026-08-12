@@ -56,6 +56,7 @@ export interface FlowerCard {
   language: string;
   themeColor: ThemeColor;
   questionIds: string[];
+  flowerImageUrl?: string;
 }
 
 export interface MindMapFullDataResponse {
@@ -69,3 +70,38 @@ export interface FlowerCardProgress {
   completedCount: number;
   progressRatio: number;
 }
+
+export interface PartnerInfo {
+  userId: string;
+  nickName?: string;
+  username?: string;
+  todayAnswered: boolean;
+  streakCount: number;
+}
+
+export interface PartnerStatusResponse {
+  hasPartner: boolean;
+  partnerInfo?: PartnerInfo;
+  partnerStreakCount: number;
+  myTodayAnswered: boolean;
+  myStreakCount: number;
+}
+
+export type PartnerInviteStatus = 'pending' | 'accepted' | 'rejected' | 'canceled';
+
+export interface PartnerInviteItem {
+  id: string;
+  senderId: string;
+  senderName?: string;
+  receiverId: string;
+  receiverName?: string;
+  status: PartnerInviteStatus;
+  createdAt: string;
+}
+
+export interface PartnerActionResponse {
+  success: boolean;
+  message?: string;
+}
+
+export type PartnerInviteAction = 'accept' | 'reject';
