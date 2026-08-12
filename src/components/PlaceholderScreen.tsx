@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { APP_TEXT_COLOR } from '@/constants/Colors';
+
 interface PlaceholderScreenProps {
   title: string;
   message: string;
@@ -32,7 +34,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#0F172A',
+    color: APP_TEXT_COLOR,
   },
   message: {
     fontSize: 15,

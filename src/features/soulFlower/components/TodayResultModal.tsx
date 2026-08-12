@@ -12,7 +12,7 @@ import { showToast } from '@/src/utils/toast';
 interface TodayResultModalProps {
   visible: boolean;
   onClose: () => void;
-  flowerImageUrl?: string | null;
+  flowerImagePath?: string | null;
   partnerStatus?: PartnerStatusResponse;
   progress: FlowerCardProgress;
 }
@@ -40,7 +40,7 @@ function StatValueWithUnit({
 function TodayResultModalComponent({
   visible,
   onClose,
-  flowerImageUrl,
+  flowerImagePath,
   partnerStatus,
   progress,
 }: TodayResultModalProps) {
@@ -84,7 +84,7 @@ function TodayResultModalComponent({
           </View>
 
           <View style={styles.body}>
-            <FlowerImage flowerImageUrl={flowerImageUrl} size={180} />
+            <FlowerImage imagePath={flowerImagePath} size={180} />
 
             <View style={styles.statsRow}>
               <View style={styles.statItem}>

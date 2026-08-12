@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { APP_TEXT_COLOR } from '@/src/features/soulFlower/constants';
 import type { PartnerStatusResponse } from '@/src/features/soulFlower/types';
 
 interface PartnerStatusModalProps {
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#0F172A',
+    color: APP_TEXT_COLOR,
     marginBottom: 4,
   },
   row: {

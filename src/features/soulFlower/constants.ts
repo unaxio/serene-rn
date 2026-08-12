@@ -1,5 +1,7 @@
 import type { ThemeColor } from './types';
 
+export { APP_TEXT_COLOR } from '@/constants/Colors';
+
 export const SOUL_FLOWER_QUERY_KEYS = {
   todayTask: ['soulFlower', 'todayTask'] as const,
   mindMap: ['soulFlower', 'mindMap'] as const,
@@ -12,9 +14,6 @@ export const DEFAULT_FLOWER_NAME = '心灵之花';
 export const PETAL_SLOT_COUNT = 6;
 
 export const LIGHTED_PEOPLE_LABEL = '已有 8,326 人点亮';
-
-/** App 默认文字颜色 */
-export const APP_TEXT_COLOR = '#1F195C';
 
 export const ALL_CATEGORY_ID = 'all';
 

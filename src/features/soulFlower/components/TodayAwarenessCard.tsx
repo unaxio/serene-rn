@@ -1,28 +1,29 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
   StyleSheet,
   Text,
   View,
-} from 'react-native';
+} from "react-native";
 
-import { AwarenessAnswerModal } from '@/src/features/soulFlower/components/AwarenessAnswerModal';
-import { PartnerInviteModal } from '@/src/features/soulFlower/components/PartnerInviteModal';
-import { PartnerStatusModal } from '@/src/features/soulFlower/components/PartnerStatusModal';
-import { StreakDetailModal } from '@/src/features/soulFlower/components/StreakDetailModal';
-import { TodayResultModal } from '@/src/features/soulFlower/components/TodayResultModal';
-import { usePartnerStatus } from '@/src/features/soulFlower/hooks/usePartner';
-import { useTodayTask } from '@/src/features/soulFlower/hooks/useTodayTask';
-import type { FlowerCardProgress } from '@/src/features/soulFlower/types';
+import { AwarenessAnswerModal } from "@/src/features/soulFlower/components/AwarenessAnswerModal";
+import { PartnerInviteModal } from "@/src/features/soulFlower/components/PartnerInviteModal";
+import { PartnerStatusModal } from "@/src/features/soulFlower/components/PartnerStatusModal";
+import { StreakDetailModal } from "@/src/features/soulFlower/components/StreakDetailModal";
+import { TodayResultModal } from "@/src/features/soulFlower/components/TodayResultModal";
+import { APP_TEXT_COLOR } from "@/src/features/soulFlower/constants";
+import { usePartnerStatus } from "@/src/features/soulFlower/hooks/usePartner";
+import { useTodayTask } from "@/src/features/soulFlower/hooks/useTodayTask";
+import type { FlowerCardProgress } from "@/src/features/soulFlower/types";
 
 interface TodayAwarenessCardProps {
-  flowerImageUrl?: string | null;
+  flowerImagePath?: string | null;
   progress: FlowerCardProgress;
 }
 
 export function TodayAwarenessCard({
-  flowerImageUrl,
+  flowerImagePath,
   progress,
 }: TodayAwarenessCardProps) {
   const { data, isLoading, isError, refetch, isSubmitting, submitAnswer } =
@@ -94,25 +95,29 @@ export function TodayAwarenessCard({
       <Text style={styles.subtitle}>给自己一个温柔的开始。</Text>
 
       <View style={styles.statusRow}>
-        <Text style={styles.statusIcon}>{alreadyAnswered ? '✓' : '○'}</Text>
+        <Text style={styles.statusIcon}>{alreadyAnswered ? "✓" : "○"}</Text>
         <Text style={styles.statusText}>
-          今日任务：{alreadyAnswered ? '已完成' : '未完成'}
+          今日任务：{alreadyAnswered ? "已完成" : "未完成"}
         </Text>
       </View>
 
       <Pressable
-        style={[styles.primaryButton, !alreadyAnswered && !hasTask && styles.disabled]}
+        style={[
+          styles.primaryButton,
+          !alreadyAnswered && !hasTask && styles.disabled,
+        ]}
         onPress={handlePrimary}
-        disabled={!alreadyAnswered && !hasTask}>
+        disabled={!alreadyAnswered && !hasTask}
+      >
         <Text style={styles.primaryText}>
-          {alreadyAnswered ? '查看今日结果' : '开始今日觉察'}
+          {alreadyAnswered ? "查看今日结果" : "开始今日觉察"}
         </Text>
       </Pressable>
 
       <Text style={styles.hint}>
         {alreadyAnswered
-          ? '下次觉察：明日 00:00，继续看见自己'
-          : '完成今日觉察，更新花卡成长状态'}
+          ? "下次觉察：明日 00:00，继续看见自己"
+          : "完成今日觉察，更新花卡成长状态"}
       </Text>
 
       <Pressable style={styles.linkRow} onPress={() => setStreakVisible(true)}>
@@ -123,7 +128,7 @@ export function TodayAwarenessCard({
         <Text style={styles.linkText}>
           {hasPartner
             ? `👥 双人联盟 携手 ${partnerStreakCount} 天 ›`
-            : '👥 双人联盟 邀请伙伴 ›'}
+            : "👥 双人联盟 邀请伙伴 ›"}
         </Text>
       </Pressable>
 
@@ -137,7 +142,7 @@ export function TodayAwarenessCard({
       <TodayResultModal
         visible={resultVisible}
         onClose={() => setResultVisible(false)}
-        flowerImageUrl={flowerImageUrl}
+        flowerImagePath={flowerImagePath}
         partnerStatus={partnerStatus}
         progress={progress}
       />
@@ -162,57 +167,57 @@ export function TodayAwarenessCard({
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: "#E2E8F0",
     gap: 8,
     minHeight: 280,
   },
   title: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#0F172A',
+    fontWeight: "700",
+    color: APP_TEXT_COLOR,
   },
   subtitle: {
     fontSize: 12,
-    color: '#64748B',
+    color: APP_TEXT_COLOR,
     marginBottom: 2,
   },
   statusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
   },
   statusIcon: {
     fontSize: 13,
-    color: '#22C55E',
+    color: "#22C55E",
   },
   statusText: {
     fontSize: 12,
-    color: '#334155',
-    fontWeight: '500',
+    color: APP_TEXT_COLOR,
+    fontWeight: "500",
   },
   primaryButton: {
     marginTop: 4,
     height: 40,
     borderRadius: 10,
-    backgroundColor: '#2F95DC',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#2F95DC",
+    alignItems: "center",
+    justifyContent: "center",
   },
   disabled: {
     opacity: 0.5,
   },
   primaryText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   hint: {
     fontSize: 11,
-    color: '#94A3B8',
+    color: "#94A3B8",
     lineHeight: 16,
   },
   linkRow: {
@@ -220,16 +225,16 @@ const styles = StyleSheet.create({
   },
   linkText: {
     fontSize: 12,
-    color: '#475569',
-    fontWeight: '500',
+    color: APP_TEXT_COLOR,
+    fontWeight: "500",
   },
   errorText: {
     fontSize: 13,
-    color: '#B91C1C',
+    color: "#B91C1C",
   },
   retry: {
     fontSize: 13,
-    color: '#2F95DC',
-    fontWeight: '600',
+    color: "#2F95DC",
+    fontWeight: "600",
   },
 });

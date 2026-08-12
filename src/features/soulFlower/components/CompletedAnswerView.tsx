@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { APP_TEXT_COLOR } from '@/src/features/soulFlower/constants';
 import type { Question, TodayAnswer } from '@/src/features/soulFlower/types';
 
 interface CompletedAnswerViewProps {
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
   questionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111827',
+    color: APP_TEXT_COLOR,
     lineHeight: 24,
   },
   answerBox: {
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
   },
   answerContent: {
     fontSize: 15,
-    color: '#1F2937',
+    color: APP_TEXT_COLOR,
     lineHeight: 22,
   },
 });

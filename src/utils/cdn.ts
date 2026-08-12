@@ -1,7 +1,7 @@
 /**
  * 测试环境 CDN 前缀；相对路径图片需自动拼接。
  */
-export const CDN_BASE_URL = 'https://test.serene.org.cn/dev';
+export const CDN_BASE_URL = "https://cdn.serene.org.cn/dev";
 
 const ABSOLUTE_URL_PATTERN = /^https?:\/\//i;
 
@@ -22,6 +22,6 @@ export function resolveCdnUrl(path?: string | null): string | null {
     return trimmed;
   }
 
-  const normalizedPath = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  const normalizedPath = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
   return `${CDN_BASE_URL}${normalizedPath}`;
 }

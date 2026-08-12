@@ -6,7 +6,8 @@ import { APP_TEXT_COLOR } from '@/src/features/soulFlower/constants';
 import { resolveCdnUrl } from '@/src/utils/cdn';
 
 interface FlowerImageProps {
-  flowerImageUrl?: string | null;
+  /** CDN 相对路径或绝对 URL */
+  imagePath?: string | null;
   size?: number;
   /** 进度为 0 时模糊并显示锁标 */
   locked?: boolean;
@@ -16,11 +17,11 @@ const IMAGE_BLUR_RADIUS = 12;
 const LOCK_BADGE_RATIO = 0.36;
 
 export function FlowerImage({
-  flowerImageUrl,
+  imagePath,
   size = 140,
   locked = false,
 }: FlowerImageProps) {
-  const uri = resolveCdnUrl(flowerImageUrl);
+  const uri = resolveCdnUrl(imagePath);
   const lockBadgeSize = Math.max(28, Math.round(size * LOCK_BADGE_RATIO));
   const lockIconSize = Math.round(lockBadgeSize * 0.5);
 
@@ -45,7 +46,11 @@ export function FlowerImage({
           <View
             style={[
               styles.lockBadge,
-              { width: lockBadgeSize, height: lockBadgeSize, borderRadius: lockBadgeSize / 2 },
+              {
+                width: lockBadgeSize,
+                height: lockBadgeSize,
+                borderRadius: lockBadgeSize / 2,
+              },
             ]}>
             <SymbolView
               name={{
@@ -97,7 +102,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#1F195C',
+    shadowColor: APP_TEXT_COLOR,
     shadowOpacity: 0.12,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 1 },

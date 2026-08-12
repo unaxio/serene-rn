@@ -1,17 +1,17 @@
-import { memo, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { memo, useMemo } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-import { FlowerImage } from '@/src/features/soulFlower/components/FlowerImage';
+import { FlowerImage } from "@/src/features/soulFlower/components/FlowerImage";
 import {
   APP_TEXT_COLOR,
   DEFAULT_THEME_COLOR,
   THEME_COLOR_STYLES,
-} from '@/src/features/soulFlower/constants';
-import type { FlowerCard } from '@/src/features/soulFlower/types';
+} from "@/src/features/soulFlower/constants";
+import type { FlowerCard } from "@/src/features/soulFlower/types";
 import {
   calcFlowerCardProgress,
   formatProgressLabel,
-} from '@/src/features/soulFlower/utils/progress';
+} from "@/src/features/soulFlower/utils/progress";
 
 /**
  * 「查看更多」弹窗内三列花卡。
@@ -29,7 +29,8 @@ function MindMapGridCardComponent({
   answeredQuestionIds,
 }: MindMapGridCardProps) {
   const theme =
-    THEME_COLOR_STYLES[card.themeColor] ?? THEME_COLOR_STYLES[DEFAULT_THEME_COLOR];
+    THEME_COLOR_STYLES[card.themeColor] ??
+    THEME_COLOR_STYLES[DEFAULT_THEME_COLOR];
 
   const { completedCount, totalCount } = useMemo(
     () => calcFlowerCardProgress(card, answeredQuestionIds),
@@ -72,7 +73,7 @@ export const MindMapGridCard = memo(MindMapGridCardComponent);
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     paddingTop: 10,
     paddingBottom: 8,
@@ -80,47 +81,47 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     minHeight: 168,
     // 轻微阴影勾勒卡片轮廓
-    shadowColor: '#1F195C',
+    shadowColor: "#1F195C",
     shadowOpacity: 0.08,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
-    position: 'relative',
+    position: "relative",
   },
   flowerName: {
-    position: 'absolute',
+    position: "absolute",
     top: 8,
     left: 8,
     zIndex: 2,
-    maxWidth: '55%',
+    maxWidth: "55%",
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: "700",
     color: APP_TEXT_COLOR,
   },
   tag: {
-    position: 'absolute',
+    position: "absolute",
     top: 8,
     right: 6,
     zIndex: 2,
-    maxWidth: '42%',
+    maxWidth: "42%",
     borderRadius: 999,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
   tagText: {
     fontSize: 9,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   imageWrap: {
     marginTop: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   footer: {
     marginTop: 6,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
     gap: 4,
     paddingHorizontal: 2,
   },
@@ -128,11 +129,11 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 9,
     lineHeight: 12,
-    color: '#64748B',
+    color: "#64748B",
   },
   progress: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: "700",
     color: APP_TEXT_COLOR,
   },
 });

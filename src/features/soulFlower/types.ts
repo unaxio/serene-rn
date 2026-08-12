@@ -1,4 +1,4 @@
-export type QuestionType = 'singleChoice' | 'text';
+export type QuestionType = "singleChoice" | "text";
 
 export interface Question {
   id: string;
@@ -34,13 +34,13 @@ export interface SubmitAnswerResponse {
 }
 
 export type ThemeColor =
-  | 'red'
-  | 'orange'
-  | 'yellow'
-  | 'green'
-  | 'blue'
-  | 'purple'
-  | 'silver';
+  | "red"
+  | "orange"
+  | "yellow"
+  | "green"
+  | "blue"
+  | "purple"
+  | "silver";
 
 export interface Category {
   id: string;
@@ -56,7 +56,10 @@ export interface FlowerCard {
   language: string;
   themeColor: ThemeColor;
   questionIds: string[];
-  flowerImageUrl?: string;
+  /** 封面图路径（CDN 相对路径） */
+  flowerImagePath?: string;
+  /** 花卡展示图路径（CDN 相对路径） */
+  cardImagePath?: string;
 }
 
 export interface MindMapFullDataResponse {
@@ -87,7 +90,11 @@ export interface PartnerStatusResponse {
   myStreakCount: number;
 }
 
-export type PartnerInviteStatus = 'pending' | 'accepted' | 'rejected' | 'canceled';
+export type PartnerInviteStatus =
+  | "pending"
+  | "accepted"
+  | "rejected"
+  | "canceled";
 
 export interface PartnerInviteItem {
   id: string;
@@ -104,4 +111,4 @@ export interface PartnerActionResponse {
   message?: string;
 }
 
-export type PartnerInviteAction = 'accept' | 'reject';
+export type PartnerInviteAction = "accept" | "reject";

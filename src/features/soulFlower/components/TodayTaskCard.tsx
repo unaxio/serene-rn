@@ -8,6 +8,7 @@ import {
 
 import { CompletedAnswerView } from '@/src/features/soulFlower/components/CompletedAnswerView';
 import { QuestionForm } from '@/src/features/soulFlower/components/QuestionForm';
+import { APP_TEXT_COLOR } from '@/src/features/soulFlower/constants';
 import { useTodayTask } from '@/src/features/soulFlower/hooks/useTodayTask';
 
 export function TodayTaskCard() {
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#111827',
+    color: APP_TEXT_COLOR,
     marginBottom: 4,
   },
   hint: {

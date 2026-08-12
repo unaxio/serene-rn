@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 
+import { APP_TEXT_COLOR } from '@/src/features/soulFlower/constants';
 import type { Question } from '@/src/features/soulFlower/types';
 
 interface QuestionFormProps {
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#111827',
+    color: APP_TEXT_COLOR,
     lineHeight: 26,
   },
   options: {
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     fontSize: 15,
-    color: '#111827',
+    color: APP_TEXT_COLOR,
     backgroundColor: '#FAFAFA',
   },
   submitButton: {

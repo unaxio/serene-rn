@@ -3,6 +3,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { QuestionForm } from '@/src/features/soulFlower/components/QuestionForm';
+import { APP_TEXT_COLOR } from '@/src/features/soulFlower/constants';
 import type { Question } from '@/src/features/soulFlower/types';
 
 interface AwarenessAnswerModalProps {
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#0F172A',
+    color: APP_TEXT_COLOR,
   },
   close: {
     fontSize: 15,

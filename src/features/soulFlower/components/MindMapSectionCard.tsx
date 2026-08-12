@@ -49,7 +49,7 @@ function MindMapSectionCardComponent({
 
       <View style={styles.imageWrap}>
         <FlowerImage
-          flowerImageUrl={card.flowerImageUrl}
+          imagePath={card.cardImagePath}
           size={88}
           locked={completedCount === 0}
         />

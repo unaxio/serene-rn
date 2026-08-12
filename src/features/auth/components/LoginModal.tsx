@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
+import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { useAuthStore } from '@/src/store/authStore';
 import { showErrorToast } from '@/src/utils/toast';
 
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#111111',
+    color: APP_TEXT_COLOR,
     marginBottom: 8,
   },
   subtitle: {
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 14,
     fontSize: 16,
-    color: '#111111',
+    color: APP_TEXT_COLOR,
     marginBottom: 14,
     backgroundColor: '#fafafa',
   },

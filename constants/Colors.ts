@@ -1,9 +1,12 @@
-const tintColorLight = '#2f95dc';
+/** App 默认主题文字颜色 */
+export const APP_TEXT_COLOR = '#1F195C';
+
+const tintColorLight = '#7e68d7';
 const tintColorDark = '#fff';
 
 export default {
   light: {
-    text: '#000',
+    text: APP_TEXT_COLOR,
     background: '#fff',
     tint: tintColorLight,
     tabIconDefault: '#ccc',

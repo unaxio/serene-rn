@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
+import { APP_TEXT_COLOR } from '@/src/features/soulFlower/constants';
 import { usePartnerInvites } from '@/src/features/soulFlower/hooks/usePartner';
 
 interface PartnerInviteModalProps {
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#0F172A',
+    color: APP_TEXT_COLOR,
   },
   close: {
     fontSize: 15,
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 12,
     fontSize: 15,
-    color: '#0F172A',
+    color: APP_TEXT_COLOR,
     backgroundColor: '#F8FAFC',
     marginBottom: 12,
   },
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
   inviteName: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#0F172A',
+    color: APP_TEXT_COLOR,
   },
   actions: {
     flexDirection: 'row',

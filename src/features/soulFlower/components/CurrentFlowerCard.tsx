@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { FlowerImage } from '@/src/features/soulFlower/components/FlowerImage';
 import { PetalProgress } from '@/src/features/soulFlower/components/PetalProgress';
 import {
+  APP_TEXT_COLOR,
   DEFAULT_FLOWER_NAME,
   LIGHTED_PEOPLE_LABEL,
   THEME_COLOR_STYLES,
@@ -32,7 +33,7 @@ export function CurrentFlowerCard({ flowerCard, progress }: CurrentFlowerCardPro
       <Text style={styles.lighted}>{LIGHTED_PEOPLE_LABEL}</Text>
 
       <FlowerImage
-        flowerImageUrl={flowerCard?.flowerImageUrl}
+        imagePath={flowerCard?.flowerImagePath}
         size={110}
         locked={progress.completedCount === 0}
       />
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#0F172A',
+    color: APP_TEXT_COLOR,
     lineHeight: 20,
   },
   lighted: {
