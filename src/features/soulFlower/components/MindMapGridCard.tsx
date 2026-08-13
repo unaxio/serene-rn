@@ -50,7 +50,7 @@ function MindMapGridCardComponent({
 
       <View style={styles.imageWrap}>
         <FlowerImage
-          flowerImageUrl={card.flowerImageUrl}
+          imagePath={card.flowerImagePath}
           size={88}
           locked={completedCount === 0}
         />
