@@ -11,6 +11,7 @@ import type { FlowerCard } from "@/src/features/soulFlower/types";
 import {
   calcFlowerCardProgress,
   formatProgressLabel,
+  getFlowerPhaseImagePath,
 } from "@/src/features/soulFlower/utils/progress";
 
 /**
@@ -50,7 +51,7 @@ function MindMapGridCardComponent({
 
       <View style={styles.imageWrap}>
         <FlowerImage
-          imagePath={card.flowerImagePath}
+          imagePath={getFlowerPhaseImagePath(card, completedCount)}
           size={88}
           locked={completedCount === 0}
         />

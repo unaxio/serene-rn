@@ -13,7 +13,10 @@ import { useMindMap } from "@/src/features/soulFlower/hooks/useMindMap";
 import { useTodayTask } from "@/src/features/soulFlower/hooks/useTodayTask";
 import type { FlowerCardProgress } from "@/src/features/soulFlower/types";
 import { findFlowerCardById } from "@/src/features/soulFlower/utils/findFlowerCard";
-import { calcFlowerCardProgress } from "@/src/features/soulFlower/utils/progress";
+import {
+  calcFlowerCardProgress,
+  getFlowerPhaseImagePath,
+} from "@/src/features/soulFlower/utils/progress";
 
 const EMPTY_PROGRESS: FlowerCardProgress = {
   totalCount: PETAL_SLOT_COUNT,
@@ -37,6 +40,11 @@ export function ExplorationOverview() {
     return calcFlowerCardProgress(matchedFlowerCard, answeredQuestionIds);
   }, [matchedFlowerCard, answeredQuestionIds]);
 
+  const flowerImagePath = useMemo(
+    () => getFlowerPhaseImagePath(matchedFlowerCard, progress.completedCount),
+    [matchedFlowerCard, progress.completedCount],
+  );
+
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
       <ScrollView
@@ -52,7 +60,7 @@ export function ExplorationOverview() {
 
         <View style={styles.dualCards}>
           <TodayAwarenessCard
-            flowerImagePath={matchedFlowerCard?.flowerImagePath}
+            flowerImagePath={flowerImagePath}
             progress={progress}
           />
           <CurrentFlowerCard

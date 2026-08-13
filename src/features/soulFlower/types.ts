@@ -56,10 +56,12 @@ export interface FlowerCard {
   language: string;
   themeColor: ThemeColor;
   questionIds: string[];
-  /** 封面图路径（CDN 相对路径） */
-  flowerImagePath?: string;
-  /** 花卡展示图路径（CDN 相对路径） */
-  cardImagePath?: string;
+  imagePathPhase1?: string;
+  imagePathPhase2?: string;
+  imagePathPhase3?: string;
+  imagePathPhase4?: string;
+  imagePathPhase5?: string;
+  imagePathPhase6?: string;
 }
 
 export interface MindMapFullDataResponse {

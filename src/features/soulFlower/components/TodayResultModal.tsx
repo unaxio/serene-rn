@@ -84,7 +84,11 @@ function TodayResultModalComponent({
           </View>
 
           <View style={styles.body}>
-            <FlowerImage imagePath={flowerImagePath} size={180} />
+            <FlowerImage
+              imagePath={flowerImagePath}
+              size={180}
+              locked={progress.completedCount === 0}
+            />
 
             <View style={styles.statsRow}>
               <View style={styles.statItem}>

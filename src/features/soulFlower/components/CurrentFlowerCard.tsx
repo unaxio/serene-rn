@@ -10,6 +10,7 @@ import {
   DEFAULT_THEME_COLOR,
 } from '@/src/features/soulFlower/constants';
 import type { FlowerCard, FlowerCardProgress } from '@/src/features/soulFlower/types';
+import { getFlowerPhaseImagePath } from '@/src/features/soulFlower/utils/progress';
 
 interface CurrentFlowerCardProps {
   flowerCard: FlowerCard | null;
@@ -33,7 +34,7 @@ export function CurrentFlowerCard({ flowerCard, progress }: CurrentFlowerCardPro
       <Text style={styles.lighted}>{LIGHTED_PEOPLE_LABEL}</Text>
 
       <FlowerImage
-        imagePath={flowerCard?.flowerImagePath}
+        imagePath={getFlowerPhaseImagePath(flowerCard, progress.completedCount)}
         size={110}
         locked={progress.completedCount === 0}
       />
