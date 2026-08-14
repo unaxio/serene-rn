@@ -114,3 +114,10 @@ export interface PartnerActionResponse {
 }
 
 export type PartnerInviteAction = "accept" | "reject";
+
+export interface FlowerCardAnswerItem {
+  id: string;
+  questionTitle: string;
+  answerContent: string;
+  createdAt: string;
+}

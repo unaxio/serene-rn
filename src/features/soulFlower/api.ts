@@ -2,6 +2,7 @@ import { API_PATHS, API_SUCCESS_CODE } from '@/src/services/config';
 import { request } from '@/src/services/request';
 
 import type {
+  FlowerCardAnswerItem,
   MindMapFullDataResponse,
   PartnerActionResponse,
   PartnerInviteAction,
@@ -112,4 +113,16 @@ export async function handlePartnerInvite(
     PartnerActionResponse | ApiEnvelope<PartnerActionResponse>
   >(API_PATHS.SOUL_FLOWER_PARTNER_INVITE_HANDLE, { inviteId, action });
   return unwrapResponse(response, '处理邀请失败');
+}
+
+/**
+ * 获取花卡觉察记录 GET /soul-flower/app/flower-card/:id/answers
+ */
+export async function getFlowerCardAnswers(
+  flowerId: string,
+): Promise<FlowerCardAnswerItem[]> {
+  const response = await request.get<
+    FlowerCardAnswerItem[] | ApiEnvelope<FlowerCardAnswerItem[]>
+  >(`${API_PATHS.SOUL_FLOWER_FLOWER_CARD_ANSWERS}/${flowerId}/answers`);
+  return unwrapResponse(response, '获取觉察记录失败');
 }

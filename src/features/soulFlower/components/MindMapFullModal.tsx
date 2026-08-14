@@ -17,6 +17,7 @@ import {
   APP_TEXT_COLOR,
   MIND_MAP_GRID_COLUMNS,
 } from '@/src/features/soulFlower/constants';
+import { useOpenFlowerCard } from '@/src/features/soulFlower/hooks/useOpenFlowerCard';
 import type { Category, FlowerCard } from '@/src/features/soulFlower/types';
 
 interface MindMapFullModalProps {
@@ -35,6 +36,7 @@ export function MindMapFullModal({
   answeredQuestionIds,
 }: MindMapFullModalProps) {
   const insets = useSafeAreaInsets();
+  const openFlowerCard = useOpenFlowerCard();
   const [selectedCategoryId, setSelectedCategoryId] = useState(ALL_CATEGORY_ID);
 
   const categoryNameMap = useMemo(() => {
@@ -93,11 +95,13 @@ export function MindMapFullModal({
             <View style={styles.grid}>
               {filteredCards.map((card) => (
                 <View key={card.id} style={styles.gridItem}>
-                  <MindMapGridCard
-                    card={card}
-                    categoryName={categoryNameMap.get(card.categoryId) ?? '未分类'}
-                    answeredQuestionIds={answeredQuestionIds}
-                  />
+                  <Pressable onPress={() => openFlowerCard(card.id)}>
+                    <MindMapGridCard
+                      card={card}
+                      categoryName={categoryNameMap.get(card.categoryId) ?? '未分类'}
+                      answeredQuestionIds={answeredQuestionIds}
+                    />
+                  </Pressable>
                 </View>
               ))}
             </View>

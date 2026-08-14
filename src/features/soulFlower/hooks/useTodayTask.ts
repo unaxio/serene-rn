@@ -29,6 +29,7 @@ export function useTodayTask() {
         queryClient.invalidateQueries({
           queryKey: SOUL_FLOWER_QUERY_KEYS.partnerStatus,
         }),
+        queryClient.invalidateQueries({ queryKey: ['soulFlower', 'flowerCardAnswers'] }),
       ]);
     },
   });

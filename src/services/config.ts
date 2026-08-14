@@ -24,6 +24,7 @@ export const API_PATHS = {
   SOUL_FLOWER_PARTNER_INVITE: "/soul-flower/app/partner/invite",
   SOUL_FLOWER_PARTNER_INVITES: "/soul-flower/app/partner/invites",
   SOUL_FLOWER_PARTNER_INVITE_HANDLE: "/soul-flower/app/partner/invite/handle",
+  SOUL_FLOWER_FLOWER_CARD_ANSWERS: "/soul-flower/app/flower-card",
 } as const;
 
 export const STORAGE_KEYS = {

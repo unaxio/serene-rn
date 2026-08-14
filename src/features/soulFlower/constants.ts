@@ -7,6 +7,8 @@ export const SOUL_FLOWER_QUERY_KEYS = {
   mindMap: ['soulFlower', 'mindMap'] as const,
   partnerStatus: ['soulFlower', 'partnerStatus'] as const,
   partnerInvites: ['soulFlower', 'partnerInvites'] as const,
+  flowerCardAnswers: (flowerId: string) =>
+    ['soulFlower', 'flowerCardAnswers', flowerId] as const,
 };
 
 export const DEFAULT_FLOWER_NAME = '心灵之花';
@@ -74,3 +76,39 @@ export const THEME_COLOR_STYLES: Record<
 export const DEFAULT_THEME_COLOR: ThemeColor = 'silver';
 
 export const EMPTY_PROGRESS_LABEL = '0/0';
+
+/** 花卡详情页使用的花色 */
+export const FLOWER_THEME_HEX: Record<ThemeColor, string> = {
+  red: '#EF7D89',
+  orange: '#D7742F',
+  yellow: '#E0AF4A',
+  green: '#94B798',
+  blue: '#93AFCF',
+  purple: '#8C7BBC',
+  silver: '#AEB7C2',
+};
+
+export const FLOWER_CARD_INNER_BG = require('../../../assets/images/flower-card-inner-bg.png');
+
+export const PETAL_BLANK_IMAGE = require('../../../assets/images/petal/petal_blank_point_down.png');
+
+export const PETAL_FILLED_IMAGES: Record<ThemeColor, number> = {
+  red: require('../../../assets/images/petal/petal_red_point_down.png'),
+  orange: require('../../../assets/images/petal/petal_orange_point_down.png'),
+  yellow: require('../../../assets/images/petal/petal_yellow_point_down.png'),
+  green: require('../../../assets/images/petal/petal_green_point_down.png'),
+  blue: require('../../../assets/images/petal/petal_blue_point_down.png'),
+  purple: require('../../../assets/images/petal/petal_purple_point_down.png'),
+  silver: require('../../../assets/images/petal/petal_silver_point_down.png'),
+};
+
+export const DESIGN_CARD_WIDTH = 400;
+export const DESIGN_CARD_HEIGHT = 500;
+export const DESIGN_BODY_HEIGHT = 432;
+export const DESIGN_FOOTER_HEIGHT = 68;
+export const CARD_HORIZONTAL_MARGIN = 18;
+export const CARD_CORNER_RADIUS = 20;
+export const DESIGN_PETAL_WIDTH = 16;
+export const DESIGN_PETAL_HEIGHT = 17;
+export const DESIGN_PETAL_GAP = 25;
+export const DETAIL_PAGE_BG = '#F5F5F5';

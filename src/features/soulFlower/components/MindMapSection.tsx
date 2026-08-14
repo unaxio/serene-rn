@@ -15,6 +15,7 @@ import {
   MIND_MAP_GRID_COLUMNS,
 } from '@/src/features/soulFlower/constants';
 import { useMindMap } from '@/src/features/soulFlower/hooks/useMindMap';
+import { useOpenFlowerCard } from '@/src/features/soulFlower/hooks/useOpenFlowerCard';
 
 const COLUMN_GAP = 8;
 const COLUMN_WIDTH_PERCENT = `${100 / MIND_MAP_GRID_COLUMNS}%` as `${number}%`;
@@ -36,6 +37,7 @@ export function MindMapSection() {
     isEmpty,
     refetch,
   } = useMindMap();
+  const openFlowerCard = useOpenFlowerCard();
 
   const categoryNameMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -96,11 +98,13 @@ export function MindMapSection() {
           <View style={styles.grid}>
             {filteredFlowerCards.map((card) => (
               <View key={card.id} style={styles.gridItem}>
-                <MindMapSectionCard
-                  card={card}
-                  categoryName={categoryNameMap.get(card.categoryId) ?? '未分类'}
-                  answeredQuestionIds={answeredQuestionIds}
-                />
+                <Pressable onPress={() => openFlowerCard(card.id)}>
+                  <MindMapSectionCard
+                    card={card}
+                    categoryName={categoryNameMap.get(card.categoryId) ?? '未分类'}
+                    answeredQuestionIds={answeredQuestionIds}
+                  />
+                </Pressable>
               </View>
             ))}
           </View>
