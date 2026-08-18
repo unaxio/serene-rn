@@ -17,8 +17,8 @@ export function TodayTaskCard() {
     isLoading,
     isError,
     refetch,
-    isSubmitting,
     submitAnswer,
+    finalizeSubmit,
   } = useTodayTask();
 
   if (isLoading) {
@@ -66,8 +66,8 @@ export function TodayTaskCard() {
       <Text style={styles.header}>开始今日觉察</Text>
       <QuestionForm
         question={question}
-        isSubmitting={isSubmitting}
         onSubmit={(answerContent) => submitAnswer(question.id, answerContent)}
+        onBack={() => void finalizeSubmit()}
       />
     </View>
   );

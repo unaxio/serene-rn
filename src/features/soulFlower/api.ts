@@ -1,3 +1,4 @@
+import { SUBMIT_ANSWER_TIMEOUT_MS } from '@/src/features/soulFlower/constants';
 import { API_PATHS, API_SUCCESS_CODE } from '@/src/services/config';
 import { request } from '@/src/services/request';
 
@@ -48,6 +49,39 @@ export async function getTodayTask(): Promise<TodayTaskResponse> {
   return unwrapResponse(response, '获取今日任务失败');
 }
 
+interface SubmitAnswerEnvelope extends ApiEnvelope<SubmitAnswerResponse> {
+  summary?: string;
+  explain?: string;
+  success?: boolean;
+}
+
+function unwrapSubmitAnswer(
+  payload: SubmitAnswerResponse | SubmitAnswerEnvelope,
+): SubmitAnswerResponse {
+  if (isApiEnvelope<SubmitAnswerResponse>(payload)) {
+    if (payload.statusCode !== API_SUCCESS_CODE) {
+      throw new Error(payload.message || '提交答案失败');
+    }
+
+    const inner = payload.data;
+    const envelope = payload as SubmitAnswerEnvelope;
+
+    return {
+      success: inner?.success ?? envelope.success ?? true,
+      message: inner?.message ?? envelope.message,
+      summary: inner?.summary ?? envelope.summary,
+      explain: inner?.explain ?? envelope.explain,
+    };
+  }
+
+  return {
+    success: payload.success ?? true,
+    message: payload.message,
+    summary: payload.summary,
+    explain: payload.explain,
+  };
+}
+
 /**
  * 提交答案 POST /soul-flower/app/submit-answer
  */
@@ -55,9 +89,11 @@ export async function submitAnswer(
   data: SubmitAnswerRequest,
 ): Promise<SubmitAnswerResponse> {
   const response = await request.post<
-    SubmitAnswerResponse | ApiEnvelope<SubmitAnswerResponse>
-  >(API_PATHS.SOUL_FLOWER_SUBMIT_ANSWER, data);
-  return unwrapResponse(response, '提交答案失败');
+    SubmitAnswerResponse | SubmitAnswerEnvelope
+  >(API_PATHS.SOUL_FLOWER_SUBMIT_ANSWER, data, {
+    timeout: SUBMIT_ANSWER_TIMEOUT_MS,
+  });
+  return unwrapSubmitAnswer(response);
 }
 
 /**

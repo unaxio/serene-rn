@@ -1,88 +1,89 @@
-import { memo, useCallback } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { memo, useCallback, useEffect, useState } from 'react';
+import { StyleSheet, Text } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
+import { FullScreenModal } from '@/src/components/FullScreenModal';
 import { QuestionForm } from '@/src/features/soulFlower/components/QuestionForm';
-import { APP_TEXT_COLOR } from '@/src/features/soulFlower/constants';
-import type { Question } from '@/src/features/soulFlower/types';
+import type { Question, SubmitAnswerResponse } from '@/src/features/soulFlower/types';
 
 interface AwarenessAnswerModalProps {
   visible: boolean;
   question?: Question;
-  isSubmitting: boolean;
   onClose: () => void;
-  onSubmit: (answerContent: string) => Promise<boolean>;
+  onSubmit: (answerContent: string) => Promise<SubmitAnswerResponse | null>;
+  onFinalize: () => Promise<void>;
+  onCompleted?: () => void;
 }
 
 function AwarenessAnswerModalComponent({
   visible,
   question,
-  isSubmitting,
   onClose,
   onSubmit,
+  onFinalize,
+  onCompleted,
 }: AwarenessAnswerModalProps) {
+  const [frozenQuestion, setFrozenQuestion] = useState<Question | undefined>(question);
+  const [hasCompleted, setHasCompleted] = useState(false);
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    setHasCompleted(false);
+    if (question) {
+      setFrozenQuestion(question);
+    }
+  }, [question, visible]);
+
   const handleSubmit = useCallback(
     async (answerContent: string) => {
-      const success = await onSubmit(answerContent);
-      if (success) {
-        onClose();
+      const result = await onSubmit(answerContent);
+      if (result && result.success !== false) {
+        setHasCompleted(true);
       }
+      return result;
     },
-    [onClose, onSubmit],
+    [onSubmit],
   );
 
+  const dismiss = useCallback(async () => {
+    const shouldShowTodayResult = hasCompleted;
+    if (shouldShowTodayResult) {
+      await onFinalize();
+    }
+    onClose();
+    if (shouldShowTodayResult) {
+      onCompleted?.();
+    }
+  }, [hasCompleted, onClose, onCompleted, onFinalize]);
+
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>开始今日觉察</Text>
-          <Pressable onPress={onClose} hitSlop={12}>
-            <Text style={styles.close}>关闭</Text>
-          </Pressable>
-        </View>
-        <KeyboardAwareScrollView
-          contentContainerStyle={styles.content}
-          keyboardShouldPersistTaps="handled">
-          {question ? (
-            <QuestionForm
-              question={question}
-              isSubmitting={isSubmitting}
-              onSubmit={handleSubmit}
-            />
-          ) : (
-            <Text style={styles.empty}>暂无可用题目</Text>
-          )}
-        </KeyboardAwareScrollView>
-      </View>
-    </Modal>
+    <FullScreenModal visible={visible} title="今日觉察" onBack={() => void dismiss()}>
+      <KeyboardAwareScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled">
+        {visible && frozenQuestion ? (
+          <QuestionForm
+            key={frozenQuestion.id}
+            question={frozenQuestion}
+            onSubmit={handleSubmit}
+            onBack={() => void dismiss()}
+          />
+        ) : (
+          <Text style={styles.empty}>暂无可用题目</Text>
+        )}
+      </KeyboardAwareScrollView>
+    </FullScreenModal>
   );
 }
 
 export const AwarenessAnswerModal = memo(AwarenessAnswerModalComponent);
 
 const styles = StyleSheet.create({
-  container: {
+  scroll: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E2E8F0',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: APP_TEXT_COLOR,
-  },
-  close: {
-    fontSize: 15,
-    color: '#64748B',
   },
   content: {
     padding: 20,

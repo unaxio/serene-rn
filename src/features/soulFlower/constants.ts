@@ -112,3 +112,8 @@ export const DESIGN_PETAL_WIDTH = 16;
 export const DESIGN_PETAL_HEIGHT = 17;
 export const DESIGN_PETAL_GAP = 25;
 export const DETAIL_PAGE_BG = '#F5F5F5';
+
+/** 觉察 AI 回应强调色 */
+export const AI_ACCENT_COLOR = '#6f72f1';
+
+export const SUBMIT_ANSWER_TIMEOUT_MS = 300_000;

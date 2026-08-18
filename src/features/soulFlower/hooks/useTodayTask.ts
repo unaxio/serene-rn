@@ -3,8 +3,8 @@ import { useCallback } from 'react';
 
 import { getTodayTask, submitAnswer } from '@/src/features/soulFlower/api';
 import { SOUL_FLOWER_QUERY_KEYS } from '@/src/features/soulFlower/constants';
-import type { SubmitAnswerRequest } from '@/src/features/soulFlower/types';
-import { showErrorToast, showToast } from '@/src/utils/toast';
+import type { SubmitAnswerRequest, SubmitAnswerResponse } from '@/src/features/soulFlower/types';
+import { showErrorToast } from '@/src/utils/toast';
 
 export function useTodayTask() {
   const queryClient = useQueryClient();
@@ -16,43 +16,40 @@ export function useTodayTask() {
 
   const mutation = useMutation({
     mutationFn: (payload: SubmitAnswerRequest) => submitAnswer(payload),
-    onSuccess: async (result) => {
-      if (!result.success) {
-        showErrorToast(result.message ?? '提交失败，请稍后重试');
-        return;
-      }
-
-      showToast(result.message ?? '今日觉察已完成');
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: SOUL_FLOWER_QUERY_KEYS.todayTask }),
-        queryClient.invalidateQueries({ queryKey: SOUL_FLOWER_QUERY_KEYS.mindMap }),
-        queryClient.invalidateQueries({
-          queryKey: SOUL_FLOWER_QUERY_KEYS.partnerStatus,
-        }),
-        queryClient.invalidateQueries({ queryKey: ['soulFlower', 'flowerCardAnswers'] }),
-      ]);
-    },
   });
 
   const handleSubmit = useCallback(
-    async (questionId: string, answerContent: string) => {
+    async (questionId: string, answerContent: string): Promise<SubmitAnswerResponse | null> => {
       const trimmed = answerContent.trim();
       if (!trimmed) {
         showErrorToast('请先填写或选择你的回答');
-        return false;
+        return null;
       }
       try {
         const result = await mutation.mutateAsync({
           questionId,
           answerContent: trimmed,
         });
-        return result.success;
+        if (result.success === false) {
+          showErrorToast(result.message ?? '提交失败，请稍后重试');
+          return null;
+        }
+        return result;
       } catch {
-        return false;
+        return null;
       }
     },
     [mutation],
   );
+
+  const finalizeSubmit = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: SOUL_FLOWER_QUERY_KEYS.todayTask }),
+      queryClient.invalidateQueries({ queryKey: SOUL_FLOWER_QUERY_KEYS.mindMap }),
+      queryClient.invalidateQueries({ queryKey: SOUL_FLOWER_QUERY_KEYS.partnerStatus }),
+      queryClient.invalidateQueries({ queryKey: ['soulFlower', 'flowerCardAnswers'] }),
+    ]);
+  }, [queryClient]);
 
   return {
     data: query.data,
@@ -62,5 +59,6 @@ export function useTodayTask() {
     refetch: query.refetch,
     isSubmitting: mutation.isPending,
     submitAnswer: handleSubmit,
+    finalizeSubmit,
   };
 }

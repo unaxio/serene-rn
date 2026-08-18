@@ -1,0 +1,13 @@
+---
+description: 全屏弹窗统一使用 FullScreenModal
+globs: "**/*.{ts,tsx}"
+alwaysApply: true
+---
+
+# 全屏弹窗
+
+新增或改造 **全屏弹窗**（`presentationStyle="pageSheet"` / 铺满屏幕）时，必须使用 `src/components/FullScreenModal.tsx`：
+
+- 左上角 `<` 返回，禁止右上角「关闭」文字
+- 标题居中，与返回按钮同一行、垂直居中对齐
+- 居中浮层、底部 sheet 等非全屏弹窗不要套用

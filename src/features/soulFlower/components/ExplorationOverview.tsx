@@ -12,7 +12,7 @@ import {
 import { useMindMap } from "@/src/features/soulFlower/hooks/useMindMap";
 import { useTodayTask } from "@/src/features/soulFlower/hooks/useTodayTask";
 import type { FlowerCardProgress } from "@/src/features/soulFlower/types";
-import { findFlowerCardById } from "@/src/features/soulFlower/utils/findFlowerCard";
+import { findFlowerCardById, getTodayFlowerId } from "@/src/features/soulFlower/utils/findFlowerCard";
 import {
   calcFlowerCardProgress,
   getFlowerPhaseImagePath,
@@ -28,9 +28,11 @@ export function ExplorationOverview() {
   const { data: todayTask } = useTodayTask();
   const { flowerCards, answeredQuestionIds } = useMindMap();
 
+  const todayFlowerId = getTodayFlowerId(todayTask);
+
   const matchedFlowerCard = useMemo(
-    () => findFlowerCardById(flowerCards, todayTask?.question?.flowerId),
-    [flowerCards, todayTask?.question?.flowerId],
+    () => findFlowerCardById(flowerCards, todayFlowerId),
+    [flowerCards, todayFlowerId],
   );
 
   const progress = useMemo(() => {

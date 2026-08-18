@@ -1,20 +1,11 @@
-import { SymbolView } from 'expo-symbols';
 import { useMemo, useState } from 'react';
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { FullScreenModal } from '@/src/components/FullScreenModal';
 import { MindMapFilterTabs } from '@/src/features/soulFlower/components/MindMapFilterTabs';
 import { MindMapGridCard } from '@/src/features/soulFlower/components/MindMapGridCard';
 import {
   ALL_CATEGORY_ID,
-  APP_TEXT_COLOR,
   MIND_MAP_GRID_COLUMNS,
 } from '@/src/features/soulFlower/constants';
 import { useOpenFlowerCard } from '@/src/features/soulFlower/hooks/useOpenFlowerCard';
@@ -35,7 +26,6 @@ export function MindMapFullModal({
   flowerCards,
   answeredQuestionIds,
 }: MindMapFullModalProps) {
-  const insets = useSafeAreaInsets();
   const openFlowerCard = useOpenFlowerCard();
   const [selectedCategoryId, setSelectedCategoryId] = useState(ALL_CATEGORY_ID);
 
@@ -55,60 +45,44 @@ export function MindMapFullModal({
   }, [flowerCards, selectedCategoryId]);
 
   return (
-    <Modal
+    <FullScreenModal
       visible={visible}
-      animationType="slide"
-      presentationStyle="pageSheet"
-      onRequestClose={onClose}>
-      <View style={[styles.container, { paddingTop: Math.max(insets.top, 12) }]}>
-        <View style={styles.topBar}>
-          <Pressable onPress={onClose} hitSlop={12} style={styles.backButton}>
-            <SymbolView
-              name={{
-                ios: 'chevron.left',
-                android: 'arrow_back_ios',
-                web: 'arrow_back_ios',
-              }}
-              size={22}
-              tintColor={APP_TEXT_COLOR}
-            />
-          </Pressable>
-        </View>
+      title="认知图谱"
+      onBack={onClose}
+      backgroundColor="#F8FAFC">
+      <Text style={styles.subtitle}>每一次觉察，都会让花朵更接近盛放。</Text>
 
-        <Text style={styles.title}>认知图谱</Text>
-        <Text style={styles.subtitle}>每一次觉察，都会让花朵更接近盛放。</Text>
-
-        <View style={styles.tabsWrap}>
-          <MindMapFilterTabs
-            categories={categories}
-            selectedCategoryId={selectedCategoryId}
-            onSelect={setSelectedCategoryId}
-          />
-        </View>
-
-        <ScrollView
-          contentContainerStyle={styles.gridContent}
-          showsVerticalScrollIndicator={false}>
-          {filteredCards.length === 0 ? (
-            <Text style={styles.empty}>该分类下暂无花卡</Text>
-          ) : (
-            <View style={styles.grid}>
-              {filteredCards.map((card) => (
-                <View key={card.id} style={styles.gridItem}>
-                  <Pressable onPress={() => openFlowerCard(card.id)}>
-                    <MindMapGridCard
-                      card={card}
-                      categoryName={categoryNameMap.get(card.categoryId) ?? '未分类'}
-                      answeredQuestionIds={answeredQuestionIds}
-                    />
-                  </Pressable>
-                </View>
-              ))}
-            </View>
-          )}
-        </ScrollView>
+      <View style={styles.tabsWrap}>
+        <MindMapFilterTabs
+          categories={categories}
+          selectedCategoryId={selectedCategoryId}
+          onSelect={setSelectedCategoryId}
+        />
       </View>
-    </Modal>
+
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.gridContent}
+        showsVerticalScrollIndicator={false}>
+        {filteredCards.length === 0 ? (
+          <Text style={styles.empty}>该分类下暂无花卡</Text>
+        ) : (
+          <View style={styles.grid}>
+            {filteredCards.map((card) => (
+              <View key={card.id} style={styles.gridItem}>
+                <Pressable onPress={() => openFlowerCard(card.id)}>
+                  <MindMapGridCard
+                    card={card}
+                    categoryName={categoryNameMap.get(card.categoryId) ?? '未分类'}
+                    answeredQuestionIds={answeredQuestionIds}
+                  />
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        )}
+      </ScrollView>
+    </FullScreenModal>
   );
 }
 
@@ -116,31 +90,8 @@ const COLUMN_GAP = 8;
 const COLUMN_WIDTH_PERCENT = `${100 / MIND_MAP_GRID_COLUMNS}%` as `${number}%`;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingHorizontal: 12,
-    marginBottom: 4,
-    minHeight: 36,
-  },
-  backButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 4,
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 22,
-    fontWeight: '700',
-    color: APP_TEXT_COLOR,
-  },
   subtitle: {
     textAlign: 'center',
-    marginTop: 6,
     marginBottom: 16,
     paddingHorizontal: 24,
     fontSize: 13,
@@ -148,6 +99,9 @@ const styles = StyleSheet.create({
   },
   tabsWrap: {
     marginBottom: 12,
+  },
+  scroll: {
+    flex: 1,
   },
   gridContent: {
     paddingHorizontal: 12,

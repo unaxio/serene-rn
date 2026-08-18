@@ -12,6 +12,7 @@ export interface Question {
 }
 
 export interface TodayAnswer {
+  flowerId?: string | null;
   answerContent: string;
   createdAt: string;
 }
@@ -29,8 +30,10 @@ export interface SubmitAnswerRequest {
 }
 
 export interface SubmitAnswerResponse {
-  success: boolean;
+  success?: boolean;
   message?: string;
+  summary?: string;
+  explain?: string;
 }
 
 export type ThemeColor =

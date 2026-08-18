@@ -26,7 +26,7 @@ export function TodayAwarenessCard({
   flowerImagePath,
   progress,
 }: TodayAwarenessCardProps) {
-  const { data, isLoading, isError, refetch, isSubmitting, submitAnswer } =
+  const { data, isLoading, isError, refetch, submitAnswer, finalizeSubmit } =
     useTodayTask();
   const { data: partnerStatus } = usePartnerStatus();
 
@@ -63,12 +63,20 @@ export function TodayAwarenessCard({
   const handleSubmit = useCallback(
     async (answerContent: string) => {
       if (!data?.question) {
-        return false;
+        return null;
       }
       return submitAnswer(data.question.id, answerContent);
     },
     [data?.question, submitAnswer],
   );
+
+  const handleAnswerClose = useCallback(() => {
+    setAnswerVisible(false);
+  }, []);
+
+  const handleAnswerCompleted = useCallback(() => {
+    setResultVisible(true);
+  }, []);
 
   if (isLoading) {
     return (
@@ -135,9 +143,10 @@ export function TodayAwarenessCard({
       <AwarenessAnswerModal
         visible={answerVisible}
         question={data.question}
-        isSubmitting={isSubmitting}
-        onClose={() => setAnswerVisible(false)}
+        onClose={handleAnswerClose}
         onSubmit={handleSubmit}
+        onFinalize={finalizeSubmit}
+        onCompleted={handleAnswerCompleted}
       />
       <TodayResultModal
         visible={resultVisible}
