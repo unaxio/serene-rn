@@ -6,8 +6,6 @@ import {
   APP_TEXT_COLOR,
   DEFAULT_FLOWER_NAME,
   LIGHTED_PEOPLE_LABEL,
-  THEME_COLOR_STYLES,
-  DEFAULT_THEME_COLOR,
 } from '@/src/features/soulFlower/constants';
 import type { FlowerCard, FlowerCardProgress } from '@/src/features/soulFlower/types';
 import { getFlowerPhaseImagePath } from '@/src/features/soulFlower/utils/progress';
@@ -18,10 +16,6 @@ interface CurrentFlowerCardProps {
 }
 
 export function CurrentFlowerCard({ flowerCard, progress }: CurrentFlowerCardProps) {
-  const theme =
-    THEME_COLOR_STYLES[flowerCard?.themeColor ?? DEFAULT_THEME_COLOR] ??
-    THEME_COLOR_STYLES[DEFAULT_THEME_COLOR];
-
   const title = flowerCard
     ? `${flowerCard.flowerName} · ${flowerCard.language}`
     : DEFAULT_FLOWER_NAME;
@@ -42,7 +36,6 @@ export function CurrentFlowerCard({ flowerCard, progress }: CurrentFlowerCardPro
       <PetalProgress
         completedCount={progress.completedCount}
         totalCount={progress.totalCount}
-        accentColor={theme.accent}
       />
 
       <Text style={styles.footer}>完成觉察更新花卡成长状态。</Text>
@@ -50,14 +43,16 @@ export function CurrentFlowerCard({ flowerCard, progress }: CurrentFlowerCardPro
   );
 }
 
+const CARD_BORDER_COLOR = '#eeeff3';
+
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
     borderRadius: 16,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: CARD_BORDER_COLOR,
     gap: 8,
     minHeight: 280,
   },

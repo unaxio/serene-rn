@@ -92,6 +92,8 @@ export const FLOWER_CARD_INNER_BG = require('../../../assets/images/flower-card-
 
 export const PETAL_BLANK_IMAGE = require('../../../assets/images/petal/petal_blank_point_down.png');
 
+export const PETAL_DEFAULT_IMAGE = require('../../../assets/images/petal-default.png');
+
 export const PETAL_FILLED_IMAGES: Record<ThemeColor, number> = {
   red: require('../../../assets/images/petal/petal_red_point_down.png'),
   orange: require('../../../assets/images/petal/petal_orange_point_down.png'),

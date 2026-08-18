@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
@@ -110,16 +111,24 @@ export function TodayAwarenessCard({
       </View>
 
       <Pressable
-        style={[
-          styles.primaryButton,
-          !alreadyAnswered && !hasTask && styles.disabled,
-        ]}
         onPress={handlePrimary}
         disabled={!alreadyAnswered && !hasTask}
+        style={[
+          styles.primaryButtonWrap,
+          !alreadyAnswered && !hasTask ? styles.disabled : undefined,
+        ]}
       >
-        <Text style={styles.primaryText}>
-          {alreadyAnswered ? "查看今日结果" : "开始今日觉察"}
-        </Text>
+        <LinearGradient
+          colors={[...PRIMARY_BUTTON_GRADIENT]}
+          locations={[...PRIMARY_BUTTON_LOCATIONS]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.primaryButton}
+        >
+          <Text style={styles.primaryText}>
+            {alreadyAnswered ? "查看今日结果" : "开始今日觉察"}
+          </Text>
+        </LinearGradient>
       </Pressable>
 
       <Text style={styles.hint}>
@@ -173,14 +182,25 @@ export function TodayAwarenessCard({
   );
 }
 
+const CARD_BORDER_COLOR = "#eeeff3";
+const PRIMARY_BUTTON_HEIGHT = 40;
+const PRIMARY_BUTTON_RADIUS = PRIMARY_BUTTON_HEIGHT / 2;
+const PRIMARY_BUTTON_GRADIENT = ["#5c9afb", "#878df8", "#c598ef"] as const;
+const PRIMARY_BUTTON_LOCATIONS = [0, 0.5, 1] as const;
+const PRIMARY_BUTTON_SHADOW_COLOR = "#878df8";
+const PRIMARY_BUTTON_SHADOW_OFFSET = { width: 0, height: 4 } as const;
+const PRIMARY_BUTTON_SHADOW_OPACITY = 0.45;
+const PRIMARY_BUTTON_SHADOW_RADIUS = 8;
+const PRIMARY_BUTTON_ELEVATION = 6;
+
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "transparent",
     borderRadius: 16,
     padding: 14,
     borderWidth: 1,
-    borderColor: "#E2E8F0",
+    borderColor: CARD_BORDER_COLOR,
     gap: 8,
     minHeight: 280,
   },
@@ -208,11 +228,19 @@ const styles = StyleSheet.create({
     color: APP_TEXT_COLOR,
     fontWeight: "500",
   },
-  primaryButton: {
+  primaryButtonWrap: {
     marginTop: 4,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: "#2F95DC",
+    borderRadius: PRIMARY_BUTTON_RADIUS,
+    backgroundColor: PRIMARY_BUTTON_GRADIENT[1],
+    shadowColor: PRIMARY_BUTTON_SHADOW_COLOR,
+    shadowOffset: PRIMARY_BUTTON_SHADOW_OFFSET,
+    shadowOpacity: PRIMARY_BUTTON_SHADOW_OPACITY,
+    shadowRadius: PRIMARY_BUTTON_SHADOW_RADIUS,
+    elevation: PRIMARY_BUTTON_ELEVATION,
+  },
+  primaryButton: {
+    height: PRIMARY_BUTTON_HEIGHT,
+    borderRadius: PRIMARY_BUTTON_RADIUS,
     alignItems: "center",
     justifyContent: "center",
   },

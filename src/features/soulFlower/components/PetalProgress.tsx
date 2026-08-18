@@ -1,46 +1,49 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Image } from "expo-image";
+import { useMemo } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-import { PETAL_SLOT_COUNT } from '@/src/features/soulFlower/constants';
-import { formatProgressLabel } from '@/src/features/soulFlower/utils/progress';
+import {
+  APP_TEXT_COLOR,
+  PETAL_BLANK_IMAGE,
+  PETAL_DEFAULT_IMAGE,
+  PETAL_SLOT_COUNT,
+} from "@/src/features/soulFlower/constants";
 
 interface PetalProgressProps {
   completedCount: number;
   totalCount: number;
-  accentColor?: string;
 }
 
-const DEFAULT_ACCENT = '#F472B6';
-const EMPTY_PETAL = '#D1D5DB';
+const PETAL_SIZE = 12;
+const PROGRESS_ROW_WIDTH_RATIO = "80%" as const;
 
 export function PetalProgress({
   completedCount,
   totalCount,
-  accentColor = DEFAULT_ACCENT,
 }: PetalProgressProps) {
   const filledCount = Math.min(completedCount, PETAL_SLOT_COUNT);
   const displayTotal = totalCount > 0 ? totalCount : PETAL_SLOT_COUNT;
+  const slots = useMemo(
+    () => Array.from({ length: PETAL_SLOT_COUNT }, (_, index) => index),
+    [],
+  );
 
   return (
     <View style={styles.row}>
       <View style={styles.petals}>
-        {Array.from({ length: PETAL_SLOT_COUNT }).map((_, index) => {
-          const isFilled = index < filledCount;
-          return (
-            <View
-              key={`petal-${index}`}
-              style={[
-                styles.petal,
-                {
-                  backgroundColor: isFilled ? accentColor : 'transparent',
-                  borderColor: isFilled ? accentColor : EMPTY_PETAL,
-                },
-              ]}
-            />
-          );
-        })}
+        {slots.map((index) => (
+          <Image
+            key={`petal-${index}`}
+            source={
+              index < filledCount ? PETAL_DEFAULT_IMAGE : PETAL_BLANK_IMAGE
+            }
+            style={styles.petal}
+            contentFit="contain"
+          />
+        ))}
       </View>
       <Text style={styles.label}>
-        {formatProgressLabel(completedCount, displayTotal)}
+        {filledCount} / {displayTotal}
       </Text>
     </View>
   );
@@ -48,27 +51,26 @@ export function PetalProgress({
 
 const styles = StyleSheet.create({
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: PROGRESS_ROW_WIDTH_RATIO,
+    alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   petals: {
-    flexDirection: 'row',
-    gap: 4,
     flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   petal: {
-    width: 14,
-    height: 18,
-    borderRadius: 8,
-    borderWidth: 1.5,
-    transform: [{ rotate: '20deg' }],
+    width: PETAL_SIZE,
+    height: PETAL_SIZE,
   },
   label: {
     fontSize: 12,
-    fontWeight: '700',
-    color: '#475569',
-    minWidth: 32,
-    textAlign: 'right',
+    fontWeight: "500",
+    color: APP_TEXT_COLOR,
+    letterSpacing: 1.5,
   },
 });
