@@ -89,6 +89,8 @@ export function MindMapSection() {
         categories={categories}
         selectedCategoryId={selectedCategoryId}
         onSelect={setSelectedCategoryId}
+        flowerCards={flowerCards}
+        answeredQuestionIds={answeredQuestionIds}
       />
 
       <View style={styles.list}>

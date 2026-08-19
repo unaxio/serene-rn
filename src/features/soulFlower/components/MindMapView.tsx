@@ -17,6 +17,7 @@ export function MindMapView() {
   const {
     categories,
     answeredQuestionIds,
+    flowerCards,
     selectedCategoryId,
     setSelectedCategoryId,
     filteredFlowerCards,
@@ -61,6 +62,8 @@ export function MindMapView() {
         categories={categories}
         selectedCategoryId={selectedCategoryId}
         onSelect={setSelectedCategoryId}
+        flowerCards={flowerCards}
+        answeredQuestionIds={answeredQuestionIds}
       />
 
       <View style={styles.listContent}>
