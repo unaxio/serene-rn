@@ -13,7 +13,7 @@ import { PartnerInviteModal } from "@/src/features/soulFlower/components/Partner
 import { PartnerStatusModal } from "@/src/features/soulFlower/components/PartnerStatusModal";
 import { StreakDetailModal } from "@/src/features/soulFlower/components/StreakDetailModal";
 import { TodayResultModal } from "@/src/features/soulFlower/components/TodayResultModal";
-import { APP_TEXT_COLOR } from "@/src/features/soulFlower/constants";
+import { APP_TEXT_COLOR, AWARENESS_ACCENT_GRADIENT, AWARENESS_ACCENT_GRADIENT_LOCATIONS } from "@/src/features/soulFlower/constants";
 import { usePartnerStatus } from "@/src/features/soulFlower/hooks/usePartner";
 import { useTodayTask } from "@/src/features/soulFlower/hooks/useTodayTask";
 import type { FlowerCardProgress } from "@/src/features/soulFlower/types";
@@ -119,8 +119,8 @@ export function TodayAwarenessCard({
         ]}
       >
         <LinearGradient
-          colors={[...PRIMARY_BUTTON_GRADIENT]}
-          locations={[...PRIMARY_BUTTON_LOCATIONS]}
+          colors={[...AWARENESS_ACCENT_GRADIENT]}
+          locations={[...AWARENESS_ACCENT_GRADIENT_LOCATIONS]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.primaryButton}
@@ -187,9 +187,7 @@ const INFO_BAR_MIN_HEIGHT = 52;
 const INFO_BAR_RADIUS = 12;
 const PRIMARY_BUTTON_HEIGHT = 40;
 const PRIMARY_BUTTON_RADIUS = PRIMARY_BUTTON_HEIGHT / 2;
-const PRIMARY_BUTTON_GRADIENT = ["#5c9afb", "#878df8", "#c598ef"] as const;
-const PRIMARY_BUTTON_LOCATIONS = [0, 0.5, 1] as const;
-const PRIMARY_BUTTON_SHADOW_COLOR = "#878df8";
+const PRIMARY_BUTTON_SHADOW_COLOR = AWARENESS_ACCENT_GRADIENT[1];
 const PRIMARY_BUTTON_SHADOW_OFFSET = { width: 0, height: 4 } as const;
 const PRIMARY_BUTTON_SHADOW_OPACITY = 0.45;
 const PRIMARY_BUTTON_SHADOW_RADIUS = 8;
@@ -233,7 +231,7 @@ const styles = StyleSheet.create({
   primaryButtonWrap: {
     marginTop: 4,
     borderRadius: PRIMARY_BUTTON_RADIUS,
-    backgroundColor: PRIMARY_BUTTON_GRADIENT[1],
+    backgroundColor: AWARENESS_ACCENT_GRADIENT[1],
     shadowColor: PRIMARY_BUTTON_SHADOW_COLOR,
     shadowOffset: PRIMARY_BUTTON_SHADOW_OFFSET,
     shadowOpacity: PRIMARY_BUTTON_SHADOW_OPACITY,

@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { AiResponseLoading } from "@/src/features/soulFlower/components/AiResponseLoading";
+import { ChoiceOptionRow } from "@/src/features/soulFlower/components/ChoiceOptionRow";
 import {
   AI_ACCENT_COLOR,
   APP_TEXT_COLOR,
@@ -77,26 +78,15 @@ export function QuestionForm({
 
       {question.type === "singleChoice" ? (
         <View style={styles.options}>
-          {(question.options ?? []).map((option) => {
-            const isSelected = selectedOption === option;
-            return (
-              <Pressable
-                key={option}
-                style={[styles.option, isSelected && styles.optionSelected]}
-                onPress={() => setSelectedOption(option)}
-                disabled={isLocked}
-              >
-                <Text
-                  style={[
-                    styles.optionText,
-                    isSelected && styles.optionTextSelected,
-                  ]}
-                >
-                  {option}
-                </Text>
-              </Pressable>
-            );
-          })}
+          {(question.options ?? []).map((option) => (
+            <ChoiceOptionRow
+              key={option}
+              label={option}
+              selected={selectedOption === option}
+              disabled={isLocked}
+              onPress={() => setSelectedOption(option)}
+            />
+          ))}
         </View>
       ) : (
         <TextInput
@@ -157,28 +147,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
   },
   options: {
-    gap: 10,
     marginTop: 4,
-  },
-  option: {
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    backgroundColor: "#FAFAFA",
-  },
-  optionSelected: {
-    borderColor: PRIMARY_COLOR,
-    backgroundColor: "#E8F4FC",
-  },
-  optionText: {
-    fontSize: 15,
-    color: "#374151",
-  },
-  optionTextSelected: {
-    color: PRIMARY_COLOR,
-    fontWeight: "600",
   },
   textInput: {
     minHeight: 120,

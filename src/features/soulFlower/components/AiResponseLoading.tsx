@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { AI_ACCENT_COLOR } from '@/src/features/soulFlower/constants';
@@ -35,15 +35,23 @@ export function AiResponseLoading() {
     return () => clearInterval(timer);
   }, []);
 
-  const dots = '.'.repeat(visibleDotCount);
+  const dots = Array.from({ length: visibleDotCount }, (_, index) => index);
 
   return (
     <View style={styles.row} accessibilityRole="progressbar">
-      <CrossStarIcon />
-      <Text style={styles.dots}>{dots}</Text>
+      <View style={styles.starSlot}>
+        <CrossStarIcon />
+      </View>
+      <View style={styles.dotsSlot}>
+        {dots.map((index) => (
+          <View key={`dot-${index}`} style={styles.dot} />
+        ))}
+      </View>
     </View>
   );
 }
+
+const DOT_SIZE = 3;
 
 const styles = StyleSheet.create({
   row: {
@@ -51,12 +59,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     marginTop: 8,
+    height: STAR_SIZE,
   },
-  dots: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: AI_ACCENT_COLOR,
-    letterSpacing: 2,
-    lineHeight: 22,
+  starSlot: {
+    width: STAR_SIZE,
+    height: STAR_SIZE,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dotsSlot: {
+    height: STAR_SIZE,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  dot: {
+    width: DOT_SIZE,
+    height: DOT_SIZE,
+    borderRadius: DOT_SIZE / 2,
+    backgroundColor: AI_ACCENT_COLOR,
   },
 });

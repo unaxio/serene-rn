@@ -128,4 +128,9 @@ export const DETAIL_PAGE_BG = '#F5F5F5';
 /** 觉察 AI 回应强调色 */
 export const AI_ACCENT_COLOR = '#6f72f1';
 
+/** 觉察主按钮 / 选项选中环共用渐变 */
+export const AWARENESS_ACCENT_GRADIENT = ['#5c9afb', '#878df8', '#c598ef'] as const;
+
+export const AWARENESS_ACCENT_GRADIENT_LOCATIONS = [0, 0.5, 1] as const;
+
 export const SUBMIT_ANSWER_TIMEOUT_MS = 300_000;
