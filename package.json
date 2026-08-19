@@ -42,7 +42,9 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:web:test": "EXPO_PUBLIC_WEB_DEPLOY=1 EXPO_PUBLIC_API_BASE_URL=https://test.serene.org.cn/api expo export -p web --output-dir dist",
+    "serve:web:test": "npx expo serve"
   },
   "private": true
 }
