@@ -6,7 +6,7 @@ export function useOpenFlowerCard() {
 
   return useCallback(
     (flowerId: string) => {
-      router.push(`/flower-card/${flowerId}`);
+      router.push(`/card/${flowerId}`);
     },
     [router],
   );
