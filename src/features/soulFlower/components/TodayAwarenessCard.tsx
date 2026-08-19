@@ -137,12 +137,12 @@ export function TodayAwarenessCard({
           : "完成今日觉察，更新花卡成长状态"}
       </Text>
 
-      <Pressable style={styles.linkRow} onPress={() => setStreakVisible(true)}>
-        <Text style={styles.linkText}>🔥 连续觉察 第 {myStreakCount} 天 ›</Text>
+      <Pressable style={styles.infoBar} onPress={() => setStreakVisible(true)}>
+        <Text style={styles.infoText}>🔥 连续觉察 第 {myStreakCount} 天 ›</Text>
       </Pressable>
 
-      <Pressable style={styles.linkRow} onPress={handleAlliance}>
-        <Text style={styles.linkText}>
+      <Pressable style={styles.infoBar} onPress={handleAlliance}>
+        <Text style={styles.infoText}>
           {hasPartner
             ? `👥 双人联盟 携手 ${partnerStreakCount} 天 ›`
             : "👥 双人联盟 邀请伙伴 ›"}
@@ -183,6 +183,8 @@ export function TodayAwarenessCard({
 }
 
 const CARD_BORDER_COLOR = "#eeeff3";
+const INFO_BAR_MIN_HEIGHT = 52;
+const INFO_BAR_RADIUS = 12;
 const PRIMARY_BUTTON_HEIGHT = 40;
 const PRIMARY_BUTTON_RADIUS = PRIMARY_BUTTON_HEIGHT / 2;
 const PRIMARY_BUTTON_GRADIENT = ["#5c9afb", "#878df8", "#c598ef"] as const;
@@ -257,13 +259,22 @@ const styles = StyleSheet.create({
     color: "#94A3B8",
     lineHeight: 16,
   },
-  linkRow: {
-    paddingVertical: 2,
+  infoBar: {
+    flex: 1,
+    minHeight: INFO_BAR_MIN_HEIGHT,
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: INFO_BAR_RADIUS,
+    backgroundColor: "#F8FAFC",
+    borderWidth: 1,
+    borderColor: CARD_BORDER_COLOR,
   },
-  linkText: {
-    fontSize: 12,
+  infoText: {
+    fontSize: 13,
     color: APP_TEXT_COLOR,
-    fontWeight: "500",
+    fontWeight: "600",
+    lineHeight: 18,
   },
   errorText: {
     fontSize: 13,
