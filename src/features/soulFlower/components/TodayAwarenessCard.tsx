@@ -165,7 +165,7 @@ export function TodayAwarenessCard({
         progress={progress}
       />
       <StreakDetailModal
-        visible={streakVisible}
+        visible={false && streakVisible}
         onClose={() => setStreakVisible(false)}
         partnerStatus={partnerStatus}
       />

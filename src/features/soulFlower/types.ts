@@ -122,5 +122,7 @@ export interface FlowerCardAnswerItem {
   id: string;
   questionTitle: string;
   answerContent: string;
+  /** AI 解读摘要；有则优先于 answerContent 展示 */
+  summary?: string;
   createdAt: string;
 }

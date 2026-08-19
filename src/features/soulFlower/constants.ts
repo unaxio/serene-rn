@@ -104,6 +104,16 @@ export const PETAL_FILLED_IMAGES: Record<ThemeColor, number> = {
   silver: require('../../../assets/images/petal/petal_silver_point_down.png'),
 };
 
+export const SUMMARY_NODE_IMAGES: Record<ThemeColor, number> = {
+  red: require('../../../assets/images/summary/node_red.png'),
+  orange: require('../../../assets/images/summary/node_orange.png'),
+  yellow: require('../../../assets/images/summary/node_yellow.png'),
+  green: require('../../../assets/images/summary/node_green.png'),
+  blue: require('../../../assets/images/summary/node_blue.png'),
+  purple: require('../../../assets/images/summary/node_purple.png'),
+  silver: require('../../../assets/images/summary/node_silver.png'),
+};
+
 export const DESIGN_CARD_WIDTH = 400;
 export const DESIGN_CARD_HEIGHT = 500;
 export const DESIGN_BODY_HEIGHT = 432;

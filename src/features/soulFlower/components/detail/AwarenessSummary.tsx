@@ -5,10 +5,12 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import {
   APP_TEXT_COLOR,
   DEFAULT_THEME_COLOR,
-  PETAL_FILLED_IMAGES,
+  SUMMARY_NODE_IMAGES,
 } from '@/src/features/soulFlower/constants';
 import type { FlowerCardAnswerItem, ThemeColor } from '@/src/features/soulFlower/types';
 import { groupAnswersByDate } from '@/src/features/soulFlower/utils/groupAnswers';
+
+const NODE_SIZE = 22;
 
 interface AwarenessSummaryProps {
   records: FlowerCardAnswerItem[];
@@ -28,8 +30,8 @@ export function AwarenessSummary({
   flowerHex,
 }: AwarenessSummaryProps) {
   const groups = useMemo(() => groupAnswersByDate(records), [records]);
-  const petalSource =
-    PETAL_FILLED_IMAGES[themeColor] ?? PETAL_FILLED_IMAGES[DEFAULT_THEME_COLOR];
+  const nodeSource =
+    SUMMARY_NODE_IMAGES[themeColor] ?? SUMMARY_NODE_IMAGES[DEFAULT_THEME_COLOR];
 
   return (
     <View style={styles.wrap}>
@@ -51,7 +53,7 @@ export function AwarenessSummary({
       {groups.map((group, groupIndex) => (
         <View key={group.dateKey} style={styles.row}>
           <View style={styles.timeline}>
-            <Image source={petalSource} style={styles.petal} contentFit="contain" />
+            <Image source={nodeSource} style={styles.node} contentFit="contain" />
             {groupIndex === groups.length - 1 ? null : (
               <View style={[styles.vLine, { backgroundColor: flowerHex }]} />
             )}
@@ -61,7 +63,9 @@ export function AwarenessSummary({
             {group.items.map((item) => (
               <View key={item.id} style={styles.qa}>
                 <Text style={styles.question}>{item.questionTitle}</Text>
-                <Text style={styles.answer}>{item.answerContent}</Text>
+                <Text style={styles.answer}>
+                  {item.summary?.trim() || item.answerContent}
+                </Text>
               </View>
             ))}
           </View>
@@ -110,9 +114,9 @@ const styles = StyleSheet.create({
     width: 28,
     alignItems: 'center',
   },
-  petal: {
-    width: 22,
-    height: 22,
+  node: {
+    width: NODE_SIZE,
+    height: NODE_SIZE,
     zIndex: 1,
   },
   vLine: {
