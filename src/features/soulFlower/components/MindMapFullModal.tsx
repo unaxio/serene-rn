@@ -1,15 +1,17 @@
-import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { FullScreenModal } from '@/src/components/FullScreenModal';
 import { MindMapFilterTabs } from '@/src/features/soulFlower/components/MindMapFilterTabs';
 import { MindMapGridCard } from '@/src/features/soulFlower/components/MindMapGridCard';
+import { FlowerCardDetailScreen } from '@/src/features/soulFlower/components/detail/FlowerCardDetailScreen';
 import {
   ALL_CATEGORY_ID,
+  DETAIL_PAGE_BG,
   MIND_MAP_GRID_COLUMNS,
 } from '@/src/features/soulFlower/constants';
-import { useOpenFlowerCard } from '@/src/features/soulFlower/hooks/useOpenFlowerCard';
 import type { Category, FlowerCard } from '@/src/features/soulFlower/types';
+import { calcFlowerCardProgress } from '@/src/features/soulFlower/utils/progress';
 
 interface MindMapFullModalProps {
   visible: boolean;
@@ -26,8 +28,8 @@ export function MindMapFullModal({
   flowerCards,
   answeredQuestionIds,
 }: MindMapFullModalProps) {
-  const openFlowerCard = useOpenFlowerCard();
   const [selectedCategoryId, setSelectedCategoryId] = useState(ALL_CATEGORY_ID);
+  const [detailFlowerId, setDetailFlowerId] = useState<string | null>(null);
 
   const categoryNameMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -44,45 +46,82 @@ export function MindMapFullModal({
     return flowerCards.filter((card) => card.categoryId === selectedCategoryId);
   }, [flowerCards, selectedCategoryId]);
 
+  useEffect(() => {
+    if (!visible) {
+      setDetailFlowerId(null);
+    }
+  }, [visible]);
+
+  const handleOpenCard = useCallback((flowerId: string) => {
+    setDetailFlowerId(flowerId);
+  }, []);
+
+  const handleCloseDetail = useCallback(() => {
+    setDetailFlowerId(null);
+  }, []);
+
   return (
-    <FullScreenModal
-      visible={visible}
-      title="认知图谱"
-      onBack={onClose}
-      backgroundColor="#F8FAFC">
-      <Text style={styles.subtitle}>每一次觉察，都会让花朵更接近盛放。</Text>
+    <>
+      <FullScreenModal
+        visible={visible}
+        title="认知图谱"
+        onBack={onClose}
+        backgroundColor="#F8FAFC">
+        <Text style={styles.subtitle}>每一次觉察，都会让花朵更接近盛放。</Text>
 
-      <View style={styles.tabsWrap}>
-        <MindMapFilterTabs
-          categories={categories}
-          selectedCategoryId={selectedCategoryId}
-          onSelect={setSelectedCategoryId}
-        />
-      </View>
+        <View style={styles.tabsWrap}>
+          <MindMapFilterTabs
+            categories={categories}
+            selectedCategoryId={selectedCategoryId}
+            onSelect={setSelectedCategoryId}
+          />
+        </View>
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.gridContent}
-        showsVerticalScrollIndicator={false}>
-        {filteredCards.length === 0 ? (
-          <Text style={styles.empty}>该分类下暂无花卡</Text>
-        ) : (
-          <View style={styles.grid}>
-            {filteredCards.map((card) => (
-              <View key={card.id} style={styles.gridItem}>
-                <Pressable onPress={() => openFlowerCard(card.id)}>
-                  <MindMapGridCard
-                    card={card}
-                    categoryName={categoryNameMap.get(card.categoryId) ?? '未分类'}
-                    answeredQuestionIds={answeredQuestionIds}
-                  />
-                </Pressable>
-              </View>
-            ))}
-          </View>
-        )}
-      </ScrollView>
-    </FullScreenModal>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.gridContent}
+          showsVerticalScrollIndicator={false}>
+          {filteredCards.length === 0 ? (
+            <Text style={styles.empty}>该分类下暂无花卡</Text>
+          ) : (
+            <View style={styles.grid}>
+              {filteredCards.map((card) => {
+                const isLocked =
+                  calcFlowerCardProgress(card, answeredQuestionIds).completedCount === 0;
+                return (
+                  <View key={card.id} style={styles.gridItem}>
+                    <Pressable
+                      disabled={isLocked}
+                      onPress={() => handleOpenCard(card.id)}>
+                      <MindMapGridCard
+                        card={card}
+                        categoryName={categoryNameMap.get(card.categoryId) ?? '未分类'}
+                        answeredQuestionIds={answeredQuestionIds}
+                      />
+                    </Pressable>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+        </ScrollView>
+      </FullScreenModal>
+
+      <Modal
+        visible={Boolean(detailFlowerId)}
+        animationType="slide"
+        presentationStyle="fullScreen"
+        onRequestClose={handleCloseDetail}>
+        <View style={styles.detailRoot}>
+          {detailFlowerId ? (
+            <FlowerCardDetailScreen
+              flowerId={detailFlowerId}
+              onBack={handleCloseDetail}
+            />
+          ) : null}
+        </View>
+      </Modal>
+    </>
   );
 }
 
@@ -121,5 +160,9 @@ const styles = StyleSheet.create({
     marginTop: 40,
     fontSize: 14,
     color: '#94A3B8',
+  },
+  detailRoot: {
+    flex: 1,
+    backgroundColor: DETAIL_PAGE_BG,
   },
 });

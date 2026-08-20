@@ -16,6 +16,7 @@ import {
 } from '@/src/features/soulFlower/constants';
 import { useMindMap } from '@/src/features/soulFlower/hooks/useMindMap';
 import { useOpenFlowerCard } from '@/src/features/soulFlower/hooks/useOpenFlowerCard';
+import { calcFlowerCardProgress } from '@/src/features/soulFlower/utils/progress';
 
 const COLUMN_GAP = 8;
 const COLUMN_WIDTH_PERCENT = `${100 / MIND_MAP_GRID_COLUMNS}%` as `${number}%`;
@@ -98,17 +99,23 @@ export function MindMapSection() {
           <Text style={styles.emptyTitle}>该分类下暂无花卡</Text>
         ) : (
           <View style={styles.grid}>
-            {filteredFlowerCards.map((card) => (
-              <View key={card.id} style={styles.gridItem}>
-                <Pressable onPress={() => openFlowerCard(card.id)}>
-                  <MindMapSectionCard
-                    card={card}
-                    categoryName={categoryNameMap.get(card.categoryId) ?? '未分类'}
-                    answeredQuestionIds={answeredQuestionIds}
-                  />
-                </Pressable>
-              </View>
-            ))}
+            {filteredFlowerCards.map((card) => {
+              const isLocked =
+                calcFlowerCardProgress(card, answeredQuestionIds).completedCount === 0;
+              return (
+                <View key={card.id} style={styles.gridItem}>
+                  <Pressable
+                    disabled={isLocked}
+                    onPress={() => openFlowerCard(card.id)}>
+                    <MindMapSectionCard
+                      card={card}
+                      categoryName={categoryNameMap.get(card.categoryId) ?? '未分类'}
+                      answeredQuestionIds={answeredQuestionIds}
+                    />
+                  </Pressable>
+                </View>
+              );
+            })}
           </View>
         )}
       </View>

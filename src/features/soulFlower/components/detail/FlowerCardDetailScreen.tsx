@@ -19,9 +19,11 @@ import { calcFlowerCardProgress } from '@/src/features/soulFlower/utils/progress
 
 interface FlowerCardDetailScreenProps {
   flowerId: string;
+  /** 传入时优先使用，用于弹窗内叠层返回列表 */
+  onBack?: () => void;
 }
 
-export function FlowerCardDetailScreen({ flowerId }: FlowerCardDetailScreenProps) {
+export function FlowerCardDetailScreen({ flowerId, onBack }: FlowerCardDetailScreenProps) {
   const router = useRouter();
   const { flowerCards, categories, answeredQuestionIds, isLoading } = useMindMap();
   const { records, isLoading: isAnswersLoading, isError, refetch } =
@@ -46,10 +48,18 @@ export function FlowerCardDetailScreen({ flowerId }: FlowerCardDetailScreenProps
     FLOWER_THEME_HEX[card?.themeColor ?? DEFAULT_THEME_COLOR] ??
     FLOWER_THEME_HEX[DEFAULT_THEME_COLOR];
 
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+      return;
+    }
+    router.back();
+  };
+
   return (
     <View style={styles.root}>
       <SafeAreaView style={styles.safe} edges={['top']}>
-        <Pressable onPress={() => router.back()} hitSlop={12} style={styles.backButton}>
+        <Pressable onPress={handleBack} hitSlop={12} style={styles.backButton}>
           <SymbolView
             name={{ ios: 'chevron.left', android: 'arrow_back_ios', web: 'arrow_back_ios' }}
             size={22}

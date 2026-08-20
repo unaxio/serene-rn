@@ -18,7 +18,6 @@ export function TodayTaskCard() {
     isError,
     refetch,
     submitAnswer,
-    finalizeSubmit,
   } = useTodayTask();
 
   if (isLoading) {
@@ -67,7 +66,6 @@ export function TodayTaskCard() {
       <QuestionForm
         question={question}
         onSubmit={(answerContent) => submitAnswer(question.id, answerContent)}
-        onBack={() => void finalizeSubmit()}
       />
     </View>
   );

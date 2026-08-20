@@ -22,18 +22,13 @@ interface AiResult {
 interface QuestionFormProps {
   question: Question;
   onSubmit: (answerContent: string) => Promise<SubmitAnswerResponse | null>;
-  onBack?: () => void;
 }
 
 const PLACEHOLDER_COLOR = "#9CA3AF";
 const PRIMARY_COLOR = "#2F95DC";
-const RETURN_TOP_GAP = 48;
+const ACTION_LINK_TOP_GAP = 24;
 
-export function QuestionForm({
-  question,
-  onSubmit,
-  onBack,
-}: QuestionFormProps) {
+export function QuestionForm({ question, onSubmit }: QuestionFormProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [textAnswer, setTextAnswer] = useState("");
   const [phase, setPhase] = useState<FormPhase>("idle");
@@ -61,10 +56,6 @@ export function QuestionForm({
       setPhase("idle");
     }
   }, [onSubmit, question.type, selectedOption, textAnswer]);
-
-  const handleBack = useCallback(() => {
-    onBack?.();
-  }, [onBack]);
 
   return (
     <View style={styles.container}>
@@ -115,9 +106,10 @@ export function QuestionForm({
             <View style={styles.resultBlock}>
               <Text style={styles.summary}>{aiResult.summary}</Text>
               <Text style={styles.explain}>{aiResult.explain}</Text>
-              <Pressable style={styles.backLinkWrap} onPress={handleBack}>
-                <Text style={styles.backLink}>返回</Text>
-              </Pressable>
+              <View style={styles.actionLinks}>
+                <Text style={styles.actionLink}>AI一对一聊→</Text>
+                <Text style={styles.actionLink}>AI众议厅→</Text>
+              </View>
             </View>
           ) : null}
         </View>
@@ -191,12 +183,12 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: APP_TEXT_COLOR,
   },
-  backLinkWrap: {
-    alignSelf: "flex-start",
-    marginTop: RETURN_TOP_GAP,
-    paddingVertical: 4,
+  actionLinks: {
+    marginTop: ACTION_LINK_TOP_GAP,
+    alignItems: "center",
+    gap: 12,
   },
-  backLink: {
+  actionLink: {
     fontSize: 13,
     color: AI_ACCENT_COLOR,
     textDecorationLine: "underline",

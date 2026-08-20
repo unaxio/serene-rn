@@ -65,12 +65,11 @@ function AwarenessAnswerModalComponent({
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled">
         {visible && frozenQuestion ? (
-          <QuestionForm
-            key={frozenQuestion.id}
-            question={frozenQuestion}
-            onSubmit={handleSubmit}
-            onBack={() => void dismiss()}
-          />
+            <QuestionForm
+              key={frozenQuestion.id}
+              question={frozenQuestion}
+              onSubmit={handleSubmit}
+            />
         ) : (
           <Text style={styles.empty}>暂无可用题目</Text>
         )}
