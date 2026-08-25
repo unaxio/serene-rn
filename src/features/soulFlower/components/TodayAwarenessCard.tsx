@@ -14,9 +14,11 @@ import { PartnerStatusModal } from "@/src/features/soulFlower/components/Partner
 import { StreakDetailModal } from "@/src/features/soulFlower/components/StreakDetailModal";
 import { TodayResultModal } from "@/src/features/soulFlower/components/TodayResultModal";
 import { APP_TEXT_COLOR, AWARENESS_ACCENT_GRADIENT, AWARENESS_ACCENT_GRADIENT_LOCATIONS } from "@/src/features/soulFlower/constants";
+import { useMindMap } from "@/src/features/soulFlower/hooks/useMindMap";
 import { usePartnerStatus } from "@/src/features/soulFlower/hooks/usePartner";
 import { useTodayTask } from "@/src/features/soulFlower/hooks/useTodayTask";
 import type { FlowerCardProgress } from "@/src/features/soulFlower/types";
+import { findFlowerCardById, getTodayFlowerId } from "@/src/features/soulFlower/utils/findFlowerCard";
 
 interface TodayAwarenessCardProps {
   flowerImagePath?: string | null;
@@ -30,8 +32,15 @@ export function TodayAwarenessCard({
   const { data, isLoading, isError, refetch, submitAnswer, finalizeSubmit } =
     useTodayTask();
   const { data: partnerStatus } = usePartnerStatus();
+  const { flowerCards } = useMindMap();
+
+  const matchedFlowerCard = findFlowerCardById(
+    flowerCards,
+    getTodayFlowerId(data),
+  );
 
   const [answerVisible, setAnswerVisible] = useState(false);
+  const [resultViewVisible, setResultViewVisible] = useState(false);
   const [resultVisible, setResultVisible] = useState(false);
   const [streakVisible, setStreakVisible] = useState(false);
   const [inviteVisible, setInviteVisible] = useState(false);
@@ -45,7 +54,7 @@ export function TodayAwarenessCard({
 
   const handlePrimary = useCallback(() => {
     if (alreadyAnswered) {
-      setResultVisible(true);
+      setResultViewVisible(true);
       return;
     }
     if (hasTask) {
@@ -74,6 +83,18 @@ export function TodayAwarenessCard({
   const handleAnswerClose = useCallback(() => {
     setAnswerVisible(false);
   }, []);
+
+  const handleResultViewClose = useCallback(() => {
+    setResultViewVisible(false);
+  }, []);
+
+  const todayAnswerResult = data?.todayAnswer
+    ? {
+        answerContent: data.todayAnswer.answerContent,
+        summary: data.todayAnswer.summary ?? "",
+        explain: data.todayAnswer.explain ?? "",
+      }
+    : undefined;
 
   const handleAnswerCompleted = useCallback(() => {
     setResultVisible(true);
@@ -156,6 +177,16 @@ export function TodayAwarenessCard({
         onSubmit={handleSubmit}
         onFinalize={finalizeSubmit}
         onCompleted={handleAnswerCompleted}
+      />
+      <AwarenessAnswerModal
+        visible={resultViewVisible}
+        question={data.question}
+        todayAnswer={data.todayAnswer}
+        flowerCard={matchedFlowerCard}
+        initialResult={todayAnswerResult}
+        onClose={handleResultViewClose}
+        onSubmit={handleSubmit}
+        onFinalize={finalizeSubmit}
       />
       <TodayResultModal
         visible={resultVisible}

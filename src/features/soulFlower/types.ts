@@ -12,9 +12,23 @@ export interface Question {
 }
 
 export interface TodayAnswer {
+  id?: string;
+  userId?: string;
+  questionId?: string;
   flowerId?: string | null;
   answerContent: string;
   createdAt: string;
+  updatedAt?: string;
+  dateKey?: string;
+  summary?: string;
+  explain?: string;
+}
+
+/** 今日答题结果（查看模式） */
+export interface TodayAnswerResult {
+  answerContent: string;
+  summary: string;
+  explain: string;
 }
 
 export interface TodayTaskResponse {

@@ -10,6 +10,7 @@ import {
 import type {
   Question,
   SubmitAnswerResponse,
+  TodayAnswerResult,
 } from "@/src/features/soulFlower/types";
 
 type FormPhase = "idle" | "loading" | "result";
@@ -22,17 +23,51 @@ interface AiResult {
 interface QuestionFormProps {
   question: Question;
   onSubmit: (answerContent: string) => Promise<SubmitAnswerResponse | null>;
+  /** 传入时直接进入 result 状态，用于查看今日答题结果 */
+  initialResult?: TodayAnswerResult;
 }
 
 const PLACEHOLDER_COLOR = "#9CA3AF";
 const PRIMARY_COLOR = "#7B6CF9";
 const ACTION_LINK_TOP_GAP = 24;
 
-export function QuestionForm({ question, onSubmit }: QuestionFormProps) {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [textAnswer, setTextAnswer] = useState("");
-  const [phase, setPhase] = useState<FormPhase>("idle");
-  const [aiResult, setAiResult] = useState<AiResult | null>(null);
+function buildInitialAnswerState(
+  question: Question,
+  initialResult?: TodayAnswerResult,
+) {
+  if (!initialResult) {
+    return {
+      selectedOption: null as string | null,
+      textAnswer: "",
+      phase: "idle" as FormPhase,
+      aiResult: null as AiResult | null,
+    };
+  }
+
+  return {
+    selectedOption:
+      question.type === "singleChoice" ? initialResult.answerContent : null,
+    textAnswer: question.type === "text" ? initialResult.answerContent : "",
+    phase: "result" as FormPhase,
+    aiResult: {
+      summary: initialResult.summary,
+      explain: initialResult.explain,
+    },
+  };
+}
+
+export function QuestionForm({
+  question,
+  onSubmit,
+  initialResult,
+}: QuestionFormProps) {
+  const initialState = buildInitialAnswerState(question, initialResult);
+  const [selectedOption, setSelectedOption] = useState<string | null>(
+    initialState.selectedOption,
+  );
+  const [textAnswer, setTextAnswer] = useState(initialState.textAnswer);
+  const [phase, setPhase] = useState<FormPhase>(initialState.phase);
+  const [aiResult, setAiResult] = useState<AiResult | null>(initialState.aiResult);
 
   const isLocked = phase !== "idle";
 
