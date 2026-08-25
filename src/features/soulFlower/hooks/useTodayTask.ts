@@ -47,6 +47,7 @@ export function useTodayTask() {
       queryClient.invalidateQueries({ queryKey: SOUL_FLOWER_QUERY_KEYS.todayTask }),
       queryClient.invalidateQueries({ queryKey: SOUL_FLOWER_QUERY_KEYS.mindMap }),
       queryClient.invalidateQueries({ queryKey: SOUL_FLOWER_QUERY_KEYS.partnerStatus }),
+      queryClient.invalidateQueries({ queryKey: SOUL_FLOWER_QUERY_KEYS.checkInRecords }),
       queryClient.invalidateQueries({ queryKey: ['soulFlower', 'flowerCardAnswers'] }),
     ]);
   }, [queryClient]);

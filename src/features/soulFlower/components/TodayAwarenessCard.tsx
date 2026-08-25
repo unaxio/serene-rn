@@ -10,15 +10,24 @@ import {
 
 import { AwarenessAnswerModal } from "@/src/features/soulFlower/components/AwarenessAnswerModal";
 import { PartnerInviteModal } from "@/src/features/soulFlower/components/PartnerInviteModal";
-import { PartnerStatusModal } from "@/src/features/soulFlower/components/PartnerStatusModal";
-import { StreakDetailModal } from "@/src/features/soulFlower/components/StreakDetailModal";
+import {
+  StreakCheckInModal,
+  type StreakCheckInTab,
+} from "@/src/features/soulFlower/components/StreakCheckInModal";
 import { TodayResultModal } from "@/src/features/soulFlower/components/TodayResultModal";
-import { APP_TEXT_COLOR, AWARENESS_ACCENT_GRADIENT, AWARENESS_ACCENT_GRADIENT_LOCATIONS } from "@/src/features/soulFlower/constants";
+import {
+  APP_TEXT_COLOR,
+  AWARENESS_ACCENT_GRADIENT,
+  AWARENESS_ACCENT_GRADIENT_LOCATIONS,
+} from "@/src/features/soulFlower/constants";
 import { useMindMap } from "@/src/features/soulFlower/hooks/useMindMap";
 import { usePartnerStatus } from "@/src/features/soulFlower/hooks/usePartner";
 import { useTodayTask } from "@/src/features/soulFlower/hooks/useTodayTask";
 import type { FlowerCardProgress } from "@/src/features/soulFlower/types";
-import { findFlowerCardById, getTodayFlowerId } from "@/src/features/soulFlower/utils/findFlowerCard";
+import {
+  findFlowerCardById,
+  getTodayFlowerId,
+} from "@/src/features/soulFlower/utils/findFlowerCard";
 
 interface TodayAwarenessCardProps {
   flowerImagePath?: string | null;
@@ -43,8 +52,9 @@ export function TodayAwarenessCard({
   const [resultViewVisible, setResultViewVisible] = useState(false);
   const [resultVisible, setResultVisible] = useState(false);
   const [streakVisible, setStreakVisible] = useState(false);
+  const [streakInitialTab, setStreakInitialTab] =
+    useState<StreakCheckInTab>("personal");
   const [inviteVisible, setInviteVisible] = useState(false);
-  const [partnerVisible, setPartnerVisible] = useState(false);
 
   const alreadyAnswered = data?.alreadyAnswered === true;
   const hasTask = data?.hasTask === true && Boolean(data.question);
@@ -62,13 +72,18 @@ export function TodayAwarenessCard({
     }
   }, [alreadyAnswered, hasTask]);
 
+  const openStreakCheckIn = useCallback((tab: StreakCheckInTab) => {
+    setStreakInitialTab(tab);
+    setStreakVisible(true);
+  }, []);
+
   const handleAlliance = useCallback(() => {
-    if (hasPartner) {
-      setPartnerVisible(true);
+    if (!hasPartner) {
+      setInviteVisible(true);
       return;
     }
-    setInviteVisible(true);
-  }, [hasPartner]);
+    openStreakCheckIn("duo");
+  }, [hasPartner, openStreakCheckIn]);
 
   const handleSubmit = useCallback(
     async (answerContent: string) => {
@@ -158,7 +173,10 @@ export function TodayAwarenessCard({
           : "完成今日觉察，更新花卡成长状态"}
       </Text>
 
-      <Pressable style={styles.infoBar} onPress={() => setStreakVisible(true)}>
+      <Pressable
+        style={styles.infoBar}
+        onPress={() => openStreakCheckIn("personal")}
+      >
         <Text style={styles.infoText}>🔥 连续觉察 第 {myStreakCount} 天 ›</Text>
       </Pressable>
 
@@ -195,19 +213,16 @@ export function TodayAwarenessCard({
         partnerStatus={partnerStatus}
         progress={progress}
       />
-      <StreakDetailModal
-        visible={false && streakVisible}
+      <StreakCheckInModal
+        visible={streakVisible}
         onClose={() => setStreakVisible(false)}
+        initialTab={streakInitialTab}
+        hasPartner={hasPartner}
         partnerStatus={partnerStatus}
       />
       <PartnerInviteModal
         visible={inviteVisible}
         onClose={() => setInviteVisible(false)}
-      />
-      <PartnerStatusModal
-        visible={partnerVisible}
-        onClose={() => setPartnerVisible(false)}
-        partnerStatus={partnerStatus}
       />
     </View>
   );

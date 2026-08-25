@@ -12,6 +12,8 @@ import type {
   SubmitAnswerRequest,
   SubmitAnswerResponse,
   TodayTaskResponse,
+  CheckInRecordsResponse,
+  UseLightCardResponse,
 } from './types';
 
 interface ApiEnvelope<T> {
@@ -161,4 +163,34 @@ export async function getFlowerCardAnswers(
     FlowerCardAnswerItem[] | ApiEnvelope<FlowerCardAnswerItem[]>
   >(`${API_PATHS.SOUL_FLOWER_FLOWER_CARD_ANSWERS}/${flowerId}/answers`);
   return unwrapResponse(response, '获取觉察记录失败');
+}
+
+/**
+ * 获取打卡记录 GET /soul-flower/app/checkin-records
+ */
+export async function getCheckInRecords(): Promise<CheckInRecordsResponse> {
+  const response = await request.get<
+    CheckInRecordsResponse | ApiEnvelope<CheckInRecordsResponse>
+  >(API_PATHS.SOUL_FLOWER_CHECKIN_RECORDS);
+  return unwrapResponse(response, '获取打卡记录失败');
+}
+
+/**
+ * 使用续光卡补打卡 POST /soul-flower/app/light-card/use
+ */
+export async function useLightCard(
+  dateKey: string,
+): Promise<UseLightCardResponse> {
+  const response = await request.post<
+    UseLightCardResponse | ApiEnvelope<UseLightCardResponse>
+  >(API_PATHS.SOUL_FLOWER_LIGHT_CARD_USE, { dateKey });
+
+  if (isApiEnvelope<UseLightCardResponse>(response)) {
+    if (response.statusCode !== API_SUCCESS_CODE) {
+      throw new Error(response.message || '使用续光卡失败');
+    }
+    return response.data ?? { success: true, message: response.message };
+  }
+
+  return response;
 }

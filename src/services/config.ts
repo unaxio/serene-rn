@@ -34,6 +34,8 @@ export const API_PATHS = {
   SOUL_FLOWER_PARTNER_INVITES: '/soul-flower/app/partner/invites',
   SOUL_FLOWER_PARTNER_INVITE_HANDLE: '/soul-flower/app/partner/invite/handle',
   SOUL_FLOWER_FLOWER_CARD_ANSWERS: '/soul-flower/app/flower-card',
+  SOUL_FLOWER_CHECKIN_RECORDS: '/soul-flower/app/checkin-records',
+  SOUL_FLOWER_LIGHT_CARD_USE: '/soul-flower/app/light-card/use',
   FOLLOW_FOLLOWING: '/follow/following',
   FOLLOW_FOLLOWERS: '/follow/followers',
   FOLLOW: '/follow',

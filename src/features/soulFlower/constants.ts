@@ -7,6 +7,7 @@ export const SOUL_FLOWER_QUERY_KEYS = {
   mindMap: ['soulFlower', 'mindMap'] as const,
   partnerStatus: ['soulFlower', 'partnerStatus'] as const,
   partnerInvites: ['soulFlower', 'partnerInvites'] as const,
+  checkInRecords: ['soulFlower', 'checkInRecords'] as const,
   flowerCardAnswers: (flowerId: string) =>
     ['soulFlower', 'flowerCardAnswers', flowerId] as const,
 };

@@ -3,12 +3,18 @@ import { useMemo, useState } from 'react';
 
 import { getMindMapFullData } from '@/src/features/soulFlower/api';
 import { SOUL_FLOWER_QUERY_KEYS } from '@/src/features/soulFlower/constants';
-import type { Category, FlowerCard } from '@/src/features/soulFlower/types';
+import type {
+  Category,
+  FlowerCard,
+  LightCardUsage,
+} from '@/src/features/soulFlower/types';
 
 interface UseMindMapResult {
   categories: Category[];
   flowerCards: FlowerCard[];
   answeredQuestionIds: string[];
+  lightCardCount: number;
+  lightCardUsages: LightCardUsage[];
   selectedCategoryId: string | null;
   setSelectedCategoryId: (categoryId: string) => void;
   filteredFlowerCards: FlowerCard[];
@@ -35,6 +41,8 @@ export function useMindMap(): UseMindMapResult {
 
   const flowerCards = query.data?.flowerCards ?? [];
   const answeredQuestionIds = query.data?.answeredQuestionIds ?? [];
+  const lightCardCount = query.data?.lightCardCount ?? 0;
+  const lightCardUsages = query.data?.lightCardUsages ?? [];
 
   const filteredFlowerCards = useMemo(() => {
     if (!activeCategoryId) {
@@ -47,6 +55,8 @@ export function useMindMap(): UseMindMapResult {
     categories,
     flowerCards,
     answeredQuestionIds,
+    lightCardCount,
+    lightCardUsages,
     selectedCategoryId: activeCategoryId,
     setSelectedCategoryId,
     filteredFlowerCards,

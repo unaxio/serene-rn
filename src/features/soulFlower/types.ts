@@ -81,10 +81,21 @@ export interface FlowerCard {
   imagePathPhase6?: string;
 }
 
+/** 续光卡使用记录 */
+export interface LightCardUsage {
+  id: string;
+  dateKey: string;
+  createdAt: string;
+}
+
 export interface MindMapFullDataResponse {
   categories: Category[];
   flowerCards: FlowerCard[];
   answeredQuestionIds: string[];
+  /** 续光卡剩余数量 */
+  lightCardCount?: number;
+  /** 续光卡使用记录 */
+  lightCardUsages?: LightCardUsage[];
 }
 
 export interface FlowerCardProgress {
@@ -97,6 +108,9 @@ export interface PartnerInfo {
   userId: string;
   nickName?: string;
   username?: string;
+  avatarUrl?: string;
+  avatarPath?: string;
+  avatar?: string;
   todayAnswered: boolean;
   streakCount: number;
 }
@@ -130,7 +144,28 @@ export interface PartnerActionResponse {
   message?: string;
 }
 
+export interface UseLightCardResponse {
+  success?: boolean;
+  message?: string;
+}
+
 export type PartnerInviteAction = "accept" | "reject";
+
+export interface CheckInSideRecords {
+  answeredDateKeys: string[];
+  lightCardUsages: LightCardUsage[];
+}
+
+export interface CheckInPartnerRecords extends CheckInSideRecords {
+  userId: string;
+}
+
+/** 打卡记录 GET /soul-flower/app/checkin-records */
+export interface CheckInRecordsResponse {
+  me: CheckInSideRecords;
+  hasPartner: boolean;
+  partner: CheckInPartnerRecords | null;
+}
 
 export interface FlowerCardAnswerItem {
   id: string;
