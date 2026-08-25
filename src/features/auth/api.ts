@@ -1,7 +1,12 @@
 import { API_PATHS } from '@/src/services/config';
 import { request } from '@/src/services/request';
 
-import type { AuthStatusResponse, LoginResponse } from './types';
+import type {
+  AuthStatusResponse,
+  LoginResponse,
+  UpdateUserProfileRequest,
+  UpdateUserProfileResponse,
+} from './types';
 
 /**
  * 用户登录 POST /auth/login
@@ -15,4 +20,17 @@ export async function login(username: string, password: string): Promise<LoginRe
  */
 export async function checkAuthStatus(): Promise<AuthStatusResponse> {
   return request.get<AuthStatusResponse>(API_PATHS.AUTH_STATUS);
+}
+
+/**
+ * 更新用户信息 POST /users/:userId
+ */
+export async function updateUserProfile(
+  userId: string,
+  params: UpdateUserProfileRequest,
+): Promise<UpdateUserProfileResponse> {
+  return request.post<UpdateUserProfileResponse>(
+    `${API_PATHS.USERS}/${userId}`,
+    params,
+  );
 }

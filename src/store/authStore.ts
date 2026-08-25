@@ -1,7 +1,15 @@
 import { create } from 'zustand';
 
-import { checkAuthStatus, login as loginApi } from '@/src/features/auth/api';
-import type { AuthStatus, AuthUserData } from '@/src/features/auth/types';
+import {
+  checkAuthStatus,
+  login as loginApi,
+  updateUserProfile as updateUserProfileApi,
+} from '@/src/features/auth/api';
+import type {
+  AuthStatus,
+  AuthUserData,
+  UpdateUserProfileRequest,
+} from '@/src/features/auth/types';
 import { API_SUCCESS_CODE } from '@/src/services/config';
 import {
   setAccessTokenGetter,
@@ -12,7 +20,7 @@ import {
   getAccessToken,
   setAccessToken,
 } from '@/src/utils/tokenStorage';
-import { showErrorToast } from '@/src/utils/toast';
+import { showErrorToast, showToast } from '@/src/utils/toast';
 
 interface AuthState {
   accessToken: string | null;
@@ -20,9 +28,11 @@ interface AuthState {
   status: AuthStatus;
   isLoginModalVisible: boolean;
   isSubmitting: boolean;
+  isUpdatingProfile: boolean;
   bootstrap: () => Promise<void>;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
+  updateProfile: (params: UpdateUserProfileRequest) => Promise<boolean>;
   openLoginModal: () => void;
   closeLoginModal: () => void;
   handleUnauthorized: () => void;
@@ -55,6 +65,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   status: 'idle',
   isLoginModalVisible: false,
   isSubmitting: false,
+  isUpdatingProfile: false,
 
   openLoginModal: () => set({ isLoginModalVisible: true }),
 
@@ -156,6 +167,41 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       status: 'unauthenticated',
       isLoginModalVisible: true,
     });
+  },
+
+  updateProfile: async (params: UpdateUserProfileRequest) => {
+    const { user } = get();
+    if (!user?.id) {
+      showErrorToast('请先登录');
+      return false;
+    }
+
+    set({ isUpdatingProfile: true });
+
+    try {
+      const response = await updateUserProfileApi(user.id, params);
+
+      if (response.statusCode !== API_SUCCESS_CODE) {
+        showErrorToast(response.message || '更新资料失败');
+        return false;
+      }
+
+      set({
+        user: {
+          ...user,
+          nickName: params.nickName,
+          gender: params.gender,
+          birthday: params.birthday,
+        },
+      });
+      showToast(response.message || '资料已更新');
+      return true;
+    } catch {
+      // 网络错误已由 request 拦截器提示
+      return false;
+    } finally {
+      set({ isUpdatingProfile: false });
+    }
   },
 }));
 

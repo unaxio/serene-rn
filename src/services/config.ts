@@ -25,6 +25,7 @@ export const REQUEST_TIMEOUT_MS = 15_000;
 export const API_PATHS = {
   AUTH_LOGIN: '/auth/login',
   AUTH_STATUS: '/auth/status',
+  USERS: '/users',
   SOUL_FLOWER_TODAY_TASK: '/soul-flower/app/today-task',
   SOUL_FLOWER_SUBMIT_ANSWER: '/soul-flower/app/submit-answer',
   SOUL_FLOWER_MIND_MAP: '/soul-flower/app/mind-map/full-data',
@@ -33,6 +34,10 @@ export const API_PATHS = {
   SOUL_FLOWER_PARTNER_INVITES: '/soul-flower/app/partner/invites',
   SOUL_FLOWER_PARTNER_INVITE_HANDLE: '/soul-flower/app/partner/invite/handle',
   SOUL_FLOWER_FLOWER_CARD_ANSWERS: '/soul-flower/app/flower-card',
+  FOLLOW_FOLLOWING: '/follow/following',
+  FOLLOW_FOLLOWERS: '/follow/followers',
+  FOLLOW: '/follow',
+  FOLLOW_SEARCH: '/follow/search',
 } as const;
 
 export const STORAGE_KEYS = {

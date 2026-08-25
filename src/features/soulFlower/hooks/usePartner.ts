@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
+import { searchUsersByNickName } from '@/src/features/follow/api';
+import type { FollowUser } from '@/src/features/follow/types';
 import {
   getPartnerInvites,
   getPartnerStatus,
@@ -27,11 +29,25 @@ export function usePartnerStatus() {
 
 export function usePartnerInvites(enabled: boolean) {
   const queryClient = useQueryClient();
+  const [searchResults, setSearchResults] = useState<FollowUser[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const query = useQuery({
     queryKey: SOUL_FLOWER_QUERY_KEYS.partnerInvites,
     queryFn: getPartnerInvites,
     enabled,
+  });
+
+  const searchMutation = useMutation({
+    mutationFn: (nickName: string) => searchUsersByNickName(nickName),
+    onSuccess: (users) => {
+      setSearchResults(users);
+      setHasSearched(true);
+    },
+    onError: () => {
+      setSearchResults([]);
+      setHasSearched(true);
+    },
   });
 
   const inviteMutation = useMutation({
@@ -73,14 +89,34 @@ export function usePartnerInvites(enabled: boolean) {
     },
   });
 
+  const searchByNickname = useCallback(
+    async (nickname: string) => {
+      const trimmed = nickname.trim();
+      if (!trimmed) {
+        showErrorToast('请输入昵称');
+        return;
+      }
+      try {
+        await searchMutation.mutateAsync(trimmed);
+      } catch {
+        // 错误已由请求层 Toast
+      }
+    },
+    [searchMutation],
+  );
+
   const sendInvite = useCallback(
     async (receiverUserId: string) => {
       const trimmed = receiverUserId.trim();
       if (!trimmed) {
-        showErrorToast('请输入伙伴用户 ID');
+        showErrorToast('用户信息无效');
         return;
       }
-      await inviteMutation.mutateAsync(trimmed);
+      try {
+        await inviteMutation.mutateAsync(trimmed);
+      } catch {
+        // 错误已由请求层 Toast
+      }
     },
     [inviteMutation],
   );
@@ -92,13 +128,23 @@ export function usePartnerInvites(enabled: boolean) {
     [handleMutation],
   );
 
+  const resetSearch = useCallback(() => {
+    setSearchResults([]);
+    setHasSearched(false);
+  }, []);
+
   return {
     invites: query.data ?? [],
     isLoading: query.isLoading,
     isError: query.isError,
     refetch: query.refetch,
+    searchResults,
+    hasSearched,
+    searchByNickname,
+    resetSearch,
     sendInvite,
     respondInvite,
+    isSearching: searchMutation.isPending,
     isSending: inviteMutation.isPending,
     isHandling: handleMutation.isPending,
   };

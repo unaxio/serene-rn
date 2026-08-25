@@ -1,5 +1,5 @@
-import { PlaceholderScreen } from '@/src/components/PlaceholderScreen';
+import { ProfileScreen } from '@/src/features/auth/components/ProfileScreen';
 
-export default function ProfileScreen() {
-  return <PlaceholderScreen title="我的" message="个人中心建设中" />;
+export default function ProfileTabScreen() {
+  return <ProfileScreen />;
 }
