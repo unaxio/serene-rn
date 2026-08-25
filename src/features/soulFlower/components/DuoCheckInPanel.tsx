@@ -9,51 +9,21 @@ import { useCheckInRecords } from '@/src/features/soulFlower/hooks/useCheckInRec
 import { useMindMap } from '@/src/features/soulFlower/hooks/useMindMap';
 import type { PartnerStatusResponse } from '@/src/features/soulFlower/types';
 import {
-  buildDateKey,
   calcCurrentStreakDays,
   countUsagesInYearMonth,
-  normalizeCheckInDateKey,
   toYearMonth,
 } from '@/src/features/soulFlower/utils/checkInCalendar';
+import {
+  getLocalTodayDateKey,
+  intersectSets,
+  toUsageDateKeySet,
+  unionSets,
+} from '@/src/features/soulFlower/utils/jointCheckIn';
 import { useAuthStore } from '@/src/store/authStore';
 
 interface DuoCheckInPanelProps {
   partnerStatus?: PartnerStatusResponse;
   enabled: boolean;
-}
-
-function getLocalTodayDateKey(): string {
-  const now = new Date();
-  return buildDateKey(now.getFullYear(), now.getMonth() + 1, now.getDate());
-}
-
-function toUsageDateKeySet(
-  usages: Array<{ dateKey: string }> | undefined,
-): Set<string> {
-  const set = new Set<string>();
-  (usages ?? []).forEach((usage) => {
-    const key = normalizeCheckInDateKey(usage.dateKey);
-    if (key) {
-      set.add(key);
-    }
-  });
-  return set;
-}
-
-function intersectSets(a: Set<string>, b: Set<string>): Set<string> {
-  const result = new Set<string>();
-  a.forEach((key) => {
-    if (b.has(key)) {
-      result.add(key);
-    }
-  });
-  return result;
-}
-
-function unionSets(a: Set<string>, b: Set<string>): Set<string> {
-  const result = new Set(a);
-  b.forEach((key) => result.add(key));
-  return result;
 }
 
 export function DuoCheckInPanel({
@@ -108,19 +78,22 @@ export function DuoCheckInPanel({
     todayKey,
   ]);
 
-  /** 共同打卡日：双方都有记录（答题或续光卡） */
-  const jointMarkedKeys = useMemo(
-    () => intersectSets(myMarkedKeys, partnerMarkedKeys),
-    [myMarkedKeys, partnerMarkedKeys],
+  const eitherLightKeys = useMemo(
+    () => unionSets(myLightKeys, partnerLightKeys),
+    [myLightKeys, partnerLightKeys],
   );
 
-  /** 任一方续光卡补签的共同日 → 黄圈 */
-  const jointLightKeys = useMemo(() => {
-    const eitherLight = unionSets(myLightKeys, partnerLightKeys);
-    return intersectSets(jointMarkedKeys, eitherLight);
-  }, [jointMarkedKeys, myLightKeys, partnerLightKeys]);
+  const jointMarkedKeys = useMemo(
+    () =>
+      unionSets(
+        intersectSets(myMarkedKeys, partnerMarkedKeys),
+        eitherLightKeys,
+      ),
+    [eitherLightKeys, myMarkedKeys, partnerMarkedKeys],
+  );
 
-  /** 共同日中非续光卡样式 */
+  const jointLightKeys = eitherLightKeys;
+
   const jointAnsweredStyleKeys = useMemo(() => {
     const set = new Set(jointMarkedKeys);
     jointLightKeys.forEach((key) => set.delete(key));
@@ -174,7 +147,7 @@ export function DuoCheckInPanel({
         lightCardDateKeys={jointLightKeys}
         lightCardCount={lightCardCount}
         navigationDateKeys={monthNavKeys}
-        makeupOccupiedDateKeys={myMarkedKeys}
+        myMarkedDateKeys={myMarkedKeys}
       />
 
       <LightCardBanner

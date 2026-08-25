@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { UseLightCardConfirmModal } from '@/src/features/soulFlower/components/UseLightCardConfirmModal';
+import { SimpleTipModal } from '@/src/features/soulFlower/components/SimpleTipModal';
 import { APP_TEXT_COLOR } from '@/src/features/soulFlower/constants';
 import { useUseLightCard } from '@/src/features/soulFlower/hooks/useUseLightCard';
 import {
@@ -15,7 +16,6 @@ import {
   toYearMonth,
   type YearMonth,
 } from '@/src/features/soulFlower/utils/checkInCalendar';
-import { showErrorToast } from '@/src/utils/toast';
 
 interface PersonalCheckInCalendarProps {
   answeredDateKeys: Set<string>;
@@ -25,8 +25,8 @@ interface PersonalCheckInCalendarProps {
   enableMakeup?: boolean;
   /** 月份切换可用范围；默认 answered ∪ light */
   navigationDateKeys?: Set<string>;
-  /** 已占用不可补签的日期；默认 answered ∪ light（双人日历传入「我的」已打卡日） */
-  makeupOccupiedDateKeys?: Set<string>;
+  /** 自己已打卡日期（不可再补签）；默认 answered ∪ light */
+  myMarkedDateKeys?: Set<string>;
 }
 
 const WEEKDAY_LABELS = ['日', '一', '二', '三', '四', '五', '六'] as const;
@@ -56,7 +56,7 @@ export function PersonalCheckInCalendar({
   lightCardCount,
   enableMakeup = true,
   navigationDateKeys,
-  makeupOccupiedDateKeys,
+  myMarkedDateKeys,
 }: PersonalCheckInCalendarProps) {
   const allMarkedKeys = useMemo(() => {
     const set = new Set(answeredDateKeys);
@@ -65,7 +65,7 @@ export function PersonalCheckInCalendar({
   }, [answeredDateKeys, lightCardDateKeys]);
 
   const boundsSourceKeys = navigationDateKeys ?? allMarkedKeys;
-  const occupiedForMakeup = makeupOccupiedDateKeys ?? allMarkedKeys;
+  const myKeys = myMarkedDateKeys ?? allMarkedKeys;
 
   const bounds = useMemo(
     () => getMonthBoundsFromDateKeys(Array.from(boundsSourceKeys)),
@@ -77,6 +77,7 @@ export function PersonalCheckInCalendar({
   );
   const [rowWidth, setRowWidth] = useState(0);
   const [pendingDateKey, setPendingDateKey] = useState<string | null>(null);
+  const [tipMessage, setTipMessage] = useState<string | null>(null);
   const { useForDate, isPending } = useUseLightCard();
 
   useEffect(() => {
@@ -106,22 +107,28 @@ export function PersonalCheckInCalendar({
 
   const cellWidth = rowWidth > 0 ? rowWidth / WEEK_COLUMN_COUNT : 0;
 
+  const canPressDate = useCallback(
+    (dateKey: string) => {
+      if (!enableMakeup || dateKey > todayKey) {
+        return false;
+      }
+      return !myKeys.has(dateKey);
+    },
+    [enableMakeup, myKeys, todayKey],
+  );
+
   const handlePressDay = useCallback(
     (dateKey: string) => {
-      if (!enableMakeup || occupiedForMakeup.has(dateKey)) {
+      if (!canPressDate(dateKey)) {
         return;
       }
-      if (dateKey > todayKey) {
-        showErrorToast('未来日期无法补签');
-        return;
-      }
-      if (lightCardCount <= 0) {
-        showErrorToast('续光卡不足');
+      if (!(lightCardCount > 0)) {
+        setTipMessage('没有续光卡');
         return;
       }
       setPendingDateKey(dateKey);
     },
-    [enableMakeup, lightCardCount, occupiedForMakeup, todayKey],
+    [canPressDate, lightCardCount],
   );
 
   const handleConfirm = useCallback(async () => {
@@ -204,17 +211,14 @@ export function PersonalCheckInCalendar({
               : null}
 
             {row.map((cell, colIndex) => {
-              const canMakeup =
-                enableMakeup &&
-                cell.dateKey !== null &&
-                !occupiedForMakeup.has(cell.dateKey) &&
-                cell.dateKey <= todayKey;
+              const canPress =
+                cell.dateKey !== null && canPressDate(cell.dateKey);
 
               return (
                 <Pressable
                   key={`day-${rowIndex}-${colIndex}`}
                   style={styles.dayCell}
-                  disabled={!canMakeup}
+                  disabled={!canPress}
                   onPress={() => {
                     if (cell.dateKey) {
                       handlePressDay(cell.dateKey);
@@ -258,6 +262,11 @@ export function PersonalCheckInCalendar({
           void handleConfirm();
         }}
         onCancel={() => setPendingDateKey(null)}
+      />
+      <SimpleTipModal
+        visible={Boolean(tipMessage)}
+        message={tipMessage ?? ''}
+        onClose={() => setTipMessage(null)}
       />
     </View>
   );

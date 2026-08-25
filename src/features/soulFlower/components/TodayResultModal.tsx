@@ -5,6 +5,8 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FlowerImage } from '@/src/features/soulFlower/components/FlowerImage';
 import { APP_TEXT_COLOR } from '@/src/features/soulFlower/constants';
+import { useJointStreakDays } from '@/src/features/soulFlower/hooks/useJointStreakDays';
+import { usePersonalStreakDays } from '@/src/features/soulFlower/hooks/usePersonalStreakDays';
 import type { FlowerCardProgress, PartnerStatusResponse } from '@/src/features/soulFlower/types';
 import { formatProgressLabel } from '@/src/features/soulFlower/utils/progress';
 import { showToast } from '@/src/utils/toast';
@@ -44,9 +46,17 @@ function TodayResultModalComponent({
   partnerStatus,
   progress,
 }: TodayResultModalProps) {
-  const myStreakCount = partnerStatus?.myStreakCount ?? 0;
-  const partnerStreakCount = partnerStatus?.partnerStreakCount ?? 0;
   const hasPartner = partnerStatus?.hasPartner === true;
+  const myTodayAnswered = partnerStatus?.myTodayAnswered === true;
+  const myStreakCount = usePersonalStreakDays({
+    enabled: visible,
+    myTodayAnswered,
+  });
+  const jointStreakDays = useJointStreakDays({
+    enabled: hasPartner && visible,
+    myTodayAnswered,
+    partnerTodayAnswered: partnerStatus?.partnerInfo?.todayAnswered === true,
+  });
   const partnerNotDone =
     hasPartner && partnerStatus?.partnerInfo?.todayAnswered === false;
   const progressLabel = formatProgressLabel(
@@ -97,7 +107,7 @@ function TodayResultModalComponent({
               </View>
 
               <View style={styles.statItem}>
-                <StatValueWithUnit value={partnerStreakCount} valueColor="#3B82F6" />
+                <StatValueWithUnit value={jointStreakDays} valueColor="#3B82F6" />
                 <Text style={styles.statLabel}>伙伴联盟</Text>
               </View>
 

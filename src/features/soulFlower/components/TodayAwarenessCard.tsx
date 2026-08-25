@@ -20,8 +20,10 @@ import {
   AWARENESS_ACCENT_GRADIENT,
   AWARENESS_ACCENT_GRADIENT_LOCATIONS,
 } from "@/src/features/soulFlower/constants";
+import { useJointStreakDays } from "@/src/features/soulFlower/hooks/useJointStreakDays";
 import { useMindMap } from "@/src/features/soulFlower/hooks/useMindMap";
 import { usePartnerStatus } from "@/src/features/soulFlower/hooks/usePartner";
+import { usePersonalStreakDays } from "@/src/features/soulFlower/hooks/usePersonalStreakDays";
 import { useTodayTask } from "@/src/features/soulFlower/hooks/useTodayTask";
 import type { FlowerCardProgress } from "@/src/features/soulFlower/types";
 import {
@@ -42,6 +44,16 @@ export function TodayAwarenessCard({
     useTodayTask();
   const { data: partnerStatus } = usePartnerStatus();
   const { flowerCards } = useMindMap();
+  const hasPartner = partnerStatus?.hasPartner === true;
+  const myTodayAnswered = partnerStatus?.myTodayAnswered === true;
+  const myStreakCount = usePersonalStreakDays({
+    myTodayAnswered,
+  });
+  const jointStreakDays = useJointStreakDays({
+    enabled: hasPartner,
+    myTodayAnswered,
+    partnerTodayAnswered: partnerStatus?.partnerInfo?.todayAnswered === true,
+  });
 
   const matchedFlowerCard = findFlowerCardById(
     flowerCards,
@@ -58,9 +70,6 @@ export function TodayAwarenessCard({
 
   const alreadyAnswered = data?.alreadyAnswered === true;
   const hasTask = data?.hasTask === true && Boolean(data.question);
-  const myStreakCount = partnerStatus?.myStreakCount ?? 0;
-  const partnerStreakCount = partnerStatus?.partnerStreakCount ?? 0;
-  const hasPartner = partnerStatus?.hasPartner === true;
 
   const handlePrimary = useCallback(() => {
     if (alreadyAnswered) {
@@ -183,7 +192,7 @@ export function TodayAwarenessCard({
       <Pressable style={styles.infoBar} onPress={handleAlliance}>
         <Text style={styles.infoText}>
           {hasPartner
-            ? `👥 双人联盟 携手 ${partnerStreakCount} 天 ›`
+            ? `👥 双人联盟 携手 ${jointStreakDays} 天 ›`
             : "👥 双人联盟 邀请伙伴 ›"}
         </Text>
       </Pressable>

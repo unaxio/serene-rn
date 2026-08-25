@@ -9,21 +9,19 @@ import { useCheckInRecords } from '@/src/features/soulFlower/hooks/useCheckInRec
 import { useMindMap } from '@/src/features/soulFlower/hooks/useMindMap';
 import type { PartnerStatusResponse } from '@/src/features/soulFlower/types';
 import {
-  buildDateKey,
   calcCurrentStreakDays,
   countUsagesInYearMonth,
-  normalizeCheckInDateKey,
   toYearMonth,
 } from '@/src/features/soulFlower/utils/checkInCalendar';
+import {
+  getLocalTodayDateKey,
+  toUsageDateKeySet,
+  unionSets,
+} from '@/src/features/soulFlower/utils/jointCheckIn';
 
 interface PersonalCheckInPanelProps {
   partnerStatus?: PartnerStatusResponse;
   enabled: boolean;
-}
-
-function getLocalTodayDateKey(): string {
-  const now = new Date();
-  return buildDateKey(now.getFullYear(), now.getMonth() + 1, now.getDate());
 }
 
 export function PersonalCheckInPanel({
@@ -35,18 +33,13 @@ export function PersonalCheckInPanel({
   const { myAnsweredDateKeys, data: checkInRecords } = useCheckInRecords(enabled);
   const { lightCardCount, lightCardUsages } = useMindMap();
 
-  const lightCardDateKeys = useMemo(() => {
-    const set = new Set<string>();
-    const usages =
-      checkInRecords?.me?.lightCardUsages ?? lightCardUsages ?? [];
-    usages.forEach((usage) => {
-      const key = normalizeCheckInDateKey(usage.dateKey);
-      if (key) {
-        set.add(key);
-      }
-    });
-    return set;
-  }, [checkInRecords?.me?.lightCardUsages, lightCardUsages]);
+  const lightCardDateKeys = useMemo(
+    () =>
+      toUsageDateKeySet(
+        checkInRecords?.me?.lightCardUsages ?? lightCardUsages,
+      ),
+    [checkInRecords?.me?.lightCardUsages, lightCardUsages],
+  );
 
   const answeredDateKeys = useMemo(() => {
     const set = new Set(myAnsweredDateKeys);
@@ -56,11 +49,10 @@ export function PersonalCheckInPanel({
     return set;
   }, [myAnsweredDateKeys, todayAnsweredFromStatus, todayKey]);
 
-  const markedDateKeys = useMemo(() => {
-    const set = new Set(answeredDateKeys);
-    lightCardDateKeys.forEach((key) => set.add(key));
-    return set;
-  }, [answeredDateKeys, lightCardDateKeys]);
+  const markedDateKeys = useMemo(
+    () => unionSets(answeredDateKeys, lightCardDateKeys),
+    [answeredDateKeys, lightCardDateKeys],
+  );
 
   const streakDays = useMemo(
     () => calcCurrentStreakDays(markedDateKeys, todayKey),
