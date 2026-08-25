@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -13,6 +13,7 @@ import { FullScreenModal } from '@/src/components/FullScreenModal';
 import { PartnerSearchUserRow } from '@/src/features/soulFlower/components/PartnerSearchUserRow';
 import { APP_TEXT_COLOR } from '@/src/features/soulFlower/constants';
 import { usePartnerInvites } from '@/src/features/soulFlower/hooks/usePartner';
+import { useAuthStore } from '@/src/store/authStore';
 
 interface PartnerInviteModalProps {
   visible: boolean;
@@ -23,6 +24,7 @@ const PLACEHOLDER_COLOR = '#94A3B8';
 
 export function PartnerInviteModal({ visible, onClose }: PartnerInviteModalProps) {
   const [nickname, setNickname] = useState('');
+  const currentUserId = useAuthStore((state) => state.user?.id);
   const {
     invites,
     isLoading,
@@ -48,7 +50,16 @@ export function PartnerInviteModal({ visible, onClose }: PartnerInviteModalProps
     void searchByNickname(nickname);
   }, [nickname, searchByNickname]);
 
-  const pendingInvites = invites.filter((item) => item.status === 'pending');
+  const receivedPendingInvites = useMemo(
+    () =>
+      invites.filter(
+        (item) =>
+          item.status === 'pending' &&
+          Boolean(currentUserId) &&
+          item.receiverId === currentUserId,
+      ),
+    [currentUserId, invites],
+  );
 
   return (
     <FullScreenModal visible={visible} title="邀请伙伴" onBack={onClose}>
@@ -69,7 +80,7 @@ export function PartnerInviteModal({ visible, onClose }: PartnerInviteModalProps
         />
 
         {isSearching ? (
-          <ActivityIndicator color="#2F95DC" style={styles.searchStatus} />
+          <ActivityIndicator color="#7B6CF9" style={styles.searchStatus} />
         ) : null}
 
         {!isSearching && hasSearched ? (
@@ -91,12 +102,12 @@ export function PartnerInviteModal({ visible, onClose }: PartnerInviteModalProps
 
         <Text style={[styles.sectionLabel, styles.sectionGap]}>收到的邀请</Text>
         {isLoading ? (
-          <ActivityIndicator color="#2F95DC" />
-        ) : pendingInvites.length === 0 ? (
+          <ActivityIndicator color="#7B6CF9" />
+        ) : receivedPendingInvites.length === 0 ? (
           <Text style={styles.empty}>暂无待处理邀请</Text>
         ) : (
           <View style={styles.inviteList}>
-            {pendingInvites.map((invite) => (
+            {receivedPendingInvites.map((invite) => (
               <View key={invite.id} style={styles.inviteCard}>
                 <Text style={styles.inviteName}>
                   {invite.senderName || invite.senderId}

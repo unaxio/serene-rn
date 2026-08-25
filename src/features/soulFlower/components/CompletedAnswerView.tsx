@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   flowerName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2F95DC',
+    color: '#7B6CF9',
   },
   questionTitle: {
     fontSize: 16,

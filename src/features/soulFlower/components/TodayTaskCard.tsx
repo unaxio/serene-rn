@@ -23,7 +23,7 @@ export function TodayTaskCard() {
   if (isLoading) {
     return (
       <View style={styles.card}>
-        <ActivityIndicator color="#2F95DC" />
+        <ActivityIndicator color="#7B6CF9" />
         <Text style={styles.hint}>正在加载今日觉察...</Text>
       </View>
     );
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: '#2F95DC',
+    backgroundColor: '#7B6CF9',
   },
   retryText: {
     color: '#FFFFFF',

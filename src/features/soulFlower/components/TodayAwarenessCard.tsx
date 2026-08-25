@@ -82,7 +82,7 @@ export function TodayAwarenessCard({
   if (isLoading) {
     return (
       <View style={styles.card}>
-        <ActivityIndicator color="#2F95DC" />
+        <ActivityIndicator color="#7B6CF9" />
       </View>
     );
   }
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   },
   retry: {
     fontSize: 13,
-    color: "#2F95DC",
+    color: "#7B6CF9",
     fontWeight: "600",
   },
 });

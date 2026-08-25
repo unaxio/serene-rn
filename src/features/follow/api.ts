@@ -1,7 +1,12 @@
 import { API_PATHS, API_SUCCESS_CODE } from '@/src/services/config';
 import { request } from '@/src/services/request';
 
-import type { FollowActionResponse, FollowUser } from './types';
+import type {
+  FollowActionResponse,
+  FollowPagedData,
+  FollowUser,
+  FollowUserRaw,
+} from './types';
 
 interface ApiEnvelope<T> {
   statusCode: number;
@@ -28,10 +33,21 @@ function unwrapResponse<T>(payload: T | ApiEnvelope<T>, fallbackMessage: string)
   return payload;
 }
 
-/** 兼容后端 id / userId 字段 */
-function normalizeFollowUser(raw: FollowUser & { id?: string }): FollowUser {
+function isFollowPagedData(
+  value: FollowUserRaw[] | FollowPagedData,
+): value is FollowPagedData {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    'items' in value &&
+    Array.isArray(value.items)
+  );
+}
+
+function normalizeFollowUser(raw: FollowUserRaw): FollowUser {
   return {
-    userId: raw.userId || raw.id || '',
+    userId: raw.id,
     nickName: raw.nickName,
     username: raw.username,
     avatarUrl: raw.avatarUrl,
@@ -40,12 +56,17 @@ function normalizeFollowUser(raw: FollowUser & { id?: string }): FollowUser {
   };
 }
 
-function normalizeFollowUsers(
-  list: Array<FollowUser & { id?: string }>,
-): FollowUser[] {
+function normalizeFollowUsers(list: FollowUserRaw[]): FollowUser[] {
   return list
     .map(normalizeFollowUser)
     .filter((user) => Boolean(user.userId));
+}
+
+function extractFollowUsers(
+  data: FollowUserRaw[] | FollowPagedData,
+): FollowUser[] {
+  const list = isFollowPagedData(data) ? data.items : data;
+  return normalizeFollowUsers(list);
 }
 
 /**
@@ -53,9 +74,9 @@ function normalizeFollowUsers(
  */
 export async function getFollowingList(): Promise<FollowUser[]> {
   const response = await request.get<
-    Array<FollowUser & { id?: string }> | ApiEnvelope<Array<FollowUser & { id?: string }>>
+    FollowUserRaw[] | FollowPagedData | ApiEnvelope<FollowUserRaw[] | FollowPagedData>
   >(API_PATHS.FOLLOW_FOLLOWING);
-  return normalizeFollowUsers(unwrapResponse(response, '获取关注列表失败'));
+  return extractFollowUsers(unwrapResponse(response, '获取关注列表失败'));
 }
 
 /**
@@ -63,9 +84,9 @@ export async function getFollowingList(): Promise<FollowUser[]> {
  */
 export async function getFollowersList(): Promise<FollowUser[]> {
   const response = await request.get<
-    Array<FollowUser & { id?: string }> | ApiEnvelope<Array<FollowUser & { id?: string }>>
+    FollowUserRaw[] | FollowPagedData | ApiEnvelope<FollowUserRaw[] | FollowPagedData>
   >(API_PATHS.FOLLOW_FOLLOWERS);
-  return normalizeFollowUsers(unwrapResponse(response, '获取粉丝列表失败'));
+  return extractFollowUsers(unwrapResponse(response, '获取粉丝列表失败'));
 }
 
 /**
@@ -90,14 +111,15 @@ export async function unfollowUser(userId: string): Promise<FollowActionResponse
 
 /**
  * 按昵称搜索用户 GET /follow/search?nickName=
+ * 响应 data: { items, total, page, pageSize }
  */
 export async function searchUsersByNickName(
   nickName: string,
 ): Promise<FollowUser[]> {
   const response = await request.get<
-    Array<FollowUser & { id?: string }> | ApiEnvelope<Array<FollowUser & { id?: string }>>
+    FollowPagedData | ApiEnvelope<FollowPagedData>
   >(API_PATHS.FOLLOW_SEARCH, {
     params: { nickName },
   });
-  return normalizeFollowUsers(unwrapResponse(response, '搜索用户失败'));
+  return extractFollowUsers(unwrapResponse(response, '搜索用户失败'));
 }

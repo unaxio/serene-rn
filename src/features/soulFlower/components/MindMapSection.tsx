@@ -51,7 +51,7 @@ export function MindMapSection() {
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#2F95DC" />
+        <ActivityIndicator color="#7B6CF9" />
         <Text style={styles.hint}>加载认知图谱中...</Text>
       </View>
     );
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: '#2F95DC',
+    backgroundColor: '#7B6CF9',
   },
   retryText: {
     color: '#FFFFFF',

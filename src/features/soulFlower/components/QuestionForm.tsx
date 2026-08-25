@@ -25,7 +25,7 @@ interface QuestionFormProps {
 }
 
 const PLACEHOLDER_COLOR = "#9CA3AF";
-const PRIMARY_COLOR = "#2F95DC";
+const PRIMARY_COLOR = "#7B6CF9";
 const ACTION_LINK_TOP_GAP = 24;
 
 export function QuestionForm({ question, onSubmit }: QuestionFormProps) {
@@ -185,8 +185,10 @@ const styles = StyleSheet.create({
   },
   actionLinks: {
     marginTop: ACTION_LINK_TOP_GAP,
+    flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    justifyContent: "center",
+    gap: 24,
   },
   actionLink: {
     fontSize: 13,

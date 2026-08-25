@@ -15,7 +15,7 @@ import { useAuthStore } from '@/src/store/authStore';
 import { showErrorToast } from '@/src/utils/toast';
 
 const PLACEHOLDER_COLOR = '#999999';
-const PRIMARY_COLOR = '#2f95dc';
+const PRIMARY_COLOR = '#7B6CF9';
 const DEFAULT_GENDER: UserGender = 'secret';
 const DEFAULT_BIRTHDAY = '200001';
 
