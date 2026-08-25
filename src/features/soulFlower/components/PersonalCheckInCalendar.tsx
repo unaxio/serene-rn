@@ -23,6 +23,10 @@ interface PersonalCheckInCalendarProps {
   lightCardCount: number;
   /** 是否允许点击空日期补签，默认 true */
   enableMakeup?: boolean;
+  /** 月份切换可用范围；默认 answered ∪ light */
+  navigationDateKeys?: Set<string>;
+  /** 已占用不可补签的日期；默认 answered ∪ light（双人日历传入「我的」已打卡日） */
+  makeupOccupiedDateKeys?: Set<string>;
 }
 
 const WEEKDAY_LABELS = ['日', '一', '二', '三', '四', '五', '六'] as const;
@@ -51,6 +55,8 @@ export function PersonalCheckInCalendar({
   lightCardDateKeys,
   lightCardCount,
   enableMakeup = true,
+  navigationDateKeys,
+  makeupOccupiedDateKeys,
 }: PersonalCheckInCalendarProps) {
   const allMarkedKeys = useMemo(() => {
     const set = new Set(answeredDateKeys);
@@ -58,9 +64,12 @@ export function PersonalCheckInCalendar({
     return set;
   }, [answeredDateKeys, lightCardDateKeys]);
 
+  const boundsSourceKeys = navigationDateKeys ?? allMarkedKeys;
+  const occupiedForMakeup = makeupOccupiedDateKeys ?? allMarkedKeys;
+
   const bounds = useMemo(
-    () => getMonthBoundsFromDateKeys(Array.from(allMarkedKeys)),
-    [allMarkedKeys],
+    () => getMonthBoundsFromDateKeys(Array.from(boundsSourceKeys)),
+    [boundsSourceKeys],
   );
 
   const [visibleMonth, setVisibleMonth] = useState<YearMonth>(() =>
@@ -98,8 +107,8 @@ export function PersonalCheckInCalendar({
   const cellWidth = rowWidth > 0 ? rowWidth / WEEK_COLUMN_COUNT : 0;
 
   const handlePressDay = useCallback(
-    (dateKey: string, checkedIn: boolean) => {
-      if (!enableMakeup || checkedIn) {
+    (dateKey: string) => {
+      if (!enableMakeup || occupiedForMakeup.has(dateKey)) {
         return;
       }
       if (dateKey > todayKey) {
@@ -112,7 +121,7 @@ export function PersonalCheckInCalendar({
       }
       setPendingDateKey(dateKey);
     },
-    [enableMakeup, lightCardCount, todayKey],
+    [enableMakeup, lightCardCount, occupiedForMakeup, todayKey],
   );
 
   const handleConfirm = useCallback(async () => {
@@ -198,7 +207,7 @@ export function PersonalCheckInCalendar({
               const canMakeup =
                 enableMakeup &&
                 cell.dateKey !== null &&
-                !cell.checkedIn &&
+                !occupiedForMakeup.has(cell.dateKey) &&
                 cell.dateKey <= todayKey;
 
               return (
@@ -208,7 +217,7 @@ export function PersonalCheckInCalendar({
                   disabled={!canMakeup}
                   onPress={() => {
                     if (cell.dateKey) {
-                      handlePressDay(cell.dateKey, cell.checkedIn);
+                      handlePressDay(cell.dateKey);
                     }
                   }}>
                   {cell.day !== null ? (

@@ -132,6 +132,11 @@ export function DuoCheckInPanel({
     [jointMarkedKeys, todayKey],
   );
 
+  const monthNavKeys = useMemo(
+    () => unionSets(myMarkedKeys, partnerMarkedKeys),
+    [myMarkedKeys, partnerMarkedKeys],
+  );
+
   const monthUsedCount = useMemo(() => {
     const usages =
       checkInRecords?.me?.lightCardUsages ?? lightCardUsages ?? [];
@@ -168,7 +173,8 @@ export function DuoCheckInPanel({
         answeredDateKeys={jointAnsweredStyleKeys}
         lightCardDateKeys={jointLightKeys}
         lightCardCount={lightCardCount}
-        enableMakeup={false}
+        navigationDateKeys={monthNavKeys}
+        makeupOccupiedDateKeys={myMarkedKeys}
       />
 
       <LightCardBanner
