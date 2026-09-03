@@ -44,6 +44,9 @@ export const API_PATHS = {
   SQUARE_COMMENTS: '/soul-flower/app/comments',
   SQUARE_ACTIONS: '/soul-flower/app/actions',
   SQUARE_IMAGE_UPLOAD: '/upload/sf-square-image',
+  GIFT_FLOWERS: '/soul-flower/app/gift-flowers',
+  GIFT_FLOWER_INVENTORY: '/soul-flower/app/gift-flowers/inventory',
+  GIFT_FLOWER_PURCHASE: '/soul-flower/app/gift-flowers/purchase',
 } as const;
 
 export const STORAGE_KEYS = {

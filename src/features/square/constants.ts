@@ -8,6 +8,30 @@ export const FLOWER_QUANTITY_MIN = 1;
 
 export const FLOWER_QUANTITY_MAX = 99;
 
+export const GIFT_FLOWER_THUMB_SIZE = 56;
+
+export const GIFT_FLOWER_GRID_MAX_HEIGHT = 240;
+
+export const GIFT_FLOWER_SEND_TITLE = '送花';
+
+export const GIFT_FLOWER_SHOP_TITLE = '购买礼物花';
+
+export const GIFT_FLOWER_COIN_LABEL = '花币';
+
+export const GIFT_FLOWER_BUY_ENTRY = '去购买';
+
+export const GIFT_FLOWER_SEND_ACTION = '赠送';
+
+export const GIFT_FLOWER_PURCHASE_ACTION = '购买';
+
+export const GIFT_FLOWER_EMPTY_INVENTORY = '暂无可赠送的花，请先购买';
+
+export const GIFT_FLOWER_RECEIVED_HINT = '获赠的花不可转赠';
+
+export const GIFT_FLOWER_SEND_SUCCESS = '赠送成功';
+
+export const GIFT_FLOWER_PURCHASE_SUCCESS = '购买成功';
+
 export const TOP_REPLIES_PREVIEW_COUNT = 2;
 
 export const COMMENT_LONG_PRESS_DELAY_MS = 350;
@@ -41,6 +65,8 @@ export const SEARCH_BAR_BG = '#F1F5F9';
 export const CARD_BORDER_COLOR = '#EEEFF3';
 
 export const ACCENT_COLOR = '#7B6CF9';
+
+export const DANGER_TEXT_COLOR = '#DC2626';
 
 export const COMMENT_HIGHLIGHT_COLOR = '#6F72F1';
 
@@ -89,4 +115,6 @@ export const SQUARE_QUERY_KEYS = {
     ['square', 'comments', targetType, targetId] as const,
   commentReplies: (rootId: string) =>
     ['square', 'commentReplies', rootId] as const,
+  giftFlowerInventory: ['square', 'giftFlowerInventory'] as const,
+  giftFlowerCatalog: ['square', 'giftFlowers'] as const,
 };

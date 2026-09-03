@@ -48,6 +48,11 @@ export function useSquareAction() {
           await queryClient.invalidateQueries({ queryKey: ['square', 'comments'] });
           await queryClient.invalidateQueries({ queryKey: ['square', 'commentReplies'] });
         }
+        if (payload.actionType === 'flower') {
+          await queryClient.invalidateQueries({
+            queryKey: SQUARE_QUERY_KEYS.giftFlowerInventory,
+          });
+        }
         return result;
       } catch {
         return null;

@@ -1,33 +1,28 @@
-import { useCallback, useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { APP_TEXT_COLOR } from '@/constants/Colors';
-import { FlowerQuantityStepper } from '@/src/features/square/components/FlowerQuantityStepper';
+import { GiftFlowerCoinBar } from '@/src/features/square/components/giftFlower/GiftFlowerCoinBar';
+import { GiftFlowerSendPane } from '@/src/features/square/components/giftFlower/GiftFlowerSendPane';
+import { GiftFlowerSheetHeader } from '@/src/features/square/components/giftFlower/GiftFlowerSheetHeader';
+import { GiftFlowerShopPane } from '@/src/features/square/components/giftFlower/GiftFlowerShopPane';
 import {
-  ACCENT_COLOR,
-  FLOWER_QUANTITY_MIN,
-  MUTED_TEXT_COLOR,
-  PLACEHOLDER_TEXT_COLOR,
+  GIFT_FLOWER_SEND_SUCCESS,
+  GIFT_FLOWER_SEND_TITLE,
+  GIFT_FLOWER_SHOP_TITLE,
 } from '@/src/features/square/constants';
+import { useSendFlowerModal } from '@/src/features/square/hooks/useSendFlowerModal';
+import { showToast } from '@/src/utils/toast';
 
 interface SendFlowerModalProps {
   visible: boolean;
   isSubmitting: boolean;
   onClose: () => void;
-  onSubmit: (quantity: number, message: string) => Promise<boolean>;
+  onSubmit: (giftFlowerId: string, quantity: number) => Promise<boolean>;
 }
 
 const BACKDROP = 'rgba(15, 23, 42, 0.45)';
-const MESSAGE_MAX_LENGTH = 50;
+const SHEET_MAX_HEIGHT = '82%';
+const SHEET_MIN_BOTTOM = 8;
 
 export function SendFlowerModal({
   visible,
@@ -35,54 +30,73 @@ export function SendFlowerModal({
   onClose,
   onSubmit,
 }: SendFlowerModalProps) {
-  const [quantity, setQuantity] = useState(FLOWER_QUANTITY_MIN);
-  const [message, setMessage] = useState('');
+  const insets = useSafeAreaInsets();
+  const modal = useSendFlowerModal(visible);
+  const isShop = modal.pane === 'shop';
 
-  useEffect(() => {
-    if (visible) {
-      setQuantity(FLOWER_QUANTITY_MIN);
-      setMessage('');
+  const handleSend = async () => {
+    if (!modal.sendSelectedId) {
+      return;
     }
-  }, [visible]);
-
-  const handleSubmit = useCallback(async () => {
-    const ok = await onSubmit(quantity, message.trim());
+    const ok = await onSubmit(modal.sendSelectedId, modal.sendQuantity);
     if (ok) {
+      showToast(GIFT_FLOWER_SEND_SUCCESS);
       onClose();
     }
-  }, [message, onClose, onSubmit, quantity]);
+  };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.backdrop}>
-        <View style={styles.sheet}>
-          <Pressable style={styles.close} onPress={onClose} hitSlop={12}>
-            <Text style={styles.closeText}>✕</Text>
-          </Pressable>
-          <KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
-            <Text style={styles.title}>送花</Text>
-            <FlowerQuantityStepper quantity={quantity} onChange={setQuantity} />
-            <TextInput
-              style={styles.input}
-              value={message}
-              onChangeText={setMessage}
-              placeholder="可填写附言（选填）"
-              placeholderTextColor={PLACEHOLDER_TEXT_COLOR}
-              maxLength={MESSAGE_MAX_LENGTH}
+        <Pressable style={styles.dismiss} onPress={onClose} />
+        <View
+          style={[
+            styles.sheet,
+            { paddingBottom: Math.max(insets.bottom, SHEET_MIN_BOTTOM) },
+          ]}>
+          <GiftFlowerSheetHeader
+            title={isShop ? GIFT_FLOWER_SHOP_TITLE : GIFT_FLOWER_SEND_TITLE}
+            showBack={isShop}
+            onBack={() => modal.setPane('inventory')}
+            onClose={onClose}
+          />
+          {isShop ? (
+            <GiftFlowerShopPane
+              items={modal.catalog.items}
+              flowerCoin={modal.inventory.flowerCoin}
+              isLoading={modal.catalog.isLoading}
+              isError={modal.catalog.isError}
+              selectedId={modal.shopSelectedId}
+              quantity={modal.shopQuantity}
+              isPurchasing={modal.isPurchasing}
+              onRetry={() => void modal.catalog.refetch()}
+              onSelect={modal.handleSelectShop}
+              onQuantityChange={modal.setShopQuantity}
+              onPurchase={() => {
+                void modal.handlePurchase();
+              }}
             />
-            <Pressable
-              style={[styles.submit, isSubmitting && styles.disabled]}
-              disabled={isSubmitting}
-              onPress={() => {
-                void handleSubmit();
-              }}>
-              {isSubmitting ? (
-                <ActivityIndicator color="#FFFFFF" />
-              ) : (
-                <Text style={styles.submitText}>赠送</Text>
-              )}
-            </Pressable>
-          </KeyboardAwareScrollView>
+          ) : (
+            <GiftFlowerSendPane
+              giftableItems={modal.giftableItems}
+              hasReceivedOnly={modal.hasReceivedOnly}
+              isLoading={modal.inventory.isLoading}
+              isError={modal.inventory.isError}
+              selectedId={modal.sendSelectedId}
+              quantity={modal.sendQuantity}
+              isSubmitting={isSubmitting}
+              onRetry={() => void modal.inventory.refetch()}
+              onSelect={modal.handleSelectSend}
+              onQuantityChange={modal.setSendQuantity}
+              onSubmit={() => {
+                void handleSend();
+              }}
+            />
+          )}
+          <GiftFlowerCoinBar
+            flowerCoin={modal.inventory.flowerCoin}
+            onAction={isShop ? undefined : () => modal.setPane('shop')}
+          />
         </View>
       </View>
     </Modal>
@@ -93,56 +107,17 @@ const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
     backgroundColor: BACKDROP,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
+    justifyContent: 'flex-end',
+  },
+  dismiss: {
+    flex: 1,
   },
   sheet: {
-    width: '100%',
-    maxWidth: 320,
+    maxHeight: SHEET_MAX_HEIGHT,
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-  },
-  close: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    zIndex: 1,
-  },
-  closeText: {
-    fontSize: 18,
-    color: MUTED_TEXT_COLOR,
-  },
-  title: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: APP_TEXT_COLOR,
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  input: {
-    height: 42,
-    borderRadius: 10,
-    backgroundColor: '#F8FAFC',
-    paddingHorizontal: 12,
-    fontSize: 14,
-    color: APP_TEXT_COLOR,
-    marginBottom: 16,
-  },
-  submit: {
-    height: 42,
-    borderRadius: 10,
-    backgroundColor: ACCENT_COLOR,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  disabled: {
-    opacity: 0.7,
-  },
-  submitText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingHorizontal: 16,
+    paddingTop: 12,
   },
 });

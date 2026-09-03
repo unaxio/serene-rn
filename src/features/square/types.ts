@@ -62,6 +62,7 @@ export interface ToggleActionResponse {
   isCollected?: boolean;
   flowerCount?: number;
   isFlowered?: boolean;
+  remainingPurchasedCount?: number;
 }
 
 export interface CreateCommentResponse {
@@ -114,5 +115,44 @@ export interface SquareActionPayload {
   targetId: string;
   actionType: SquareActionType;
   quantity?: number;
-  message?: string;
+  giftFlowerId?: string;
+}
+
+export interface GiftFlower {
+  id: string;
+  name: string;
+  tag: string;
+  imagePath: string;
+  coinValue: number;
+  status: number;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GiftFlowerInventoryItem {
+  giftFlowerId: string;
+  name: string;
+  tag: string;
+  imagePath: string;
+  coinValue: number;
+  purchasedCount: number;
+  receivedCount: number;
+}
+
+export interface GiftFlowerInventory {
+  flowerCoin: number;
+  items: GiftFlowerInventoryItem[];
+}
+
+export interface PurchaseGiftFlowerPayload {
+  giftFlowerId: string;
+  quantity?: number;
+}
+
+export interface PurchaseGiftFlowerResponse {
+  giftFlowerId: string;
+  purchasedCount: number;
+  receivedCount: number;
+  flowerCoin: number;
 }

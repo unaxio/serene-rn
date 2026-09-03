@@ -15,6 +15,7 @@ import {
 } from '@/src/features/square/constants';
 import { useCommentActions } from '@/src/features/square/hooks/useCommentActions';
 import { useComments } from '@/src/features/square/hooks/useComments';
+import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import type { SquareComment } from '@/src/features/square/types';
 import { getReplyPlaceholder } from '@/src/features/square/utils/displayAuthor';
 
@@ -30,6 +31,7 @@ export function useStoryDetailComments(storyId: string, storyCommentCount?: numb
     enabled: true,
   });
   const { runAction, isPending, resonateComment, collectComment } = useCommentActions();
+  const requireAuth = useRequireAuth();
   const composerRef = useRef<CommentComposerHandle>(null);
   const commentsYRef = useRef(0);
   const isCommentsInViewRef = useRef(false);
@@ -63,6 +65,16 @@ export function useStoryDetailComments(storyId: string, storyCommentCount?: numb
     });
     return () => sub.remove();
   }, [composerOpen]);
+
+  const openFlowerModal = useCallback(
+    (target: FlowerTarget) => {
+      if (!requireAuth()) {
+        return;
+      }
+      setFlowerTarget(target);
+    },
+    [requireAuth],
+  );
 
   const openComposer = useCallback((target: SquareComment | null) => {
     composerOpenedAtRef.current = Date.now();
@@ -131,7 +143,7 @@ export function useStoryDetailComments(storyId: string, storyCommentCount?: numb
   );
 
   const handleSendFlower = useCallback(
-    async (quantity: number, message: string) => {
+    async (giftFlowerId: string, quantity: number) => {
       if (!flowerTarget) {
         return false;
       }
@@ -139,8 +151,8 @@ export function useStoryDetailComments(storyId: string, storyCommentCount?: numb
         targetType: flowerTarget.targetType,
         targetId: flowerTarget.targetId,
         actionType: 'flower',
+        giftFlowerId,
         quantity,
-        message: message || undefined,
       });
       return result !== null;
     },
@@ -165,6 +177,7 @@ export function useStoryDetailComments(storyId: string, storyCommentCount?: numb
     setActiveRoot,
     flowerTarget,
     setFlowerTarget,
+    openFlowerModal,
     displayCommentCount: commentCount ?? storyCommentCount ?? comments.total ?? 0,
     setCommentCount,
     openComposer,

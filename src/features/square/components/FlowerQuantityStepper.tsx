@@ -9,22 +9,29 @@ import {
 interface FlowerQuantityStepperProps {
   quantity: number;
   onChange: (quantity: number) => void;
+  min?: number;
+  max?: number;
 }
 
-export function FlowerQuantityStepper({ quantity, onChange }: FlowerQuantityStepperProps) {
+export function FlowerQuantityStepper({
+  quantity,
+  onChange,
+  min = FLOWER_QUANTITY_MIN,
+  max = FLOWER_QUANTITY_MAX,
+}: FlowerQuantityStepperProps) {
   return (
     <View style={styles.stepper}>
       <Pressable
         style={styles.stepBtn}
-        disabled={quantity <= FLOWER_QUANTITY_MIN}
-        onPress={() => onChange(Math.max(FLOWER_QUANTITY_MIN, quantity - 1))}>
+        disabled={quantity <= min}
+        onPress={() => onChange(Math.max(min, quantity - 1))}>
         <Text style={styles.stepText}>-</Text>
       </Pressable>
       <Text style={styles.quantity}>{quantity}</Text>
       <Pressable
         style={styles.stepBtn}
-        disabled={quantity >= FLOWER_QUANTITY_MAX}
-        onPress={() => onChange(Math.min(FLOWER_QUANTITY_MAX, quantity + 1))}>
+        disabled={quantity >= max}
+        onPress={() => onChange(Math.min(max, quantity + 1))}>
         <Text style={styles.stepText}>+</Text>
       </Pressable>
     </View>
@@ -37,7 +44,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 20,
-    marginBottom: 16,
   },
   stepBtn: {
     width: 36,

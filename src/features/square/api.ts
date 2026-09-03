@@ -25,7 +25,7 @@ import {
   type StoryRaw,
 } from './utils/normalize';
 
-interface ApiEnvelope<T> {
+export interface ApiEnvelope<T> {
   statusCode: number;
   message: string;
   data?: T;
@@ -40,7 +40,7 @@ function isApiEnvelope<T>(value: unknown): value is ApiEnvelope<T> {
   );
 }
 
-function unwrapResponse<T>(payload: T | ApiEnvelope<T>, fallbackMessage: string): T {
+export function unwrapResponse<T>(payload: T | ApiEnvelope<T>, fallbackMessage: string): T {
   if (isApiEnvelope<T>(payload)) {
     if (payload.statusCode !== API_SUCCESS_CODE || payload.data === undefined) {
       throw new Error(payload.message || fallbackMessage);
