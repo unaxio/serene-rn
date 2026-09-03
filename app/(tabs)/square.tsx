@@ -1,5 +1,5 @@
-import { PlaceholderScreen } from '@/src/components/PlaceholderScreen';
+import { SquareScreen } from '@/src/features/square/components/SquareScreen';
 
-export default function SquareScreen() {
-  return <PlaceholderScreen title="广场" message="广场功能建设中" />;
+export default function SquareTabScreen() {
+  return <SquareScreen />;
 }

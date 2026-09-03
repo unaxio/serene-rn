@@ -40,6 +40,10 @@ export const API_PATHS = {
   FOLLOW_FOLLOWERS: '/follow/followers',
   FOLLOW: '/follow',
   FOLLOW_SEARCH: '/follow/search',
+  SQUARE_STORIES: '/soul-flower/app/stories',
+  SQUARE_COMMENTS: '/soul-flower/app/comments',
+  SQUARE_ACTIONS: '/soul-flower/app/actions',
+  SQUARE_IMAGE_UPLOAD: '/upload/sf-square-image',
 } as const;
 
 export const STORAGE_KEYS = {
