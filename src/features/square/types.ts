@@ -156,3 +156,93 @@ export interface PurchaseGiftFlowerResponse {
   receivedCount: number;
   flowerCoin: number;
 }
+
+export type ShareVisibleRange = 'public' | 'friends' | 'private';
+
+export interface Share {
+  id: string;
+  content: string;
+  images: string[];
+  topicTag: string | null;
+  visibleRange: ShareVisibleRange;
+  author: SquareAuthor;
+  resonateCount: number;
+  collectCount: number;
+  flowerCount: number;
+  commentCount: number;
+  isResonated: boolean;
+  isCollected: boolean;
+  isFlowered: boolean;
+  createdAt: string;
+}
+
+export interface CreateSharePayload {
+  content: string;
+  images: string[];
+  visibleRange: ShareVisibleRange;
+  topicTag?: string;
+}
+
+export interface GetSharesParams {
+  page: number;
+  pageSize: number;
+}
+
+export type AskAnswerSort = 'latest' | 'hot';
+
+export interface Ask {
+  id: string;
+  title: string;
+  content: string;
+  topicTag: string | null;
+  author: SquareAuthor;
+  answerCount: number;
+  viewCount: number;
+  commentCount: number;
+  resonateCount: number;
+  collectCount: number;
+  isResonated: boolean;
+  isCollected: boolean;
+  answerSummary: string | null;
+  answererAvatar: string | null;
+  createdAt: string;
+}
+
+export interface AskAnswer {
+  id: string;
+  askId: string;
+  content: string;
+  author: SquareAuthor;
+  resonateCount: number;
+  collectCount: number;
+  flowerCount: number;
+  commentCount: number;
+  isResonated: boolean;
+  isCollected: boolean;
+  isFlowered: boolean;
+  createdAt: string;
+}
+
+export interface CreateAskPayload {
+  title: string;
+  content: string;
+  topicTag: string;
+  isAnonymous: boolean;
+}
+
+export interface CreateAskAnswerPayload {
+  content: string;
+  isAnonymous: boolean;
+}
+
+export interface GetAsksParams {
+  page: number;
+  pageSize: number;
+}
+
+export interface GetAskAnswersParams {
+  askId: string;
+  sort: AskAnswerSort;
+  page: number;
+  pageSize: number;
+}

@@ -1,5 +1,6 @@
 import {
   ANONYMOUS_DISPLAY_NAME,
+  DEFAULT_AUTHOR_LEVEL,
 } from '@/src/features/square/constants';
 import type { SquareAuthor } from '@/src/features/square/types';
 
@@ -20,6 +21,11 @@ export function getAuthorDisplayName(author: SquareAuthor | null | undefined): s
 
 export function getReplyPlaceholder(author: SquareAuthor | null | undefined): string {
   return `回复 ${getAuthorDisplayName(author)}`;
+}
+
+export function getAuthorLevelLabel(author: SquareAuthor | null | undefined): string {
+  const level = author?.level ?? DEFAULT_AUTHOR_LEVEL;
+  return `Lv.${level}`;
 }
 
 export function getAuthorAvatarPath(author: SquareAuthor | null | undefined): string | null {

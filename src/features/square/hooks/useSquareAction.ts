@@ -3,29 +3,27 @@ import { useCallback } from 'react';
 
 import { toggleSquareAction } from '@/src/features/square/api';
 import { SQUARE_QUERY_KEYS } from '@/src/features/square/constants';
+import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import type {
+  Ask,
+  AskAnswer,
+  Share,
   SquareActionPayload,
+  SquarePagedData,
   Story,
   ToggleActionResponse,
 } from '@/src/features/square/types';
-import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
-
-function patchStory(story: Story, result: ToggleActionResponse): Story {
-  return {
-    ...story,
-    resonateCount: result.resonateCount ?? story.resonateCount,
-    isResonated: result.isResonated ?? story.isResonated,
-    collectCount: result.collectCount ?? story.collectCount,
-    isCollected: result.isCollected ?? story.isCollected,
-    flowerCount: result.flowerCount ?? story.flowerCount,
-    isFlowered: result.isFlowered ?? story.isFlowered,
-  };
-}
+import {
+  patchAsk,
+  patchAskAnswer,
+  patchPagedItems,
+  patchShare,
+  patchStory,
+} from '@/src/features/square/utils/patchActionTarget';
 
 export function useSquareAction() {
   const requireAuth = useRequireAuth();
   const queryClient = useQueryClient();
-
   const mutation = useMutation({
     mutationFn: (payload: SquareActionPayload) => toggleSquareAction(payload),
   });
@@ -43,6 +41,31 @@ export function useSquareAction() {
             (old: Story | undefined) => (old ? patchStory(old, result) : old),
           );
           await queryClient.invalidateQueries({ queryKey: ['square', 'stories'] });
+        }
+        if (payload.targetType === 'share') {
+          queryClient.setQueriesData(
+            { queryKey: SQUARE_QUERY_KEYS.shares },
+            (old: { pages: SquarePagedData<Share>[]; pageParams: unknown[] } | undefined) =>
+              patchPagedItems(old, payload.targetId, (item) => patchShare(item, result)),
+          );
+        }
+        if (payload.targetType === 'ask') {
+          queryClient.setQueryData(
+            SQUARE_QUERY_KEYS.askDetail(payload.targetId),
+            (old: Ask | undefined) => (old ? patchAsk(old, result) : old),
+          );
+          queryClient.setQueriesData(
+            { queryKey: SQUARE_QUERY_KEYS.asks },
+            (old: { pages: SquarePagedData<Ask>[]; pageParams: unknown[] } | undefined) =>
+              patchPagedItems(old, payload.targetId, (item) => patchAsk(item, result)),
+          );
+        }
+        if (payload.targetType === 'ask_answer') {
+          queryClient.setQueriesData(
+            { queryKey: ['square', 'askAnswers'] },
+            (old: { pages: SquarePagedData<AskAnswer>[]; pageParams: unknown[] } | undefined) =>
+              patchPagedItems(old, payload.targetId, (item) => patchAskAnswer(item, result)),
+          );
         }
         if (payload.targetType === 'comment') {
           await queryClient.invalidateQueries({ queryKey: ['square', 'comments'] });

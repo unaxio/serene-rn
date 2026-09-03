@@ -60,6 +60,57 @@ async function launchCamera(): Promise<PickedImageFile | null> {
   }
 }
 
+export async function pickSquareImages(maxCount: number): Promise<PickedImageFile[]> {
+  if (maxCount <= 0) {
+    return [];
+  }
+  if (Platform.OS === 'web') {
+    const file = await launchLibrary();
+    return file ? [file] : [];
+  }
+
+  return new Promise((resolve) => {
+    Alert.alert('选择图片', undefined, [
+      {
+        text: '相册',
+        onPress: () => {
+          void launchLibraryMany(maxCount).then(resolve);
+        },
+      },
+      {
+        text: '拍照',
+        onPress: () => {
+          void launchCamera().then((file) => resolve(file ? [file] : []));
+        },
+      },
+      { text: '取消', style: 'cancel', onPress: () => resolve([]) },
+    ]);
+  });
+}
+
+async function launchLibraryMany(maxCount: number): Promise<PickedImageFile[]> {
+  try {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      showErrorToast('需要相册权限才能上传图片');
+      return [];
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: IMAGE_QUALITY,
+      allowsMultipleSelection: maxCount > 1,
+      selectionLimit: maxCount,
+    });
+    if (result.canceled) {
+      return [];
+    }
+    return result.assets.slice(0, maxCount).map(toPickedFile);
+  } catch {
+    showErrorToast('打开相册失败');
+    return [];
+  }
+}
+
 export function pickSquareImage(): Promise<PickedImageFile | null> {
   if (Platform.OS === 'web') {
     return launchLibrary();

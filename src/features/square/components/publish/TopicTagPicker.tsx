@@ -9,13 +9,22 @@ import {
 
 interface TopicTagPickerProps {
   selectedId: string | null;
-  onSelect: (id: string) => void;
+  onSelect: (id: string | null) => void;
+  allowDeselect?: boolean;
+  label?: string;
 }
 
-export function TopicTagPicker({ selectedId, onSelect }: TopicTagPickerProps) {
+const DEFAULT_LABEL = '选择话题标签';
+
+export function TopicTagPicker({
+  selectedId,
+  onSelect,
+  allowDeselect = false,
+  label = DEFAULT_LABEL,
+}: TopicTagPickerProps) {
   return (
     <View style={styles.block}>
-      <Text style={styles.label}>选择话题标签</Text>
+      <Text style={styles.label}>{label}</Text>
       <View style={styles.row}>
         {STORY_TOPIC_OPTIONS.map((option) => {
           const isActive = option.id === selectedId;
@@ -23,7 +32,13 @@ export function TopicTagPicker({ selectedId, onSelect }: TopicTagPickerProps) {
             <Pressable
               key={option.id}
               style={styles.option}
-              onPress={() => onSelect(option.id)}>
+              onPress={() => {
+                if (allowDeselect && isActive) {
+                  onSelect(null);
+                  return;
+                }
+                onSelect(option.id);
+              }}>
               <Text style={[styles.optionText, isActive && styles.optionTextActive]}>
                 {option.name}
               </Text>

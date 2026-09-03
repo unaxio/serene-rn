@@ -3,7 +3,11 @@ import type {
   SquareAuthor,
   SquareComment,
   SquarePagedData,
+  Share,
+  ShareVisibleRange,
   Story,
+  Ask,
+  AskAnswer,
 } from '@/src/features/square/types';
 import { resolveStorySummary } from '@/src/features/square/utils/storySummary';
 
@@ -91,6 +95,52 @@ export function normalizeStory(raw: StoryRaw): Story {
   };
 }
 
+const SHARE_VISIBLE_RANGES: ShareVisibleRange[] = ['public', 'friends', 'private'];
+
+export interface ShareRaw {
+  id?: string;
+  _id?: string;
+  content?: string;
+  images?: string[] | null;
+  topicTag?: string | null;
+  visibleRange?: string | null;
+  author?: SquareAuthor | null;
+  resonateCount?: number;
+  collectCount?: number;
+  flowerCount?: number;
+  commentCount?: number;
+  isResonated?: boolean;
+  isCollected?: boolean;
+  isFlowered?: boolean;
+  createdAt?: string;
+}
+
+function normalizeVisibleRange(value: string | null | undefined): ShareVisibleRange {
+  if (value && SHARE_VISIBLE_RANGES.includes(value as ShareVisibleRange)) {
+    return value as ShareVisibleRange;
+  }
+  return 'public';
+}
+
+export function normalizeShare(raw: ShareRaw): Share {
+  return {
+    id: toEntityId(raw),
+    content: raw.content ?? '',
+    images: (raw.images ?? []).map((item) => item.trim()).filter((item) => item.length > 0),
+    topicTag: raw.topicTag?.trim() ? raw.topicTag.trim() : null,
+    visibleRange: normalizeVisibleRange(raw.visibleRange),
+    author: normalizeAuthor(raw.author),
+    resonateCount: raw.resonateCount ?? 0,
+    collectCount: raw.collectCount ?? 0,
+    flowerCount: raw.flowerCount ?? 0,
+    commentCount: raw.commentCount ?? 0,
+    isResonated: raw.isResonated ?? false,
+    isCollected: raw.isCollected ?? false,
+    isFlowered: raw.isFlowered ?? false,
+    createdAt: raw.createdAt ?? '',
+  };
+}
+
 export function normalizeComment(raw: CommentRaw): SquareComment {
   const id = toEntityId(raw);
   return {
@@ -110,6 +160,106 @@ export function normalizeComment(raw: CommentRaw): SquareComment {
       normalizeComment({ ...item, rootId: item.rootId ?? id }),
     ),
     parentAuthor: raw.parentAuthor ? normalizeAuthor(raw.parentAuthor) : null,
+    createdAt: raw.createdAt ?? '',
+  };
+}
+
+export interface AskRaw {
+  id?: string;
+  _id?: string;
+  title?: string;
+  content?: string;
+  topicTag?: string | null;
+  author?: SquareAuthor | null;
+  answerCount?: number;
+  viewCount?: number;
+  commentCount?: number;
+  resonateCount?: number;
+  collectCount?: number;
+  isResonated?: boolean;
+  isCollected?: boolean;
+  answerSummary?: string | { content?: string } | null;
+  answererAvatar?: string | SquareAuthor | null;
+  createdAt?: string;
+}
+
+export interface AskAnswerRaw {
+  id?: string;
+  _id?: string;
+  askId?: string;
+  content?: string;
+  author?: SquareAuthor | null;
+  resonateCount?: number;
+  collectCount?: number;
+  flowerCount?: number;
+  commentCount?: number;
+  isResonated?: boolean;
+  isCollected?: boolean;
+  isFlowered?: boolean;
+  createdAt?: string;
+}
+
+function resolveAnswerSummary(
+  raw: AskRaw['answerSummary'],
+): string | null {
+  if (!raw) {
+    return null;
+  }
+  if (typeof raw === 'string') {
+    const text = raw.trim();
+    return text.length > 0 ? resolveStorySummary(undefined, text) : null;
+  }
+  const text = raw.content?.trim();
+  return text && text.length > 0 ? resolveStorySummary(undefined, text) : null;
+}
+
+function resolveAnswererAvatar(
+  raw: AskRaw['answererAvatar'],
+): string | null {
+  if (!raw) {
+    return null;
+  }
+  if (typeof raw === 'string') {
+    const path = raw.trim();
+    return path.length > 0 ? path : null;
+  }
+  const path = raw.avatarUrl?.trim();
+  return path && path.length > 0 ? path : null;
+}
+
+export function normalizeAsk(raw: AskRaw): Ask {
+  return {
+    id: toEntityId(raw),
+    title: raw.title ?? '',
+    content: raw.content ?? '',
+    topicTag: raw.topicTag?.trim() ? raw.topicTag.trim() : null,
+    author: normalizeAuthor(raw.author),
+    answerCount: raw.answerCount ?? 0,
+    viewCount: raw.viewCount ?? 0,
+    commentCount: raw.commentCount ?? 0,
+    resonateCount: raw.resonateCount ?? 0,
+    collectCount: raw.collectCount ?? 0,
+    isResonated: raw.isResonated ?? false,
+    isCollected: raw.isCollected ?? false,
+    answerSummary: resolveAnswerSummary(raw.answerSummary),
+    answererAvatar: resolveAnswererAvatar(raw.answererAvatar),
+    createdAt: raw.createdAt ?? '',
+  };
+}
+
+export function normalizeAskAnswer(raw: AskAnswerRaw): AskAnswer {
+  return {
+    id: toEntityId(raw),
+    askId: raw.askId ?? '',
+    content: raw.content ?? '',
+    author: normalizeAuthor(raw.author),
+    resonateCount: raw.resonateCount ?? 0,
+    collectCount: raw.collectCount ?? 0,
+    flowerCount: raw.flowerCount ?? 0,
+    commentCount: raw.commentCount ?? 0,
+    isResonated: raw.isResonated ?? false,
+    isCollected: raw.isCollected ?? false,
+    isFlowered: raw.isFlowered ?? false,
     createdAt: raw.createdAt ?? '',
   };
 }

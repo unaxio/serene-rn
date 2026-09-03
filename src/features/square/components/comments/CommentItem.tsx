@@ -15,6 +15,7 @@ interface CommentItemProps {
   comment: SquareComment;
   enableCollect?: boolean;
   enableFlower?: boolean;
+  showReplyPreview?: boolean;
   parentReplyName?: string | null;
   onResonate: (comment: SquareComment) => void;
   onCollect?: (comment: SquareComment) => void;
@@ -31,6 +32,7 @@ function CommentItemComponent({
   comment,
   enableCollect = false,
   enableFlower = false,
+  showReplyPreview = true,
   parentReplyName,
   onResonate,
   onCollect,
@@ -86,11 +88,13 @@ function CommentItemComponent({
             />
           ) : null}
         </View>
-        <CommentReplyPreviewBox
-          comment={comment}
-          onReply={onReply}
-          onViewReplies={onViewReplies}
-        />
+        {showReplyPreview ? (
+          <CommentReplyPreviewBox
+            comment={comment}
+            onReply={onReply}
+            onViewReplies={onViewReplies}
+          />
+        ) : null}
       </View>
     </View>
   );

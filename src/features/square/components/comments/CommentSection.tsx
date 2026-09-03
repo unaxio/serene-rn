@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { FullScreenModal } from '@/src/components/FullScreenModal';
 import type { CommentComposerHandle } from '@/src/features/square/components/comments/CommentComposer';
@@ -18,6 +18,8 @@ interface CommentSectionProps {
   enableCollect?: boolean;
   enableFlower?: boolean;
   onFlower?: (comment: SquareComment) => void;
+  initialReplyTo?: SquareComment | null;
+  initialRoot?: SquareComment | null;
 }
 
 export function CommentSection({
@@ -29,12 +31,30 @@ export function CommentSection({
   enableCollect = false,
   enableFlower = false,
   onFlower,
+  initialReplyTo = null,
+  initialRoot = null,
 }: CommentSectionProps) {
   const [activeRoot, setActiveRoot] = useState<SquareComment | null>(null);
   const [replyTo, setReplyTo] = useState<SquareComment | null>(null);
   const composerRef = useRef<CommentComposerHandle>(null);
   const comments = useComments({ targetType, targetId, enabled: visible });
   const { resonateComment, collectComment } = useCommentActions();
+
+  useEffect(() => {
+    if (!visible) {
+      setActiveRoot(null);
+      setReplyTo(null);
+      return;
+    }
+    if (initialRoot) {
+      setActiveRoot(initialRoot);
+    }
+    if (initialReplyTo) {
+      setReplyTo(initialReplyTo);
+      const timer = setTimeout(() => composerRef.current?.focus(), COMPOSER_FOCUS_DELAY_MS);
+      return () => clearTimeout(timer);
+    }
+  }, [initialReplyTo, initialRoot, visible]);
 
   const notifyCount = useCallback(
     (nextCount?: number) => {

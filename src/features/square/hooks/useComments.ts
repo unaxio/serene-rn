@@ -57,6 +57,17 @@ export function useComments({ targetType, targetId, enabled }: UseCommentsParams
         queryKey: SQUARE_QUERY_KEYS.storyDetail(targetId),
       });
     }
+    if (targetType === 'share') {
+      await queryClient.invalidateQueries({ queryKey: SQUARE_QUERY_KEYS.shares });
+    }
+    if (targetType === 'ask') {
+      await queryClient.invalidateQueries({
+        queryKey: SQUARE_QUERY_KEYS.askDetail(targetId),
+      });
+    }
+    if (targetType === 'ask_answer') {
+      await queryClient.invalidateQueries({ queryKey: ['square', 'askAnswers'] });
+    }
   }, [queryClient, queryKey, targetId, targetType]);
 
   const createMutation = useMutation({

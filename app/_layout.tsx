@@ -66,6 +66,10 @@ function RootLayoutNav() {
         <Stack.Screen name="card/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="stories/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="publish/story" options={{ headerShown: false }} />
+        <Stack.Screen name="publish/share" options={{ headerShown: false }} />
+        <Stack.Screen name="publish/ask" options={{ headerShown: false }} />
+        <Stack.Screen name="asks/[id]" options={{ headerShown: false }} />
+        <Stack.Screen name="asks/[id]/answer" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
     </ThemeProvider>

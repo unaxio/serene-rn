@@ -14,6 +14,8 @@ interface PublishEntryMenuProps {
 
 const MENU_TOP_OFFSET = 56;
 const STORY_PUBLISH_ITEM_ID = 'story';
+const SHARE_PUBLISH_ITEM_ID = 'share';
+const ASK_PUBLISH_ITEM_ID = 'ask';
 
 export function PublishEntryMenu({ visible, onClose }: PublishEntryMenuProps) {
   const insets = useSafeAreaInsets();
@@ -22,14 +24,28 @@ export function PublishEntryMenu({ visible, onClose }: PublishEntryMenuProps) {
 
   const handleSelect = (id: string) => {
     onClose();
-    if (id !== STORY_PUBLISH_ITEM_ID) {
-      showToast(COMING_SOON_MESSAGE);
+    if (id === STORY_PUBLISH_ITEM_ID) {
+      if (!requireAuth()) {
+        return;
+      }
+      router.push('/publish/story');
       return;
     }
-    if (!requireAuth()) {
+    if (id === SHARE_PUBLISH_ITEM_ID) {
+      if (!requireAuth()) {
+        return;
+      }
+      router.push('/publish/share');
       return;
     }
-    router.push('/publish/story');
+    if (id === ASK_PUBLISH_ITEM_ID) {
+      if (!requireAuth()) {
+        return;
+      }
+      router.push('/publish/ask');
+      return;
+    }
+    showToast(COMING_SOON_MESSAGE);
   };
 
   return (

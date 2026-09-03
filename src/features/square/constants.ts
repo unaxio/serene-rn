@@ -1,4 +1,4 @@
-import type { SquareSubTabId } from './types';
+import type { AskAnswerSort, ShareVisibleRange, SquareSubTabId } from './types';
 
 export const SQUARE_PAGE_SIZE = 20;
 
@@ -82,6 +82,150 @@ export const STORY_TITLE_MAX_LENGTH = 60;
 
 export const STORY_CONTENT_MAX_LENGTH = 2000;
 
+export const SHARE_CONTENT_MAX_LENGTH = 500;
+
+export const SHARE_IMAGE_MAX_COUNT = 9;
+
+export const SHARE_AVATAR_SIZE = 50;
+
+export const SHARE_SIDEBAR_WIDTH = 64;
+
+export const SHARE_COMPACT_COMMENT_COUNT = 2;
+
+export const DEFAULT_AUTHOR_LEVEL = 1;
+
+export const SHARE_DEFAULT_VISIBLE_RANGE: ShareVisibleRange = 'public';
+
+export const SHARE_LIST_BG = '#FFFFFF';
+
+export const SHARE_ITEM_PADDING_H = 16;
+
+export const SHARE_ITEM_PADDING_V = 14;
+
+export const SHARE_BODY_GAP = 8;
+
+export const SHARE_IMAGE_GAP = 4;
+
+export const SHARE_IMAGE_RADIUS = 6;
+
+export const SHARE_SINGLE_IMAGE_MAX_HEIGHT = 220;
+
+export const SHARE_FOUR_IMAGE_COUNT = 4;
+
+export const SHARE_FOUR_GRID_COLUMNS = 2;
+
+export const SHARE_PREVIEW_BG = '#0F172A';
+
+export const SHARE_DEFAULT_GRID_COLUMNS = 3;
+
+export const SHARE_DIVIDER_WIDTH = 1;
+
+export const SHARE_NAME_ROW_GAP = 6;
+
+export const SHARE_UPLOAD_GRID_GAP = 8;
+
+export const SHARE_UPLOAD_THUMB_SIZE = 88;
+
+export const SHARE_LIST_END_REACHED_THRESHOLD = 0.4;
+
+export const SHARE_CONTENT_MIN_HEIGHT = 120;
+
+export const SHARE_ACTION_LIKE_LABEL = '点赞';
+
+export const SHARE_ACTION_COMMENT_LABEL = '评论';
+
+export const SHARE_ACTION_FLOWER_LABEL = '送花';
+
+export const SHARE_EXPAND_COMMENTS_LABEL = '展开更多评论';
+
+export const SHARE_COLLAPSE_COMMENTS_LABEL = '收起评论';
+
+export const SHARE_LOAD_MORE_COMMENTS_LABEL = '加载更多评论';
+
+export const SHARE_PUBLISH_TITLE = '分享';
+
+export const SHARE_CONTENT_PLACEHOLDER = '分享这一刻…';
+
+export const SHARE_VISIBLE_RANGE_LABEL = '可见范围';
+
+export const SHARE_TOPIC_OPTIONAL_LABEL = '话题标签（选填）';
+
+export const SHARE_IMAGE_UPLOAD_LABEL = '添加图片';
+
+export const SHARE_IMAGE_PREVIEW_TITLE = '图片';
+
+export const SHARE_LIST_EMPTY_MESSAGE = '暂无分享';
+
+export const ASK_TITLE_MAX_LENGTH = 100;
+
+export const ASK_CONTENT_MAX_LENGTH = 2000;
+
+export const ASK_ANSWER_MAX_LENGTH = 2000;
+
+export const ASK_CONTENT_MIN_HEIGHT = 120;
+
+export const ASK_ANSWER_MIN_HEIGHT = 180;
+
+export const ASK_REPLY_EXPAND_COUNT = 5;
+
+export const ASK_STICKY_SLACK = 12;
+
+export const ASK_GO_ANSWER_LABEL = '去回答';
+
+export const ASK_INVITE_LABEL = '邀请回答';
+
+export const ASK_PUBLISH_TITLE = '提问';
+
+export const ASK_ANSWER_PUBLISH_TITLE = '写回答';
+
+export const ASK_LIST_EMPTY_MESSAGE = '暂无问答';
+
+export const ASK_SORT_HOT_LABEL = '最热';
+
+export const ASK_SORT_LATEST_LABEL = '最新';
+
+export const ASK_DEFAULT_SORT: AskAnswerSort = 'hot';
+
+export const ASK_SORT_OPTIONS: { id: AskAnswerSort; label: string }[] = [
+  { id: 'hot', label: ASK_SORT_HOT_LABEL },
+  { id: 'latest', label: ASK_SORT_LATEST_LABEL },
+];
+
+export const ASK_INVITE_TITLE = '邀请回答';
+
+export const ASK_INVITE_EMPTY = '暂无可邀请的好友';
+
+export const ASK_INVITE_PENDING = '邀请功能即将上线';
+
+export const ASK_ANSWER_EMPTY = '暂无回答，来写第一条吧';
+
+export const ASK_COLLECT_LABEL = '收藏';
+
+export const ASK_SHARE_LABEL = '分享';
+
+export const ASK_ANSWER_SUBMIT_LABEL = '提交';
+
+export const ASK_COMMENT_PREVIEW_INDENT = 46;
+
+export const ASK_SUMMARY_EMPTY = '暂无回答';
+
+export const ASK_VIEW_ALL_REPLIES_LABEL = '查看全部回复';
+
+export const ASK_LIST_END_REACHED_THRESHOLD = 0.4;
+
+export const ASK_ANSWERER_AVATAR_SIZE = 28;
+
+export const ASK_CARD_PADDING = 12;
+
+export const SHARE_VISIBLE_RANGE_OPTIONS: {
+  id: ShareVisibleRange;
+  label: string;
+}[] = [
+  { id: 'public', label: '公开' },
+  { id: 'friends', label: '好友可见' },
+  { id: 'private', label: '仅自己' },
+];
+
 export const STORY_TOPIC_TABS = [
   { id: ALL_TOPIC_CATEGORY, name: '全部' },
   { id: '婚恋', name: '婚恋' },
@@ -117,4 +261,9 @@ export const SQUARE_QUERY_KEYS = {
     ['square', 'commentReplies', rootId] as const,
   giftFlowerInventory: ['square', 'giftFlowerInventory'] as const,
   giftFlowerCatalog: ['square', 'giftFlowers'] as const,
+  shares: ['square', 'shares'] as const,
+  asks: ['square', 'asks'] as const,
+  askDetail: (id: string) => ['square', 'ask', id] as const,
+  askAnswers: (id: string, sort: string) =>
+    ['square', 'askAnswers', id, sort] as const,
 };

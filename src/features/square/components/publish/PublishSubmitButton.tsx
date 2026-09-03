@@ -10,15 +10,18 @@ interface PublishSubmitButtonProps {
   enabled: boolean;
   isSubmitting: boolean;
   onPress: () => void;
+  label?: string;
 }
 
 const BUTTON_HEIGHT = 44;
 const BUTTON_RADIUS = BUTTON_HEIGHT / 2;
+const DEFAULT_LABEL = '发布';
 
 export function PublishSubmitButton({
   enabled,
   isSubmitting,
   onPress,
+  label = DEFAULT_LABEL,
 }: PublishSubmitButtonProps) {
   const canPress = enabled && !isSubmitting;
 
@@ -34,7 +37,7 @@ export function PublishSubmitButton({
           {isSubmitting ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text style={styles.text}>发布</Text>
+            <Text style={styles.text}>{label}</Text>
           )}
         </LinearGradient>
       </View>

@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ComingSoonPane } from '@/src/features/square/components/ComingSoonPane';
+import { AskList } from '@/src/features/square/components/AskList';
 import { PublishEntryMenu } from '@/src/features/square/components/PublishEntryMenu';
+import { ShareList } from '@/src/features/square/components/ShareList';
 import { SquareHeader } from '@/src/features/square/components/SquareHeader';
 import { SquareSearchBar } from '@/src/features/square/components/SquareSearchBar';
 import { SquareSubTabs } from '@/src/features/square/components/SquareSubTabs';
@@ -24,10 +25,10 @@ export function SquareScreen() {
         <StoryList />
       </View>
       <View style={[styles.pane, activeTab !== 'share' && styles.hidden]}>
-        <ComingSoonPane message="分享即将上线" />
+        <ShareList />
       </View>
       <View style={[styles.pane, activeTab !== 'ask' && styles.hidden]}>
-        <ComingSoonPane message="问答即将上线" />
+        <AskList />
       </View>
       <PublishEntryMenu
         visible={publishVisible}
