@@ -33,7 +33,10 @@ export function StoryDetailLoaded({ storyId, story }: StoryDetailLoadedProps) {
 
   const handleFlowerComment = useCallback(
     (comment: SquareComment) => {
-      flow.openFlowerModal({ targetType: 'comment', targetId: comment.id });
+      flow.openFlowerModal(
+        { targetType: 'comment', targetId: comment.id },
+        comment.author.id,
+      );
     },
     [flow],
   );
@@ -78,7 +81,12 @@ export function StoryDetailLoaded({ storyId, story }: StoryDetailLoadedProps) {
           isCollected={story.isCollected}
           onResonate={() => handleStoryToggle('resonate')}
           onCollect={() => handleStoryToggle('collect')}
-          onFlower={() => flow.openFlowerModal({ targetType: 'story', targetId: storyId })}
+          onFlower={() =>
+            flow.openFlowerModal(
+              { targetType: 'story', targetId: storyId },
+              story.author.id,
+            )
+          }
           onComment={flow.handleCommentIcon}
           onShare={() => showToast(COMING_SOON_MESSAGE)}
         />

@@ -27,7 +27,7 @@ import { resolveCdnUrl } from '@/src/utils/cdn';
 interface ShareItemProps {
   share: Share;
   onResonate: (shareId: string) => void;
-  onFlower: (shareId: string) => void;
+  onFlower: (share: Share) => void;
   onPreviewImages: (uris: string[], index: number) => void;
 }
 
@@ -78,7 +78,7 @@ function ShareItemInner({
             setShowComposer(true);
             setExpanded(true);
           }}
-          onFlower={() => onFlower(share.id)}
+          onFlower={() => onFlower(share)}
         />
         <ShareCompactComments
           shareId={share.id}

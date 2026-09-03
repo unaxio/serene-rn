@@ -49,14 +49,22 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
         onCollect={(id) => {
           void flow.runAction({ targetType: 'ask_answer', targetId: id, actionType: 'collect' });
         }}
-        onFlower={(id) => flow.openFlower({ targetType: 'ask_answer', targetId: id })}
+        onFlower={(answer) =>
+          flow.openFlower(
+            { targetType: 'ask_answer', targetId: answer.id },
+            answer.author.id,
+          )
+        }
         onComment={(answer) => flow.openComments(answer)}
         onShare={() => showToast(COMING_SOON_MESSAGE)}
         onReplyComment={(answer, comment) => flow.openComments(answer, comment)}
         onViewReplies={(answer, comment) => flow.openReplyPanel(answer, comment)}
         onResonateComment={flow.resonateComment}
         onFlowerComment={(comment: SquareComment) => {
-          flow.openFlower({ targetType: 'comment', targetId: comment.id });
+          flow.openFlower(
+            { targetType: 'comment', targetId: comment.id },
+            comment.author.id,
+          );
         }}
       />
     ),

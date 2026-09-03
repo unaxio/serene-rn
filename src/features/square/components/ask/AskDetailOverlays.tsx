@@ -30,7 +30,10 @@ export function AskDetailOverlays({ flow }: AskDetailOverlaysProps) {
         enableFlower
         initialReplyTo={sheet?.replyTo ?? null}
         onFlower={(comment: SquareComment) => {
-          flow.openFlower({ targetType: 'comment', targetId: comment.id });
+          flow.openFlower(
+            { targetType: 'comment', targetId: comment.id },
+            comment.author.id,
+          );
         }}
       />
       {sheet?.root ? (
@@ -41,7 +44,12 @@ export function AskDetailOverlays({ flow }: AskDetailOverlaysProps) {
           enableFlower
           onClose={() => flow.setCommentSheet(null)}
           onResonate={flow.resonateComment}
-          onFlower={(comment) => flow.openFlower({ targetType: 'comment', targetId: comment.id })}
+          onFlower={(comment) =>
+            flow.openFlower(
+              { targetType: 'comment', targetId: comment.id },
+              comment.author.id,
+            )
+          }
           onSubmitReply={async (parentId, content) => {
             const result = await sheetComments.submitReply(sheet.root?.id ?? parentId, parentId, content);
             return Boolean(result);

@@ -18,7 +18,7 @@ interface AskAnswerItemProps {
   answer: AskAnswer;
   onResonate: (answerId: string) => void;
   onCollect: (answerId: string) => void;
-  onFlower: (answerId: string) => void;
+  onFlower: (answer: AskAnswer) => void;
   onComment: (answer: AskAnswer) => void;
   onShare: () => void;
   onReplyComment: (answer: AskAnswer, comment: SquareComment) => void;
@@ -60,7 +60,7 @@ function AskAnswerItemInner({
         answer={answer}
         onResonate={() => onResonate(answer.id)}
         onCollect={() => onCollect(answer.id)}
-        onFlower={() => onFlower(answer.id)}
+        onFlower={() => onFlower(answer)}
         onComment={() => onComment(answer)}
         onShare={onShare}
       />

@@ -12,6 +12,7 @@ import {
   SHARE_LIST_EMPTY_MESSAGE,
   SHARE_LIST_END_REACHED_THRESHOLD,
 } from '@/src/features/square/constants';
+import { useGuardSendFlower } from '@/src/features/square/hooks/useGuardSendFlower';
 import { useShares } from '@/src/features/square/hooks/useShares';
 import { useSquareAction } from '@/src/features/square/hooks/useSquareAction';
 import type { Share } from '@/src/features/square/types';
@@ -25,6 +26,7 @@ export function ShareList() {
   const { items, isLoading, isError, isRefreshing, isFetchingMore, loadMore, refresh, refetch } =
     useShares();
   const { runAction, isPending } = useSquareAction();
+  const canSendFlower = useGuardSendFlower();
   const [flowerShareId, setFlowerShareId] = useState<string | null>(null);
   const [preview, setPreview] = useState<ImagePreviewState | null>(null);
 
@@ -56,6 +58,16 @@ export function ShareList() {
     [flowerShareId, runAction],
   );
 
+  const handleFlower = useCallback(
+    (share: Share) => {
+      if (!canSendFlower(share.author.id)) {
+        return;
+      }
+      setFlowerShareId(share.id);
+    },
+    [canSendFlower],
+  );
+
   const handlePreviewImages = useCallback((uris: string[], index: number) => {
     setPreview({ uris, index });
   }, []);
@@ -65,11 +77,11 @@ export function ShareList() {
       <ShareItem
         share={item}
         onResonate={handleResonate}
-        onFlower={setFlowerShareId}
+        onFlower={handleFlower}
         onPreviewImages={handlePreviewImages}
       />
     ),
-    [handlePreviewImages, handleResonate],
+    [handleFlower, handlePreviewImages, handleResonate],
   );
 
   const listEmpty = (() => {

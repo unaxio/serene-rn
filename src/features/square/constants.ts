@@ -30,6 +30,8 @@ export const GIFT_FLOWER_RECEIVED_HINT = '获赠的花不可转赠';
 
 export const GIFT_FLOWER_SEND_SUCCESS = '赠送成功';
 
+export const SEND_FLOWER_TO_SELF_MESSAGE = '不能给自己送花';
+
 export const GIFT_FLOWER_PURCHASE_SUCCESS = '购买成功';
 
 export const TOP_REPLIES_PREVIEW_COUNT = 2;
