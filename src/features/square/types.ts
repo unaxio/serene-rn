@@ -8,6 +8,7 @@ export interface SquareAuthor {
   id: string | null;
   nickName: string;
   avatarUrl: string;
+  level?: string | number | null;
 }
 
 export interface SquarePagedData<T> {
@@ -23,6 +24,7 @@ export interface Story {
   content: string;
   summary: string;
   topicTag: string | null;
+  tags: string[];
   coverImagePath: string | null;
   author: SquareAuthor;
   resonateCount: number;

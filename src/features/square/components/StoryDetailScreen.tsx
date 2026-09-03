@@ -1,7 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CommentSection } from '@/src/features/square/components/comments/CommentSection';
 import { SendFlowerModal } from '@/src/features/square/components/SendFlowerModal';
@@ -72,10 +71,8 @@ export function StoryDetailScreen({ storyId }: StoryDetailScreenProps) {
 
   return (
     <View style={styles.root}>
-      <SafeAreaView style={styles.safe} edges={['top']}>
-        <StoryDetailHeader onBack={() => router.back()} />
-        {body}
-      </SafeAreaView>
+      <StoryDetailHeader onBack={() => router.back()} />
+      <View style={styles.body}>{body}</View>
       {story ? (
         <StoryActionBar
           resonateCount={story.resonateCount}
@@ -114,7 +111,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: SQUARE_PAGE_BG,
   },
-  safe: {
+  body: {
     flex: 1,
   },
   status: {

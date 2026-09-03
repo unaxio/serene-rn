@@ -14,8 +14,9 @@ interface StoryCategoryTabsProps {
 }
 
 const INDICATOR_HEIGHT = 2;
-const TAB_GAP = 20;
-const TAB_VERTICAL_PADDING = 8;
+const TAB_GAP = 24;
+const TAB_VERTICAL_PADDING = 14;
+const TAB_FONT_SIZE = 15;
 
 function StoryCategoryTabsComponent({ selectedId, onSelect }: StoryCategoryTabsProps) {
   const handleSelect = useCallback(
@@ -63,15 +64,18 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 4,
     gap: TAB_GAP,
     alignItems: 'flex-end',
   },
   tab: {
     alignItems: 'center',
     paddingTop: TAB_VERTICAL_PADDING,
+    paddingBottom: 4,
   },
   tabText: {
-    fontSize: 14,
+    fontSize: TAB_FONT_SIZE,
     fontWeight: '500',
     color: MUTED_TEXT_COLOR,
   },
@@ -80,7 +84,7 @@ const styles = StyleSheet.create({
     color: APP_TEXT_COLOR,
   },
   indicator: {
-    marginTop: 6,
+    marginTop: 8,
     height: INDICATOR_HEIGHT,
     alignSelf: 'stretch',
     backgroundColor: 'transparent',

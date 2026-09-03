@@ -139,9 +139,10 @@ export async function getCommentReplies(rootId: string): Promise<SquareComment[]
 export async function toggleSquareAction(
   payload: SquareActionPayload,
 ): Promise<ToggleActionResponse> {
+  const { actionType, ...body } = payload;
   const response = await request.post<
     ToggleActionResponse | ApiEnvelope<ToggleActionResponse>
-  >(API_PATHS.SQUARE_ACTIONS, payload);
+  >(`${API_PATHS.SQUARE_ACTIONS}/${actionType}`, body);
   return unwrapResponse(response, '操作失败');
 }
 

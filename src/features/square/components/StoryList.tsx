@@ -1,9 +1,10 @@
-import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -15,11 +16,15 @@ import {
   ACCENT_COLOR,
   ALL_TOPIC_CATEGORY,
   MUTED_TEXT_COLOR,
+  SQUARE_PAGE_BG,
+  STORY_LIST_COLUMN_GAP,
+  STORY_LIST_HORIZONTAL_PADDING,
 } from '@/src/features/square/constants';
 import { useStories } from '@/src/features/square/hooks/useStories';
+import { useStoryMasonryColumns } from '@/src/features/square/hooks/useStoryMasonryColumns';
 import type { Story } from '@/src/features/square/types';
 
-const END_REACHED_THRESHOLD = 0.4;
+const LOAD_MORE_OFFSET = 240;
 
 function ListStatus({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
@@ -47,6 +52,7 @@ export function StoryList() {
     refresh,
     refetch,
   } = useStories(category);
+  const columns = useStoryMasonryColumns(items);
 
   const handlePress = useCallback(
     (storyId: string) => {
@@ -55,9 +61,13 @@ export function StoryList() {
     [router],
   );
 
-  const renderItem = useCallback(
-    ({ item }: { item: Story }) => <StoryCard story={item} onPress={handlePress} />,
-    [handlePress],
+  const handleScroll = useCallback(
+    (offsetY: number, viewportHeight: number, contentHeight: number) => {
+      if (offsetY + viewportHeight >= contentHeight - LOAD_MORE_OFFSET) {
+        loadMore();
+      }
+    },
+    [loadMore],
   );
 
   const listEmpty = (() => {
@@ -73,25 +83,39 @@ export function StoryList() {
   return (
     <View style={styles.root}>
       <StoryCategoryTabs selectedId={category} onSelect={setCategory} />
-      <FlashList
-        data={items}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        onEndReached={loadMore}
-        onEndReachedThreshold={END_REACHED_THRESHOLD}
-        refreshing={isRefreshing}
-        onRefresh={() => {
-          void refresh();
-        }}
-        ListEmptyComponent={listEmpty}
-        ListFooterComponent={
-          isFetchingMore ? (
-            <ActivityIndicator style={styles.footer} color={ACCENT_COLOR} />
-          ) : null
-        }
+      <ScrollView
         style={styles.list}
         contentContainerStyle={styles.listContent}
-      />
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            tintColor={ACCENT_COLOR}
+            onRefresh={() => {
+              void refresh();
+            }}
+          />
+        }
+        onScroll={(event) => {
+          const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
+          handleScroll(contentOffset.y, layoutMeasurement.height, contentSize.height);
+        }}
+        scrollEventThrottle={16}>
+        {items.length === 0 ? (
+          listEmpty
+        ) : (
+          <View style={styles.masonry}>
+            {columns.map((column, columnIndex) => (
+              <View key={`col-${columnIndex}`} style={styles.column}>
+                {column.map((story: Story) => (
+                  <StoryCard key={story.id} story={story} onPress={handlePress} />
+                ))}
+              </View>
+            ))}
+          </View>
+        )}
+        {isFetchingMore ? <ActivityIndicator style={styles.footer} color={ACCENT_COLOR} /> : null}
+      </ScrollView>
     </View>
   );
 }
@@ -102,10 +126,22 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
+    backgroundColor: SQUARE_PAGE_BG,
   },
   listContent: {
-    paddingTop: 4,
+    paddingHorizontal: STORY_LIST_HORIZONTAL_PADDING,
+    paddingTop: 8,
     paddingBottom: 24,
+    flexGrow: 1,
+  },
+  masonry: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: STORY_LIST_COLUMN_GAP,
+  },
+  column: {
+    flex: 1,
+    gap: STORY_LIST_COLUMN_GAP,
   },
   status: {
     paddingVertical: 48,

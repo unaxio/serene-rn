@@ -14,6 +14,7 @@ export interface StoryRaw {
   content?: string;
   summary?: string;
   topicTag?: string | null;
+  tags?: string[] | null;
   coverImagePath?: string | null;
   coverImage?: string | null;
   author?: SquareAuthor | null;
@@ -53,7 +54,17 @@ export function normalizeAuthor(raw: SquareAuthor | null | undefined): SquareAut
     id: raw?.id ?? null,
     nickName: raw?.nickName ?? '',
     avatarUrl: raw?.avatarUrl ?? '',
+    level: raw?.level ?? null,
   };
+}
+
+function resolveStoryTags(raw: StoryRaw): string[] {
+  const fromList = (raw.tags ?? []).map((tag) => tag.trim()).filter((tag) => tag.length > 0);
+  if (fromList.length > 0) {
+    return fromList;
+  }
+  const topic = raw.topicTag?.trim();
+  return topic ? [topic] : [];
 }
 
 export function normalizeStory(raw: StoryRaw): Story {
@@ -64,6 +75,7 @@ export function normalizeStory(raw: StoryRaw): Story {
     content,
     summary: resolveStorySummary(raw.summary, content),
     topicTag: raw.topicTag ?? null,
+    tags: resolveStoryTags(raw),
     coverImagePath: raw.coverImagePath ?? raw.coverImage ?? null,
     author: normalizeAuthor(raw.author),
     resonateCount: raw.resonateCount ?? 0,

@@ -16,14 +16,14 @@ export function TopicTag({ label }: TopicTagProps) {
 
 const styles = StyleSheet.create({
   tag: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 999,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4,
     backgroundColor: '#EFEDFD',
     alignSelf: 'flex-start',
   },
   text: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '600',
     color: ACCENT_COLOR,
   },

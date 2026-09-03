@@ -30,6 +30,14 @@ export const ACCENT_COLOR = '#7B6CF9';
 
 export const COMMENT_HIGHLIGHT_COLOR = '#6F72F1';
 
+export const STORY_LIST_MIN_COLUMNS = 2;
+
+export const STORY_LIST_MIN_COLUMN_WIDTH = 300;
+
+export const STORY_LIST_COLUMN_GAP = 8;
+
+export const STORY_LIST_HORIZONTAL_PADDING = 12;
+
 export const STORY_TITLE_MAX_LENGTH = 60;
 
 export const STORY_CONTENT_MAX_LENGTH = 2000;
