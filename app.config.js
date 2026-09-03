@@ -43,6 +43,13 @@ const config = {
     ],
     'expo-image',
     'expo-secure-store',
+    [
+      'expo-image-picker',
+      {
+        photosPermission: '需要访问相册以上传封面',
+        cameraPermission: '需要使用相机以上传封面',
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,

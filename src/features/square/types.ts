@@ -74,7 +74,16 @@ export interface CreateCommentResponse {
 }
 
 export interface UploadSquareImageResponse {
-  imagePath: string;
+  relativePath: string;
+}
+
+export interface CreateStoryPayload {
+  title: string;
+  content: string;
+  topicTag: string;
+  coverImage?: string;
+  isAnonymous: boolean;
+  isDraft: boolean;
 }
 
 export interface GetStoriesParams {

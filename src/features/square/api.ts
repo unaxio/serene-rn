@@ -6,6 +6,7 @@ import type {
   CreateCommentPayload,
   CreateCommentResponse,
   CreateReplyPayload,
+  CreateStoryPayload,
   GetCommentsParams,
   GetStoriesParams,
   SquareActionPayload,
@@ -82,6 +83,14 @@ export async function getStoryDetail(id: string): Promise<Story> {
   return normalizeStory(unwrapResponse(response, '获取故事详情失败'));
 }
 
+export async function createStory(payload: CreateStoryPayload): Promise<Story> {
+  const response = await request.post<StoryRaw | ApiEnvelope<StoryRaw>>(
+    API_PATHS.SQUARE_STORIES,
+    payload,
+  );
+  return normalizeStory(unwrapResponse(response, '发布故事失败'));
+}
+
 export async function getComments(
   params: GetCommentsParams,
 ): Promise<SquarePagedData<SquareComment>> {
@@ -136,19 +145,39 @@ export async function toggleSquareAction(
   return unwrapResponse(response, '操作失败');
 }
 
+function resolveUploadRelativePath(data: UploadSquareImageResponse & {
+  imagePath?: string;
+  coverImagePath?: string;
+  path?: string;
+}): string {
+  return data.relativePath || data.imagePath || data.coverImagePath || data.path || '';
+}
+
 export async function uploadSquareImage(
   file: { uri: string; name: string; type: string },
 ): Promise<UploadSquareImageResponse> {
   const formData = new FormData();
-  formData.append('file', {
-    uri: file.uri,
-    name: file.name,
-    type: file.type,
-  } as unknown as Blob);
+  if (typeof Blob !== 'undefined' && file.uri.startsWith('blob:')) {
+    const blobResponse = await fetch(file.uri);
+    const blob = await blobResponse.blob();
+    formData.append('file', blob, file.name);
+  } else {
+    formData.append('file', {
+      uri: file.uri,
+      name: file.name,
+      type: file.type,
+    } as unknown as Blob);
+  }
   const response = await request.post<
-    UploadSquareImageResponse | ApiEnvelope<UploadSquareImageResponse>
+    | UploadSquareImageResponse
+    | ApiEnvelope<UploadSquareImageResponse>
   >(API_PATHS.SQUARE_IMAGE_UPLOAD, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
-  return unwrapResponse(response, '上传图片失败');
+  const data = unwrapResponse(response, '上传图片失败');
+  const relativePath = resolveUploadRelativePath(data);
+  if (!relativePath) {
+    throw new Error('上传成功但未返回图片路径');
+  }
+  return { relativePath };
 }

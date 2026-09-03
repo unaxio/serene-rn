@@ -30,6 +30,10 @@ export const ACCENT_COLOR = '#7B6CF9';
 
 export const COMMENT_HIGHLIGHT_COLOR = '#6F72F1';
 
+export const STORY_TITLE_MAX_LENGTH = 60;
+
+export const STORY_CONTENT_MAX_LENGTH = 2000;
+
 export const STORY_TOPIC_TABS = [
   { id: ALL_TOPIC_CATEGORY, name: '全部' },
   { id: '婚恋', name: '婚恋' },
@@ -40,6 +44,10 @@ export const STORY_TOPIC_TABS = [
   { id: '家庭', name: '家庭' },
 ] as const;
 
+export const STORY_TOPIC_OPTIONS = STORY_TOPIC_TABS.filter(
+  (tab) => tab.id !== ALL_TOPIC_CATEGORY,
+);
+
 export const SQUARE_SUB_TABS: { id: SquareSubTabId; label: string }[] = [
   { id: 'story', label: '故事' },
   { id: 'share', label: '分享' },
@@ -47,8 +55,8 @@ export const SQUARE_SUB_TABS: { id: SquareSubTabId; label: string }[] = [
 ];
 
 export const PUBLISH_MENU_ITEMS = [
-  { id: 'share', label: '分享' },
   { id: 'story', label: '投稿' },
+  { id: 'share', label: '分享' },
   { id: 'ask', label: '提问' },
 ] as const;
 

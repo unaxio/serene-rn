@@ -1,8 +1,10 @@
+import { useRouter } from 'expo-router';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { COMING_SOON_MESSAGE, PUBLISH_MENU_ITEMS } from '@/src/features/square/constants';
+import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import { showToast } from '@/src/utils/toast';
 
 interface PublishEntryMenuProps {
@@ -11,13 +13,23 @@ interface PublishEntryMenuProps {
 }
 
 const MENU_TOP_OFFSET = 56;
+const STORY_PUBLISH_ITEM_ID = 'story';
 
 export function PublishEntryMenu({ visible, onClose }: PublishEntryMenuProps) {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const requireAuth = useRequireAuth();
 
-  const handleSelect = () => {
+  const handleSelect = (id: string) => {
     onClose();
-    showToast(COMING_SOON_MESSAGE);
+    if (id !== STORY_PUBLISH_ITEM_ID) {
+      showToast(COMING_SOON_MESSAGE);
+      return;
+    }
+    if (!requireAuth()) {
+      return;
+    }
+    router.push('/publish/story');
   };
 
   return (
@@ -28,7 +40,7 @@ export function PublishEntryMenu({ visible, onClose }: PublishEntryMenuProps) {
             <Pressable
               key={item.id}
               style={styles.item}
-              onPress={handleSelect}>
+              onPress={() => handleSelect(item.id)}>
               <Text style={styles.itemText}>{item.label}</Text>
             </Pressable>
           ))}
