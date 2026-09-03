@@ -1,8 +1,9 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { FlowerQuantityStepper } from '@/src/features/square/components/FlowerQuantityStepper';
 import { GiftFlowerGrid } from '@/src/features/square/components/giftFlower/GiftFlowerGrid';
+import { GiftFlowerItemScroller } from '@/src/features/square/components/giftFlower/GiftFlowerItemScroller';
 import { GiftFlowerPaneStatus } from '@/src/features/square/components/giftFlower/GiftFlowerPaneStatus';
 import { GiftFlowerPrimaryButton } from '@/src/features/square/components/giftFlower/GiftFlowerPrimaryButton';
 import { GiftFlowerTile } from '@/src/features/square/components/giftFlower/GiftFlowerTile';
@@ -11,7 +12,6 @@ import {
   FLOWER_QUANTITY_MAX,
   FLOWER_QUANTITY_MIN,
   GIFT_FLOWER_COIN_LABEL,
-  GIFT_FLOWER_GRID_MAX_HEIGHT,
   GIFT_FLOWER_PURCHASE_ACTION,
   MUTED_TEXT_COLOR,
 } from '@/src/features/square/constants';
@@ -52,10 +52,7 @@ export function GiftFlowerShopPane({
 
   return (
     <View style={styles.root}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scroll}
-        keyboardShouldPersistTaps="handled">
+      <GiftFlowerItemScroller>
         <GiftFlowerPaneStatus
           isLoading={isLoading}
           isError={isError}
@@ -78,7 +75,7 @@ export function GiftFlowerShopPane({
             ))}
           </GiftFlowerGrid>
         ) : null}
-      </ScrollView>
+      </GiftFlowerItemScroller>
       {selected ? (
         <View style={styles.footer}>
           <Text style={styles.selectedName}>{selected.name}</Text>
@@ -106,12 +103,6 @@ export function GiftFlowerShopPane({
 const styles = StyleSheet.create({
   root: {
     flexShrink: 1,
-  },
-  scrollView: {
-    maxHeight: GIFT_FLOWER_GRID_MAX_HEIGHT,
-  },
-  scroll: {
-    paddingBottom: 8,
   },
   footer: {
     gap: 12,

@@ -32,7 +32,7 @@ export function useSendFlowerModal(visible: boolean) {
   );
 
   useEffect(() => {
-    if (visible) {
+    if (!visible) {
       return;
     }
     setPane('inventory');
