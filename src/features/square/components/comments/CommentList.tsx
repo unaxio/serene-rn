@@ -1,20 +1,33 @@
 import { FlashList } from '@shopify/flash-list';
-import { useCallback } from 'react';
+import { useCallback, type Ref } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
-import { CommentComposer } from '@/src/features/square/components/comments/CommentComposer';
+import {
+  CommentComposer,
+  type CommentComposerHandle,
+} from '@/src/features/square/components/comments/CommentComposer';
 import { CommentItem } from '@/src/features/square/components/comments/CommentItem';
-import { ACCENT_COLOR, MUTED_TEXT_COLOR } from '@/src/features/square/constants';
+import {
+  ACCENT_COLOR,
+  COMMENT_COMPOSER_PLACEHOLDER,
+  MUTED_TEXT_COLOR,
+} from '@/src/features/square/constants';
 import type { useComments } from '@/src/features/square/hooks/useComments';
 import type { SquareComment } from '@/src/features/square/types';
+import { getReplyPlaceholder } from '@/src/features/square/utils/displayAuthor';
 
 interface CommentListProps {
   comments: ReturnType<typeof useComments>;
   enableCollect: boolean;
+  enableFlower: boolean;
+  replyTo: SquareComment | null;
+  composerRef?: Ref<CommentComposerHandle>;
   onCreate: (content: string) => Promise<boolean>;
-  onOpenReplies: (comment: SquareComment) => void;
+  onReply: (comment: SquareComment) => void;
+  onViewReplies: (comment: SquareComment) => void;
   onResonate: (comment: SquareComment) => void;
   onCollect: (comment: SquareComment) => void;
+  onFlower?: (comment: SquareComment) => void;
 }
 
 const END_REACHED_THRESHOLD = 0.4;
@@ -22,24 +35,35 @@ const END_REACHED_THRESHOLD = 0.4;
 export function CommentList({
   comments,
   enableCollect,
+  enableFlower,
+  replyTo,
+  composerRef,
   onCreate,
-  onOpenReplies,
+  onReply,
+  onViewReplies,
   onResonate,
   onCollect,
+  onFlower,
 }: CommentListProps) {
   const renderItem = useCallback(
     ({ item }: { item: SquareComment }) => (
       <CommentItem
         comment={item}
         enableCollect={enableCollect}
+        enableFlower={enableFlower}
         onResonate={onResonate}
         onCollect={onCollect}
-        onReply={onOpenReplies}
-        onViewReplies={onOpenReplies}
+        onFlower={onFlower}
+        onReply={onReply}
+        onViewReplies={onViewReplies}
       />
     ),
-    [enableCollect, onCollect, onOpenReplies, onResonate],
+    [enableCollect, enableFlower, onCollect, onFlower, onReply, onResonate, onViewReplies],
   );
+
+  const placeholder = replyTo
+    ? getReplyPlaceholder(replyTo.author)
+    : COMMENT_COMPOSER_PLACEHOLDER;
 
   return (
     <View style={styles.root}>
@@ -58,7 +82,8 @@ export function CommentList({
         }
       />
       <CommentComposer
-        placeholder="说点什么…"
+        ref={composerRef}
+        placeholder={placeholder}
         isSubmitting={comments.isSubmitting}
         onSubmit={onCreate}
       />

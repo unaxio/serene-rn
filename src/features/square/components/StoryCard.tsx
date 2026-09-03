@@ -16,7 +16,7 @@ interface StoryCardProps {
   onPress: (storyId: string) => void;
 }
 
-const AVATAR_SIZE = 28;
+const AVATAR_SIZE = 36;
 const TITLE_MAX_LINES = 2;
 const BODY_MAX_LINES = 3;
 const COVER_ASPECT_RATIO = 3 / 1;
@@ -79,13 +79,14 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: 8,
   },
   headerText: {
     flex: 1,
     gap: 4,
     minWidth: 0,
+    justifyContent: 'center',
   },
   nameRow: {
     flexDirection: 'row',
@@ -95,6 +96,7 @@ const styles = StyleSheet.create({
   authorName: {
     flexShrink: 1,
     fontSize: 12,
+    lineHeight: 16,
     fontWeight: '600',
     color: APP_TEXT_COLOR,
   },

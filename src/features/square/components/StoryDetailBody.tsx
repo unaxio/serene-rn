@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { SquareUserAvatar } from '@/src/features/square/components/SquareUserAvatar';
@@ -20,7 +20,7 @@ export function StoryDetailBody({ story }: StoryDetailBodyProps) {
   const coverUri = resolveCdnUrl(story.coverImagePath);
 
   return (
-    <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <View style={styles.content}>
       <Text style={styles.title}>{story.title}</Text>
       <View style={styles.authorRow}>
         <SquareUserAvatar author={story.author} size={36} />
@@ -34,14 +34,14 @@ export function StoryDetailBody({ story }: StoryDetailBodyProps) {
         <Image source={{ uri: coverUri }} style={styles.cover} contentFit="cover" />
       ) : null}
       <Text style={styles.body}>{story.content}</Text>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
-    paddingBottom: 32,
+    paddingBottom: 24,
     gap: 14,
   },
   title: {

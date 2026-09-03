@@ -120,6 +120,8 @@ export function useComments({ targetType, targetId, enabled }: UseCommentsParams
     total,
     isLoading: query.isLoading,
     isError: query.isError,
+    isFetchingNextPage: query.isFetchingNextPage,
+    hasNextPage: Boolean(query.hasNextPage),
     isSubmitting: createMutation.isPending || replyMutation.isPending,
     loadMore,
     refresh: query.refetch,

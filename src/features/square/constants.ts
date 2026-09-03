@@ -10,6 +10,20 @@ export const FLOWER_QUANTITY_MAX = 99;
 
 export const TOP_REPLIES_PREVIEW_COUNT = 2;
 
+export const COMMENT_LONG_PRESS_DELAY_MS = 350;
+
+export const COMMENT_SECTION_TITLE = '评论';
+
+export const COMMENTS_SCROLLED_SLACK = 80;
+
+export const COMMENT_LOAD_MORE_OFFSET = 160;
+
+export const COMPOSER_FOCUS_DELAY_MS = 80;
+
+export const COMPOSER_OPEN_GUARD_MS = 400;
+
+export const COMMENT_COMPOSER_PLACEHOLDER = '说点什么…';
+
 export const ANONYMOUS_DISPLAY_NAME = '匿名用户';
 
 export const ALL_TOPIC_CATEGORY = 'all';

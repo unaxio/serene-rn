@@ -5,7 +5,7 @@ import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { SquareUserAvatar } from '@/src/features/square/components/SquareUserAvatar';
 import { CommentActionButton } from '@/src/features/square/components/comments/CommentActionButton';
 import { CommentReplyPreviewBox } from '@/src/features/square/components/comments/CommentReplyPreviewBox';
-import { MUTED_TEXT_COLOR } from '@/src/features/square/constants';
+import { MUTED_TEXT_COLOR, COMMENT_LONG_PRESS_DELAY_MS } from '@/src/features/square/constants';
 import type { SquareComment } from '@/src/features/square/types';
 import { showCommentActionMenu } from '@/src/features/square/utils/commentActionMenu';
 import { getAuthorDisplayName } from '@/src/features/square/utils/displayAuthor';
@@ -14,22 +14,27 @@ import { formatRelativeTime } from '@/src/features/square/utils/formatRelativeTi
 interface CommentItemProps {
   comment: SquareComment;
   enableCollect?: boolean;
+  enableFlower?: boolean;
   parentReplyName?: string | null;
   onResonate: (comment: SquareComment) => void;
   onCollect?: (comment: SquareComment) => void;
+  onFlower?: (comment: SquareComment) => void;
   onReply: (comment: SquareComment) => void;
   onViewReplies?: (comment: SquareComment) => void;
 }
 
-const LONG_PRESS_DELAY_MS = 350;
 const AVATAR_SIZE = 36;
+const AVATAR_GAP = 10;
+const ACTION_LEFT_OFFSET = AVATAR_SIZE + AVATAR_GAP;
 
 function CommentItemComponent({
   comment,
   enableCollect = false,
+  enableFlower = false,
   parentReplyName,
   onResonate,
   onCollect,
+  onFlower,
   onReply,
   onViewReplies,
 }: CommentItemProps) {
@@ -38,17 +43,25 @@ function CommentItemComponent({
   }, [comment.content]);
 
   return (
-    <Pressable onLongPress={handleLongPress} delayLongPress={LONG_PRESS_DELAY_MS} style={styles.item}>
-      <SquareUserAvatar author={comment.author} size={AVATAR_SIZE} />
-      <View style={styles.body}>
-        <Text style={styles.name}>
-          {getAuthorDisplayName(comment.author)}
-          {parentReplyName ? (
-            <Text style={styles.replyHint}>  回复 @{parentReplyName}</Text>
-          ) : null}
-        </Text>
-        <Text style={styles.content}>{comment.content}</Text>
-        <Text style={styles.time}>{formatRelativeTime(comment.createdAt)}</Text>
+    <View style={styles.item}>
+      <Pressable
+        style={styles.header}
+        onPress={() => onReply(comment)}
+        onLongPress={handleLongPress}
+        delayLongPress={COMMENT_LONG_PRESS_DELAY_MS}>
+        <SquareUserAvatar author={comment.author} size={AVATAR_SIZE} />
+        <View style={styles.body}>
+          <Text style={styles.name}>
+            {getAuthorDisplayName(comment.author)}
+            {parentReplyName ? (
+              <Text style={styles.replyHint}> 回复 {parentReplyName}</Text>
+            ) : null}
+          </Text>
+          <Text style={styles.content}>{comment.content}</Text>
+          <Text style={styles.time}>{formatRelativeTime(comment.createdAt)}</Text>
+        </View>
+      </Pressable>
+      <View style={styles.footer}>
         <View style={styles.actions}>
           <CommentActionButton
             icon={{ ios: 'heart', android: 'favorite_border', web: 'favorite_border' }}
@@ -64,15 +77,22 @@ function CommentItemComponent({
               onPress={() => onCollect(comment)}
             />
           ) : null}
-          <CommentActionButton
-            icon={{ ios: 'arrowshape.turn.up.left', android: 'reply', web: 'reply' }}
-            label="回复"
-            onPress={() => onReply(comment)}
-          />
+          {enableFlower && onFlower ? (
+            <CommentActionButton
+              icon={{ ios: 'leaf', android: 'local_florist', web: 'local_florist' }}
+              label={String(comment.flowerCount)}
+              active={comment.isFlowered}
+              onPress={() => onFlower(comment)}
+            />
+          ) : null}
         </View>
-        <CommentReplyPreviewBox comment={comment} onViewReplies={onViewReplies} />
+        <CommentReplyPreviewBox
+          comment={comment}
+          onReply={onReply}
+          onViewReplies={onViewReplies}
+        />
       </View>
-    </Pressable>
+    </View>
   );
 }
 
@@ -80,13 +100,19 @@ export const CommentItem = memo(CommentItemComponent);
 
 const styles = StyleSheet.create({
   item: {
-    flexDirection: 'row',
-    gap: 10,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
+  header: {
+    flexDirection: 'row',
+    gap: AVATAR_GAP,
+  },
   body: {
     flex: 1,
+    gap: 4,
+  },
+  footer: {
+    marginLeft: ACTION_LEFT_OFFSET,
     gap: 4,
   },
   name: {

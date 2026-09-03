@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,72 +10,85 @@ import {
 } from '@/src/features/square/constants';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 
+export interface CommentComposerHandle {
+  focus: () => void;
+}
+
 interface CommentComposerProps {
   placeholder: string;
   isSubmitting: boolean;
   onSubmit: (content: string) => Promise<boolean>;
+  includeSafeArea?: boolean;
 }
 
 const MAX_COMMENT_LENGTH = 500;
 const COMPOSER_MIN_BOTTOM = 8;
 
-export function CommentComposer({
-  placeholder,
-  isSubmitting,
-  onSubmit,
-}: CommentComposerProps) {
-  const insets = useSafeAreaInsets();
-  const requireAuth = useRequireAuth();
-  const [value, setValue] = useState('');
+export const CommentComposer = forwardRef<CommentComposerHandle, CommentComposerProps>(
+  function CommentComposer(
+    { placeholder, isSubmitting, onSubmit, includeSafeArea = true },
+    ref,
+  ) {
+    const insets = useSafeAreaInsets();
+    const requireAuth = useRequireAuth();
+    const inputRef = useRef<TextInput>(null);
+    const [value, setValue] = useState('');
 
-  const handleSubmit = useCallback(async () => {
-    const trimmed = value.trim();
-    if (!trimmed || isSubmitting) {
-      return;
-    }
-    if (!requireAuth()) {
-      return;
-    }
-    const ok = await onSubmit(trimmed);
-    if (ok) {
-      setValue('');
-    }
-  }, [isSubmitting, onSubmit, requireAuth, value]);
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        inputRef.current?.focus();
+      },
+    }));
 
-  const canSend = value.trim().length > 0 && !isSubmitting;
+    const handleSubmit = useCallback(async () => {
+      const trimmed = value.trim();
+      if (!trimmed || isSubmitting) {
+        return;
+      }
+      if (!requireAuth()) {
+        return;
+      }
+      const ok = await onSubmit(trimmed);
+      if (ok) {
+        setValue('');
+      }
+    }, [isSubmitting, onSubmit, requireAuth, value]);
 
-  return (
-    <KeyboardStickyView>
-      <View
-        style={[
-          styles.bar,
-          { paddingBottom: Math.max(insets.bottom, COMPOSER_MIN_BOTTOM) },
-        ]}>
-        <TextInput
-          style={styles.input}
-          value={value}
-          onChangeText={setValue}
-          placeholder={placeholder}
-          placeholderTextColor={PLACEHOLDER_TEXT_COLOR}
-          maxLength={MAX_COMMENT_LENGTH}
-          editable={!isSubmitting}
-          returnKeyType="send"
-          onSubmitEditing={() => {
-            void handleSubmit();
-          }}
-        />
-        <Pressable
-          style={[styles.send, !canSend && styles.sendDisabled]}
-          disabled={!canSend}
-          onPress={() => {
-            void handleSubmit();
-          }}>
-          <Text style={styles.sendText}>发送</Text>
-        </Pressable>
-      </View>
-    </KeyboardStickyView>
-  );
-}
+    const canSend = value.trim().length > 0 && !isSubmitting;
+    const bottomInset = includeSafeArea
+      ? Math.max(insets.bottom, COMPOSER_MIN_BOTTOM)
+      : COMPOSER_MIN_BOTTOM;
+
+    return (
+      <KeyboardStickyView>
+        <View style={[styles.bar, { paddingBottom: bottomInset }]}>
+          <TextInput
+            ref={inputRef}
+            style={styles.input}
+            value={value}
+            onChangeText={setValue}
+            placeholder={placeholder}
+            placeholderTextColor={PLACEHOLDER_TEXT_COLOR}
+            maxLength={MAX_COMMENT_LENGTH}
+            editable={!isSubmitting}
+            returnKeyType="send"
+            onSubmitEditing={() => {
+              void handleSubmit();
+            }}
+          />
+          <Pressable
+            style={[styles.send, !canSend && styles.sendDisabled]}
+            disabled={!canSend}
+            onPress={() => {
+              void handleSubmit();
+            }}>
+            <Text style={styles.sendText}>发送</Text>
+          </Pressable>
+        </View>
+      </KeyboardStickyView>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   bar: {

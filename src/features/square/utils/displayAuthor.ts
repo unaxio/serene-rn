@@ -18,6 +18,10 @@ export function getAuthorDisplayName(author: SquareAuthor | null | undefined): s
   return name && name.length > 0 ? name : ANONYMOUS_DISPLAY_NAME;
 }
 
+export function getReplyPlaceholder(author: SquareAuthor | null | undefined): string {
+  return `回复 ${getAuthorDisplayName(author)}`;
+}
+
 export function getAuthorAvatarPath(author: SquareAuthor | null | undefined): string | null {
   if (!author || isAnonymousAuthor(author)) {
     return null;

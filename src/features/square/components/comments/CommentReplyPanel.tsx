@@ -1,21 +1,29 @@
 import { FlashList } from '@shopify/flash-list';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { FullScreenModal } from '@/src/components/FullScreenModal';
-import { CommentComposer } from '@/src/features/square/components/comments/CommentComposer';
+import {
+  CommentComposer,
+  type CommentComposerHandle,
+} from '@/src/features/square/components/comments/CommentComposer';
 import { CommentItem } from '@/src/features/square/components/comments/CommentItem';
-import { ACCENT_COLOR, MUTED_TEXT_COLOR } from '@/src/features/square/constants';
+import { ACCENT_COLOR, COMPOSER_FOCUS_DELAY_MS, MUTED_TEXT_COLOR } from '@/src/features/square/constants';
 import { useCommentReplies } from '@/src/features/square/hooks/useCommentReplies';
 import type { SquareComment } from '@/src/features/square/types';
-import { getAuthorDisplayName } from '@/src/features/square/utils/displayAuthor';
+import { getAuthorDisplayName, getReplyPlaceholder } from '@/src/features/square/utils/displayAuthor';
+import { resolveParentReplyName } from '@/src/features/square/utils/resolveParentReplyName';
 
 interface CommentReplyPanelProps {
   visible: boolean;
   root: SquareComment;
   isSubmitting: boolean;
+  enableCollect?: boolean;
+  enableFlower?: boolean;
   onClose: () => void;
   onResonate: (comment: SquareComment) => void;
+  onCollect?: (comment: SquareComment) => void;
+  onFlower?: (comment: SquareComment) => void;
   onSubmitReply: (parentId: string, content: string) => Promise<boolean>;
 }
 
@@ -23,12 +31,17 @@ export function CommentReplyPanel({
   visible,
   root,
   isSubmitting,
+  enableCollect = false,
+  enableFlower = false,
   onClose,
   onResonate,
+  onCollect,
+  onFlower,
   onSubmitReply,
 }: CommentReplyPanelProps) {
   const { replies, isLoading, isError } = useCommentReplies(root.id, visible);
   const [replyTo, setReplyTo] = useState<SquareComment>(root);
+  const composerRef = useRef<CommentComposerHandle>(null);
 
   useEffect(() => {
     setReplyTo(root);
@@ -42,6 +55,11 @@ export function CommentReplyPanel({
     });
     return map;
   }, [replies, root]);
+
+  const handleReply = useCallback((comment: SquareComment) => {
+    setReplyTo(comment);
+    setTimeout(() => composerRef.current?.focus(), COMPOSER_FOCUS_DELAY_MS);
+  }, []);
 
   const handleSubmit = useCallback(
     async (content: string) => {
@@ -58,12 +76,14 @@ export function CommentReplyPanel({
     ({ item }: { item: SquareComment }) => (
       <CommentItem
         comment={item}
+        enableFlower={enableFlower}
         parentReplyName={resolveParentReplyName(item, parentNameMap)}
         onResonate={onResonate}
-        onReply={setReplyTo}
+        onFlower={onFlower}
+        onReply={handleReply}
       />
     ),
-    [onResonate, parentNameMap],
+    [enableFlower, handleReply, onFlower, onResonate, parentNameMap],
   );
 
   return (
@@ -71,8 +91,12 @@ export function CommentReplyPanel({
       <View style={styles.root}>
         <CommentItem
           comment={{ ...root, topReplies: [] }}
+          enableCollect={enableCollect}
+          enableFlower={enableFlower}
           onResonate={onResonate}
-          onReply={setReplyTo}
+          onCollect={onCollect}
+          onFlower={onFlower}
+          onReply={handleReply}
         />
         {isLoading ? (
           <ActivityIndicator style={styles.status} color={ACCENT_COLOR} />
@@ -83,28 +107,19 @@ export function CommentReplyPanel({
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
+          ListEmptyComponent={
+            isLoading || isError ? null : <Text style={styles.error}>暂无回复</Text>
+          }
         />
         <CommentComposer
-          placeholder={`回复 ${getAuthorDisplayName(replyTo.author)}`}
+          ref={composerRef}
+          placeholder={getReplyPlaceholder(replyTo.author)}
           isSubmitting={isSubmitting}
           onSubmit={handleSubmit}
         />
       </View>
     </FullScreenModal>
   );
-}
-
-function resolveParentReplyName(
-  item: SquareComment,
-  parentNameMap: Map<string, string>,
-): string | null {
-  if (!item.parentId) {
-    return null;
-  }
-  if (item.parentAuthor) {
-    return getAuthorDisplayName(item.parentAuthor);
-  }
-  return parentNameMap.get(item.parentId) ?? null;
 }
 
 const styles = StyleSheet.create({

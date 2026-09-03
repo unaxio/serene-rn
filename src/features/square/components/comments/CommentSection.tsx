@@ -1,10 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { FullScreenModal } from '@/src/components/FullScreenModal';
+import type { CommentComposerHandle } from '@/src/features/square/components/comments/CommentComposer';
 import { CommentList } from '@/src/features/square/components/comments/CommentList';
 import { CommentReplyPanel } from '@/src/features/square/components/comments/CommentReplyPanel';
+import { COMPOSER_FOCUS_DELAY_MS } from '@/src/features/square/constants';
+import { useCommentActions } from '@/src/features/square/hooks/useCommentActions';
 import { useComments } from '@/src/features/square/hooks/useComments';
-import { useSquareAction } from '@/src/features/square/hooks/useSquareAction';
 import type { SquareComment, SquareTargetType } from '@/src/features/square/types';
 
 interface CommentSectionProps {
@@ -14,6 +16,8 @@ interface CommentSectionProps {
   targetId: string;
   onCommentCountChange?: (newCount: number) => void;
   enableCollect?: boolean;
+  enableFlower?: boolean;
+  onFlower?: (comment: SquareComment) => void;
 }
 
 export function CommentSection({
@@ -23,10 +27,14 @@ export function CommentSection({
   targetId,
   onCommentCountChange,
   enableCollect = false,
+  enableFlower = false,
+  onFlower,
 }: CommentSectionProps) {
   const [activeRoot, setActiveRoot] = useState<SquareComment | null>(null);
+  const [replyTo, setReplyTo] = useState<SquareComment | null>(null);
+  const composerRef = useRef<CommentComposerHandle>(null);
   const comments = useComments({ targetType, targetId, enabled: visible });
-  const { runAction } = useSquareAction();
+  const { resonateComment, collectComment } = useCommentActions();
 
   const notifyCount = useCallback(
     (nextCount?: number) => {
@@ -35,19 +43,22 @@ export function CommentSection({
     [comments.total, onCommentCountChange],
   );
 
-  const handleCreate = useCallback(
+  const handleSubmit = useCallback(
     async (content: string) => {
-      const result = await comments.submitComment(content);
+      const result = replyTo
+        ? await comments.submitReply(replyTo.rootId, replyTo.id, content)
+        : await comments.submitComment(content);
       if (!result) {
         return false;
       }
       notifyCount(result.commentCount);
+      setReplyTo(null);
       return true;
     },
-    [comments, notifyCount],
+    [comments, notifyCount, replyTo],
   );
 
-  const handleReply = useCallback(
+  const handleReplyToRoot = useCallback(
     async (parentId: string, content: string) => {
       if (!activeRoot) {
         return false;
@@ -62,27 +73,10 @@ export function CommentSection({
     [activeRoot, comments, notifyCount],
   );
 
-  const handleResonate = useCallback(
-    (comment: SquareComment) => {
-      void runAction({
-        targetType: 'comment',
-        targetId: comment.id,
-        actionType: 'resonate',
-      });
-    },
-    [runAction],
-  );
-
-  const handleCollect = useCallback(
-    (comment: SquareComment) => {
-      void runAction({
-        targetType: 'comment',
-        targetId: comment.id,
-        actionType: 'collect',
-      });
-    },
-    [runAction],
-  );
+  const handleReply = useCallback((comment: SquareComment) => {
+    setReplyTo(comment);
+    setTimeout(() => composerRef.current?.focus(), COMPOSER_FOCUS_DELAY_MS);
+  }, []);
 
   return (
     <FullScreenModal
@@ -90,24 +84,34 @@ export function CommentSection({
       title="全部评论"
       onBack={() => {
         setActiveRoot(null);
+        setReplyTo(null);
         onClose();
       }}>
       <CommentList
         comments={comments}
         enableCollect={enableCollect}
-        onCreate={handleCreate}
-        onOpenReplies={setActiveRoot}
-        onResonate={handleResonate}
-        onCollect={handleCollect}
+        enableFlower={enableFlower}
+        replyTo={replyTo}
+        composerRef={composerRef}
+        onCreate={handleSubmit}
+        onReply={handleReply}
+        onViewReplies={setActiveRoot}
+        onResonate={resonateComment}
+        onCollect={collectComment}
+        onFlower={onFlower}
       />
       {activeRoot ? (
         <CommentReplyPanel
           visible
           root={activeRoot}
           isSubmitting={comments.isSubmitting}
+          enableCollect={enableCollect}
+          enableFlower={enableFlower}
           onClose={() => setActiveRoot(null)}
-          onResonate={handleResonate}
-          onSubmitReply={handleReply}
+          onResonate={resonateComment}
+          onCollect={collectComment}
+          onFlower={onFlower}
+          onSubmitReply={handleReplyToRoot}
         />
       ) : null}
     </FullScreenModal>

@@ -37,14 +37,6 @@ export interface Story {
   createdAt: string;
 }
 
-export interface CommentReplyPreview {
-  id: string;
-  content: string;
-  author: SquareAuthor;
-  parentId: string | null;
-  createdAt: string;
-}
-
 export interface SquareComment {
   id: string;
   content: string;
@@ -54,9 +46,11 @@ export interface SquareComment {
   replyCount: number;
   resonateCount: number;
   collectCount: number;
+  flowerCount: number;
   isResonated: boolean;
   isCollected: boolean;
-  topReplies: CommentReplyPreview[];
+  isFlowered: boolean;
+  topReplies: SquareComment[];
   parentAuthor: SquareAuthor | null;
   createdAt: string;
 }

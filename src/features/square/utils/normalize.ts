@@ -38,8 +38,10 @@ export interface CommentRaw {
   replyCount?: number;
   resonateCount?: number;
   collectCount?: number;
+  flowerCount?: number;
   isResonated?: boolean;
   isCollected?: boolean;
+  isFlowered?: boolean;
   topReplies?: CommentRaw[];
   parentAuthor?: SquareAuthor | null;
   createdAt?: string;
@@ -100,9 +102,13 @@ export function normalizeComment(raw: CommentRaw): SquareComment {
     replyCount: raw.replyCount ?? 0,
     resonateCount: raw.resonateCount ?? 0,
     collectCount: raw.collectCount ?? 0,
+    flowerCount: raw.flowerCount ?? 0,
     isResonated: raw.isResonated ?? false,
     isCollected: raw.isCollected ?? false,
-    topReplies: (raw.topReplies ?? []).map(normalizeComment),
+    isFlowered: raw.isFlowered ?? false,
+    topReplies: (raw.topReplies ?? []).map((item) =>
+      normalizeComment({ ...item, rootId: item.rootId ?? id }),
+    ),
     parentAuthor: raw.parentAuthor ? normalizeAuthor(raw.parentAuthor) : null,
     createdAt: raw.createdAt ?? '',
   };
