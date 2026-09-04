@@ -52,6 +52,7 @@ export const API_PATHS = {
   GIFT_FLOWERS: '/soul-flower/app/gift-flowers',
   GIFT_FLOWER_INVENTORY: '/soul-flower/app/gift-flowers/inventory',
   GIFT_FLOWER_PURCHASE: '/soul-flower/app/gift-flowers/purchase',
+  GIFT_FLOWER_LEDGERS: '/soul-flower/app/actions/flowers',
 } as const;
 
 export const STORAGE_KEYS = {

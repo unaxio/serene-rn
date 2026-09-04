@@ -32,6 +32,36 @@ export const GIFT_FLOWER_SEND_SUCCESS = '赠送成功';
 
 export const GIFT_FLOWER_PURCHASE_SUCCESS = '购买成功';
 
+export const FLOWER_LEDGER_PAGE_SIZE = 20;
+
+export const FLOWER_LEDGER_TITLE = '把温柔送给TA';
+
+export const FLOWER_LEDGER_SUBTITLE = '你的一朵花，是一个暖心的陪伴';
+
+export const FLOWER_LEDGER_SEND_LABEL = '❀送花';
+
+export const FLOWER_LEDGER_COUNT_PREFIX = '已送花';
+
+export const FLOWER_LEDGER_COUNT_SUFFIX = '人';
+
+export const FLOWER_LEDGER_MODAL_TITLE = '送花记录';
+
+export const FLOWER_LEDGER_EMPTY = '暂无送花记录';
+
+export const FLOWER_LEDGER_LOAD_ERROR = '送花记录加载失败';
+
+export const FLOWER_LEDGER_AVATAR_SIZE = 28;
+
+export const FLOWER_LEDGER_AVATAR_GAP = 4;
+
+export const FLOWER_LEDGER_CHEVRON_SIZE = 22;
+
+export const FLOWER_LEDGER_ROW_FLOWER_SIZE = 36;
+
+export const FLOWER_LEDGER_SEND_GRADIENT = ['#C026D3', '#E11D48'] as const;
+
+export const GIFT_FLOWER_LEDGERS_QUERY_ROOT = ['square', 'giftFlowerLedgers'] as const;
+
 export const TOP_REPLIES_PREVIEW_COUNT = 2;
 
 export const COMMENT_LONG_PRESS_DELAY_MS = 350;
@@ -261,6 +291,8 @@ export const SQUARE_QUERY_KEYS = {
     ['square', 'commentReplies', rootId] as const,
   giftFlowerInventory: ['square', 'giftFlowerInventory'] as const,
   giftFlowerCatalog: ['square', 'giftFlowers'] as const,
+  giftFlowerLedgers: (targetType: string, targetId: string) =>
+    [...GIFT_FLOWER_LEDGERS_QUERY_ROOT, targetType, targetId] as const,
   shares: ['square', 'shares'] as const,
   asks: ['square', 'asks'] as const,
   askDetail: (id: string) => ['square', 'ask', id] as const,

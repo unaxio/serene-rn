@@ -2,7 +2,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 import { toggleSquareAction } from '@/src/features/square/api';
-import { SQUARE_QUERY_KEYS } from '@/src/features/square/constants';
+import {
+  GIFT_FLOWER_LEDGERS_QUERY_ROOT,
+  SQUARE_QUERY_KEYS,
+} from '@/src/features/square/constants';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import { toastCaughtFailure } from '@/src/utils/requestError';
 import type {
@@ -75,6 +78,9 @@ export function useSquareAction() {
         if (payload.actionType === 'flower') {
           await queryClient.invalidateQueries({
             queryKey: SQUARE_QUERY_KEYS.giftFlowerInventory,
+          });
+          await queryClient.invalidateQueries({
+            queryKey: GIFT_FLOWER_LEDGERS_QUERY_ROOT,
           });
         }
         return result;

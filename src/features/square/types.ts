@@ -157,6 +157,36 @@ export interface PurchaseGiftFlowerResponse {
   flowerCoin: number;
 }
 
+export type GiftFlowerLedgerTargetType = Extract<
+  SquareTargetType,
+  'story' | 'share' | 'ask_answer' | 'comment'
+>;
+
+export interface GiftFlowerSnapshot {
+  id: string;
+  name: string;
+  tag: string;
+  imagePath: string;
+}
+
+export interface GiftFlowerLedger {
+  id: string;
+  targetType: GiftFlowerLedgerTargetType;
+  targetId: string;
+  quantity: number;
+  createdAt: string;
+  sender: SquareAuthor;
+  receiver: SquareAuthor;
+  giftFlower: GiftFlowerSnapshot;
+}
+
+export interface GetGiftFlowerLedgersParams {
+  targetType: GiftFlowerLedgerTargetType;
+  targetId: string;
+  page: number;
+  pageSize: number;
+}
+
 export type ShareVisibleRange = 'public' | 'friends' | 'private';
 
 export interface Share {

@@ -9,6 +9,7 @@ import { StoryInlineComments } from '@/src/features/square/components/comments/S
 import { SendFlowerModal } from '@/src/features/square/components/SendFlowerModal';
 import { StoryActionBar } from '@/src/features/square/components/StoryActionBar';
 import { StoryDetailBody } from '@/src/features/square/components/StoryDetailBody';
+import { StoryFlowerLedger } from '@/src/features/square/components/flowerLedger/StoryFlowerLedger';
 import { COMING_SOON_MESSAGE } from '@/src/features/square/constants';
 import { useStoryDetailComments } from '@/src/features/square/hooks/useStoryDetailComments';
 import type { SquareComment, Story } from '@/src/features/square/types';
@@ -47,6 +48,12 @@ export function StoryDetailLoaded({ storyId, story }: StoryDetailLoadedProps) {
         scrollEventThrottle={SCROLL_EVENT_THROTTLE}
         onScroll={flow.handleScroll}>
         <StoryDetailBody story={story} />
+        <StoryFlowerLedger
+          storyId={storyId}
+          onSendFlower={() =>
+            flow.openFlowerModal({ targetType: 'story', targetId: storyId })
+          }
+        />
         <StoryInlineComments
           comments={flow.comments}
           enableCollect
