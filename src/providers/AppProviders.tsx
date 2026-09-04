@@ -5,6 +5,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { StyleSheet } from 'react-native';
 
 import { LoginModal } from '@/src/features/auth/components/LoginModal';
+import { AppToast } from '@/src/components/AppToast';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -31,6 +32,7 @@ export function AppProviders({ children }: AppProvidersProps) {
         <QueryClientProvider client={queryClient}>
           {children}
           <LoginModal />
+          <AppToast />
         </QueryClientProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>
