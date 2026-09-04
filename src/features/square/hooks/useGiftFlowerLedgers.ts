@@ -6,7 +6,11 @@ import {
   SQUARE_QUERY_KEYS,
 } from '@/src/features/square/constants';
 import { getGiftFlowerLedgers } from '@/src/features/square/giftFlowerLedgerApi';
-import type { GiftFlowerLedgerTargetType } from '@/src/features/square/types';
+import type {
+  GiftFlowerLedger,
+  GiftFlowerLedgerTargetType,
+  SquarePagedData,
+} from '@/src/features/square/types';
 
 interface UseGiftFlowerLedgersParams {
   targetType: GiftFlowerLedgerTargetType;
@@ -14,13 +18,27 @@ interface UseGiftFlowerLedgersParams {
   enabled?: boolean;
 }
 
-function getNextPageParam(lastPage: {
-  page: number;
-  pageSize: number;
-  total: number;
-}): number | undefined {
-  const loaded = lastPage.page * lastPage.pageSize;
-  return loaded < lastPage.total ? lastPage.page + 1 : undefined;
+function getNextPageParam(
+  lastPage: SquarePagedData<GiftFlowerLedger>,
+  allPages: SquarePagedData<GiftFlowerLedger>[],
+  lastPageParam: number,
+): number | undefined {
+  if (lastPage.items.length === 0 || lastPage.items.length < lastPage.pageSize) {
+    return undefined;
+  }
+  const nextPage = lastPage.page + 1;
+  if (nextPage <= lastPageParam) {
+    return undefined;
+  }
+  const loadedCount = allPages.reduce((sum, page) => sum + page.items.length, 0);
+  if (loadedCount >= lastPage.total) {
+    return undefined;
+  }
+  const totalPages = Math.ceil(lastPage.total / lastPage.pageSize);
+  if (totalPages <= 0 || lastPage.page >= totalPages || nextPage > totalPages) {
+    return undefined;
+  }
+  return nextPage;
 }
 
 export function useGiftFlowerLedgers({
@@ -54,7 +72,7 @@ export function useGiftFlowerLedgers({
     if (query.hasNextPage && !query.isFetchingNextPage) {
       void query.fetchNextPage();
     }
-  }, [query]);
+  }, [query.fetchNextPage, query.hasNextPage, query.isFetchingNextPage]);
 
   return {
     items,

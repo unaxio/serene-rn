@@ -6,10 +6,15 @@ import { useGiftFlowerLedgers } from '@/src/features/square/hooks/useGiftFlowerL
 
 interface StoryFlowerLedgerProps {
   storyId: string;
+  flowerCount: number;
   onSendFlower: () => void;
 }
 
-export function StoryFlowerLedger({ storyId, onSendFlower }: StoryFlowerLedgerProps) {
+export function StoryFlowerLedger({
+  storyId,
+  flowerCount,
+  onSendFlower,
+}: StoryFlowerLedgerProps) {
   const ledgers = useGiftFlowerLedgers({
     targetType: 'story',
     targetId: storyId,
@@ -27,6 +32,7 @@ export function StoryFlowerLedger({ storyId, onSendFlower }: StoryFlowerLedgerPr
   return (
     <>
       <StoryFlowerLedgerCard
+        flowerCount={flowerCount}
         ledgers={ledgers}
         onSendFlower={onSendFlower}
         onOpenRecords={openRecords}

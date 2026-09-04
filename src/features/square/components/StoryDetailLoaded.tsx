@@ -50,6 +50,7 @@ export function StoryDetailLoaded({ storyId, story }: StoryDetailLoadedProps) {
         <StoryDetailBody story={story} />
         <StoryFlowerLedger
           storyId={storyId}
+          flowerCount={story.flowerCount}
           onSendFlower={() =>
             flow.openFlowerModal({ targetType: 'story', targetId: storyId })
           }

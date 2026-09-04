@@ -18,6 +18,7 @@ import {
 import type { useGiftFlowerLedgers } from '@/src/features/square/hooks/useGiftFlowerLedgers';
 
 interface StoryFlowerLedgerCardProps {
+  flowerCount: number;
   ledgers: ReturnType<typeof useGiftFlowerLedgers>;
   onSendFlower: () => void;
   onOpenRecords: () => void;
@@ -29,6 +30,7 @@ const CARD_BORDER_WIDTH = 1;
 const CHEVRON_ICON_SIZE = 10;
 
 export function StoryFlowerLedgerCard({
+  flowerCount,
   ledgers,
   onSendFlower,
   onOpenRecords,
@@ -53,7 +55,7 @@ export function StoryFlowerLedgerCard({
       <View style={styles.bottom}>
         <Text style={styles.count}>
           {FLOWER_LEDGER_COUNT_PREFIX}
-          {ledgers.total}
+          {flowerCount}
           {FLOWER_LEDGER_COUNT_SUFFIX}
         </Text>
         <FlowerLedgerAvatarStrip

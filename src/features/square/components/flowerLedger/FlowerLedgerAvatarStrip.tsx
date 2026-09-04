@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 
 import { SquareUserAvatar } from '@/src/features/square/components/SquareUserAvatar';
@@ -7,6 +7,7 @@ import {
   FLOWER_LEDGER_AVATAR_SIZE,
 } from '@/src/features/square/constants';
 import type { GiftFlowerLedger } from '@/src/features/square/types';
+import { uniqueLedgerSenders } from '@/src/features/square/utils/flowerLedger';
 
 interface FlowerLedgerAvatarStripProps {
   items: GiftFlowerLedger[];
@@ -32,6 +33,7 @@ export function FlowerLedgerAvatarStrip({
   loadMore,
 }: FlowerLedgerAvatarStripProps) {
   const [slotCount, setSlotCount] = useState(0);
+  const senders = useMemo(() => uniqueLedgerSenders(items), [items]);
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const next = countFitSlots(event.nativeEvent.layout.width);
@@ -39,21 +41,21 @@ export function FlowerLedgerAvatarStrip({
   };
 
   useEffect(() => {
-    if (slotCount <= 0 || items.length >= slotCount) {
+    if (slotCount <= 0 || senders.length >= slotCount) {
       return;
     }
     if (!hasNextPage || isFetchingNextPage) {
       return;
     }
     loadMore();
-  }, [hasNextPage, isFetchingNextPage, items.length, loadMore, slotCount]);
+  }, [hasNextPage, isFetchingNextPage, loadMore, senders.length, slotCount]);
 
   return (
     <View style={styles.strip} onLayout={handleLayout}>
-      {items.slice(0, slotCount).map((item) => (
+      {senders.slice(0, slotCount).map((sender) => (
         <SquareUserAvatar
-          key={item.id}
-          author={item.sender}
+          key={sender.id ?? ''}
+          author={sender}
           size={FLOWER_LEDGER_AVATAR_SIZE}
         />
       ))}
