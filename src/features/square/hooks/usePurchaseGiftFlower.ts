@@ -5,6 +5,7 @@ import { SQUARE_QUERY_KEYS } from '@/src/features/square/constants';
 import { purchaseGiftFlower } from '@/src/features/square/giftFlowerApi';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import type { PurchaseGiftFlowerResponse } from '@/src/features/square/types';
+import { toastCaughtFailure } from '@/src/utils/requestError';
 
 export function usePurchaseGiftFlower() {
   const requireAuth = useRequireAuth();
@@ -27,7 +28,8 @@ export function usePurchaseGiftFlower() {
           queryKey: SQUARE_QUERY_KEYS.giftFlowerInventory,
         });
         return result;
-      } catch {
+      } catch (error) {
+        toastCaughtFailure(error);
         return null;
       }
     },

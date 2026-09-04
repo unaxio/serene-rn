@@ -15,7 +15,6 @@ import {
 } from '@/src/features/square/constants';
 import { useCommentActions } from '@/src/features/square/hooks/useCommentActions';
 import { useComments } from '@/src/features/square/hooks/useComments';
-import { useGuardSendFlower } from '@/src/features/square/hooks/useGuardSendFlower';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import type { SquareComment } from '@/src/features/square/types';
 import { getReplyPlaceholder } from '@/src/features/square/utils/displayAuthor';
@@ -33,7 +32,6 @@ export function useStoryDetailComments(storyId: string, storyCommentCount?: numb
   });
   const { runAction, isPending, resonateComment, collectComment } = useCommentActions();
   const requireAuth = useRequireAuth();
-  const canSendFlower = useGuardSendFlower();
   const composerRef = useRef<CommentComposerHandle>(null);
   const commentsYRef = useRef(0);
   const isCommentsInViewRef = useRef(false);
@@ -69,16 +67,13 @@ export function useStoryDetailComments(storyId: string, storyCommentCount?: numb
   }, [composerOpen]);
 
   const openFlowerModal = useCallback(
-    (target: FlowerTarget, authorId?: string | null) => {
+    (target: FlowerTarget) => {
       if (!requireAuth()) {
-        return;
-      }
-      if (!canSendFlower(authorId)) {
         return;
       }
       setFlowerTarget(target);
     },
-    [canSendFlower, requireAuth],
+    [requireAuth],
   );
 
   const openComposer = useCallback((target: SquareComment | null) => {

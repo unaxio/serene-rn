@@ -3,7 +3,6 @@ import { type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native'
 
 import { ASK_STICKY_SLACK } from '@/src/features/square/constants';
 import { useCommentActions } from '@/src/features/square/hooks/useCommentActions';
-import { useGuardSendFlower } from '@/src/features/square/hooks/useGuardSendFlower';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import type { AskAnswer, SquareComment } from '@/src/features/square/types';
 
@@ -20,7 +19,6 @@ interface CommentSheetState {
 
 export function useAskDetailFlow() {
   const requireAuth = useRequireAuth();
-  const canSendFlower = useGuardSendFlower();
   const { runAction, isPending, resonateComment } = useCommentActions();
   const [questionHeight, setQuestionHeight] = useState(0);
   const [stickyVisible, setStickyVisible] = useState(false);
@@ -29,16 +27,13 @@ export function useAskDetailFlow() {
   const [commentSheet, setCommentSheet] = useState<CommentSheetState | null>(null);
 
   const openFlower = useCallback(
-    (target: AskFlowerTarget, authorId?: string | null) => {
+    (target: AskFlowerTarget) => {
       if (!requireAuth()) {
-        return;
-      }
-      if (!canSendFlower(authorId)) {
         return;
       }
       setFlowerTarget(target);
     },
-    [canSendFlower, requireAuth],
+    [requireAuth],
   );
 
   const handleScroll = useCallback(

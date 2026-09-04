@@ -1,4 +1,4 @@
-import { API_PATHS, API_SUCCESS_CODE } from '@/src/services/config';
+import { API_PATHS, API_SUCCESS_CODE, HTTP_STATUS, NETWORK_ERROR_MESSAGE } from '@/src/services/config';
 import { request } from '@/src/services/request';
 
 import { ALL_TOPIC_CATEGORY } from './constants';
@@ -42,6 +42,10 @@ function isApiEnvelope<T>(value: unknown): value is ApiEnvelope<T> {
 
 export function unwrapResponse<T>(payload: T | ApiEnvelope<T>, fallbackMessage: string): T {
   if (isApiEnvelope<T>(payload)) {
+    if (payload.statusCode >= HTTP_STATUS.BAD_REQUEST) {
+      const rawMessage = typeof payload.message === 'string' ? payload.message.trim() : '';
+      throw new Error(rawMessage.length > 0 ? rawMessage : NETWORK_ERROR_MESSAGE);
+    }
     if (payload.statusCode !== API_SUCCESS_CODE || payload.data === undefined) {
       throw new Error(payload.message || fallbackMessage);
     }

@@ -50,10 +50,7 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
           void flow.runAction({ targetType: 'ask_answer', targetId: id, actionType: 'collect' });
         }}
         onFlower={(answer) =>
-          flow.openFlower(
-            { targetType: 'ask_answer', targetId: answer.id },
-            answer.author.id,
-          )
+          flow.openFlower({ targetType: 'ask_answer', targetId: answer.id })
         }
         onComment={(answer) => flow.openComments(answer)}
         onShare={() => showToast(COMING_SOON_MESSAGE)}
@@ -61,10 +58,7 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
         onViewReplies={(answer, comment) => flow.openReplyPanel(answer, comment)}
         onResonateComment={flow.resonateComment}
         onFlowerComment={(comment: SquareComment) => {
-          flow.openFlower(
-            { targetType: 'comment', targetId: comment.id },
-            comment.author.id,
-          );
+          flow.openFlower({ targetType: 'comment', targetId: comment.id });
         }}
       />
     ),

@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { toggleSquareAction } from '@/src/features/square/api';
 import { SQUARE_QUERY_KEYS } from '@/src/features/square/constants';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
+import { toastCaughtFailure } from '@/src/utils/requestError';
 import type {
   Ask,
   AskAnswer,
@@ -77,7 +78,8 @@ export function useSquareAction() {
           });
         }
         return result;
-      } catch {
+      } catch (error) {
+        toastCaughtFailure(error);
         return null;
       }
     },

@@ -12,7 +12,7 @@ import {
   HTTP_STATUS,
   REQUEST_TIMEOUT_MS,
 } from '@/src/services/config';
-import { showErrorToast } from '@/src/utils/toast';
+import { toastAxiosFailure } from '@/src/utils/requestError';
 
 type TokenGetter = () => string | null;
 type UnauthorizedHandler = () => void;
@@ -39,16 +39,10 @@ function attachAuthHeader(config: InternalAxiosRequestConfig): InternalAxiosRequ
 }
 
 function handleResponseError(error: AxiosError): Promise<never> {
-  const status = error.response?.status;
-
-  if (status === HTTP_STATUS.UNAUTHORIZED) {
+  if (error.response?.status === HTTP_STATUS.UNAUTHORIZED) {
     onUnauthorized?.();
   } else {
-    const message =
-      (error.response?.data as { message?: string } | undefined)?.message ??
-      error.message ??
-      '网络请求失败，请稍后重试';
-    showErrorToast(message);
+    toastAxiosFailure(error);
   }
 
   return Promise.reject(error);

@@ -14,9 +14,12 @@ export const TEST_WEB_BASE_PATH = '/flower';
 
 export const HTTP_STATUS = {
   OK: 200,
+  BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
 } as const;
+
+export const NETWORK_ERROR_MESSAGE = '网络异常，请稍后重试';
 
 export const AUTH_HEADER_PREFIX = 'Bearer';
 
