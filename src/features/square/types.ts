@@ -4,6 +4,30 @@ export type SquareActionType = 'resonate' | 'collect' | 'flower';
 
 export type SquareSubTabId = 'story' | 'share' | 'ask';
 
+export type SquareSearchType = 'story' | 'share' | 'ask';
+
+export interface SquareSearchItem {
+  type: SquareSearchType;
+  id: string;
+  title: string;
+  content: string;
+  coverImage: string | null;
+  createdAt: string;
+  author: SquareAuthor;
+}
+
+export interface SquareSearchPage {
+  items: SquareSearchItem[];
+  size: number;
+}
+
+export interface GetSquareSearchParams {
+  keyword: string;
+  size: number;
+  start?: string;
+  end?: string;
+}
+
 export interface SquareAuthor {
   id: string | null;
   nickName: string;

@@ -50,6 +50,7 @@ export const API_PATHS = {
   SQUARE_SHARES: '/soul-flower/app/shares',
   SQUARE_ASKS: '/soul-flower/app/asks',
   SQUARE_ASK_ANSWERS: '/soul-flower/app/ask-answers',
+  SQUARE_SEARCH: '/soul-flower/app/search',
   SQUARE_COMMENTS: '/soul-flower/app/comments',
   SQUARE_ACTIONS: '/soul-flower/app/actions',
   SQUARE_IMAGE_UPLOAD: '/upload/sf-square-image',

@@ -111,6 +111,26 @@ export const PLACEHOLDER_TEXT_COLOR = "#94A3B8";
 
 export const SEARCH_BAR_BG = "#F1F5F9";
 
+export const SEARCH_PLACEHOLDER = "搜索故事、分享、问答";
+
+export const SEARCH_EMPTY_HINT = "输入关键词搜索故事、分享、问答";
+
+export const SEARCH_NO_RESULT = "没有找到相关内容";
+
+export const SEARCH_LOAD_ERROR = "搜索失败，请稍后重试";
+
+export const SEARCH_PAGE_SIZE = 10;
+
+export const SEARCH_TITLE_MAX_LINES = 2;
+
+export const SEARCH_CONTENT_MAX_LINES = 3;
+
+export const SEARCH_TYPE_LABELS: Record<SquareSubTabId, string> = {
+  story: "故事",
+  share: "分享",
+  ask: "问答",
+};
+
 export const CARD_BORDER_COLOR = "#EEEFF3";
 
 export const ACCENT_COLOR = "#7B6CF9";
@@ -360,4 +380,5 @@ export const SQUARE_QUERY_KEYS = {
   askAnswerDetail: (id: string) => ["square", "askAnswer", id] as const,
   askAnswers: (id: string, sort: string) =>
     ["square", "askAnswers", id, sort] as const,
+  search: (keyword: string) => ["square", "search", keyword] as const,
 };

@@ -9,6 +9,9 @@ import type {
   Ask,
   AskAnswer,
   AskAnswerDetail,
+  SquareSearchItem,
+  SquareSearchPage,
+  SquareSearchType,
 } from '@/src/features/square/types';
 import { resolveStorySummary } from '@/src/features/square/utils/storySummary';
 
@@ -273,6 +276,59 @@ export function normalizeAskAnswerDetail(raw: AskAnswerRaw): AskAnswerDetail {
   return {
     ...normalizeAskAnswer(raw),
     ask: normalizeAsk(raw.ask),
+  };
+}
+
+const SEARCH_TYPES: SquareSearchType[] = ['story', 'share', 'ask'];
+
+export interface SearchItemRaw {
+  type?: string;
+  id?: string;
+  _id?: string;
+  title?: string;
+  content?: string;
+  coverImage?: string | null;
+  createdAt?: string;
+  author?: SquareAuthor | null;
+}
+
+interface SearchPageRaw {
+  items?: SearchItemRaw[];
+  size?: number;
+}
+
+function isSearchType(value: string): value is SquareSearchType {
+  return SEARCH_TYPES.includes(value as SquareSearchType);
+}
+
+export function normalizeSearchItem(raw: SearchItemRaw): SquareSearchItem | null {
+  const type = raw.type ?? '';
+  if (!isSearchType(type)) {
+    return null;
+  }
+  const id = toEntityId(raw);
+  if (id.length === 0) {
+    return null;
+  }
+  const coverImage = raw.coverImage?.trim();
+  return {
+    type,
+    id,
+    title: raw.title ?? '',
+    content: raw.content ?? '',
+    coverImage: coverImage && coverImage.length > 0 ? coverImage : null,
+    createdAt: raw.createdAt ?? '',
+    author: normalizeAuthor(raw.author),
+  };
+}
+
+export function normalizeSearchPage(raw: SearchPageRaw, fallbackSize: number): SquareSearchPage {
+  const items = (raw.items ?? [])
+    .map(normalizeSearchItem)
+    .filter((item): item is SquareSearchItem => item !== null);
+  return {
+    items,
+    size: raw.size ?? fallbackSize,
   };
 }
 
