@@ -1,14 +1,20 @@
 import { FlashList } from '@shopify/flash-list';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { FullScreenModal } from '@/src/components/FullScreenModal';
+import { PercentSheetModal } from '@/src/components/PercentSheetModal';
 import {
   CommentComposer,
   type CommentComposerHandle,
 } from '@/src/features/square/components/comments/CommentComposer';
 import { CommentItem } from '@/src/features/square/components/comments/CommentItem';
-import { ACCENT_COLOR, COMPOSER_FOCUS_DELAY_MS, MUTED_TEXT_COLOR } from '@/src/features/square/constants';
+import { CommentReplyRoot } from '@/src/features/square/components/comments/CommentReplyRoot';
+import {
+  COMMENT_REPLIES_TITLE,
+  COMMENT_SHEET_HEIGHT_RATIO,
+  COMPOSER_FOCUS_DELAY_MS,
+  MUTED_TEXT_COLOR,
+} from '@/src/features/square/constants';
 import { useCommentReplies } from '@/src/features/square/hooks/useCommentReplies';
 import type { SquareComment } from '@/src/features/square/types';
 import { getAuthorDisplayName, getReplyPlaceholder } from '@/src/features/square/utils/displayAuthor';
@@ -87,28 +93,33 @@ export function CommentReplyPanel({
   );
 
   return (
-    <FullScreenModal visible={visible} title="全部回复" onBack={onClose}>
+    <PercentSheetModal
+      visible={visible}
+      title={COMMENT_REPLIES_TITLE}
+      heightRatio={COMMENT_SHEET_HEIGHT_RATIO}
+      onBack={onClose}>
       <View style={styles.root}>
-        <CommentItem
-          comment={{ ...root, topReplies: [] }}
-          enableCollect={enableCollect}
-          enableFlower={enableFlower}
-          onResonate={onResonate}
-          onCollect={onCollect}
-          onFlower={onFlower}
-          onReply={handleReply}
-        />
-        {isLoading ? (
-          <ActivityIndicator style={styles.status} color={ACCENT_COLOR} />
-        ) : null}
-        {isError ? <Text style={styles.error}>回复加载失败</Text> : null}
         <FlashList
           data={replies}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
+          ListHeaderComponent={
+            <CommentReplyRoot
+              root={root}
+              replyCount={Math.max(root.replyCount, replies.length)}
+              enableCollect={enableCollect}
+              enableFlower={enableFlower}
+              isLoading={isLoading}
+              isError={isError}
+              onResonate={onResonate}
+              onCollect={onCollect}
+              onFlower={onFlower}
+              onReply={handleReply}
+            />
+          }
           ListEmptyComponent={
-            isLoading || isError ? null : <Text style={styles.error}>暂无回复</Text>
+            isLoading || isError ? null : <Text style={styles.empty}>暂无回复</Text>
           }
         />
         <CommentComposer
@@ -118,7 +129,7 @@ export function CommentReplyPanel({
           onSubmit={handleSubmit}
         />
       </View>
-    </FullScreenModal>
+    </PercentSheetModal>
   );
 }
 
@@ -129,10 +140,7 @@ const styles = StyleSheet.create({
   list: {
     paddingBottom: 12,
   },
-  status: {
-    paddingVertical: 16,
-  },
-  error: {
+  empty: {
     textAlign: 'center',
     color: MUTED_TEXT_COLOR,
     fontSize: 13,

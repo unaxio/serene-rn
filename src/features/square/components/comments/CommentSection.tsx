@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { FullScreenModal } from '@/src/components/FullScreenModal';
+import { PercentSheetModal } from '@/src/components/PercentSheetModal';
 import type { CommentComposerHandle } from '@/src/features/square/components/comments/CommentComposer';
 import { CommentList } from '@/src/features/square/components/comments/CommentList';
 import { CommentReplyPanel } from '@/src/features/square/components/comments/CommentReplyPanel';
-import { COMPOSER_FOCUS_DELAY_MS } from '@/src/features/square/constants';
+import {
+  COMMENT_ALL_TITLE,
+  COMMENT_SHEET_HEIGHT_RATIO,
+  COMPOSER_FOCUS_DELAY_MS,
+} from '@/src/features/square/constants';
 import { useCommentActions } from '@/src/features/square/hooks/useCommentActions';
 import { useComments } from '@/src/features/square/hooks/useComments';
 import type { SquareComment, SquareTargetType } from '@/src/features/square/types';
@@ -99,9 +103,10 @@ export function CommentSection({
   }, []);
 
   return (
-    <FullScreenModal
+    <PercentSheetModal
       visible={visible}
-      title="全部评论"
+      title={COMMENT_ALL_TITLE}
+      heightRatio={COMMENT_SHEET_HEIGHT_RATIO}
       onBack={() => {
         setActiveRoot(null);
         setReplyTo(null);
@@ -134,6 +139,6 @@ export function CommentSection({
           onSubmitReply={handleReplyToRoot}
         />
       ) : null}
-    </FullScreenModal>
+    </PercentSheetModal>
   );
 }

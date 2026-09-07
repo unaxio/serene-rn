@@ -71,6 +71,18 @@ export const COMMENT_LONG_PRESS_DELAY_MS = 350;
 
 export const COMMENT_SECTION_TITLE = "评论";
 
+export const COMMENT_ALL_TITLE = "全部评论";
+
+export const COMMENT_REPLIES_TITLE = "评论回复";
+
+export const COMMENT_SHEET_HEIGHT_RATIO = 0.8;
+
+export const COMMENT_ROOT_DIVIDER_HEIGHT = 8;
+
+export const COMMENT_REPLIES_COUNT_PREFIX = "回复 ";
+
+export const COMMENT_HORIZONTAL_PADDING = 16;
+
 export const COMMENTS_SCROLLED_SLACK = 80;
 
 export const COMMENT_LOAD_MORE_OFFSET = 160;
