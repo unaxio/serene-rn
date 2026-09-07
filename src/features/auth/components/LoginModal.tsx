@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -16,6 +17,16 @@ import { showErrorToast } from '@/src/utils/toast';
 
 const PLACEHOLDER_COLOR = '#999999';
 const PRIMARY_COLOR = '#7B6CF9';
+
+function reloadCurrentPage(): void {
+  if (Platform.OS !== 'web') {
+    return;
+  }
+  const location = globalThis.location;
+  if (typeof location?.reload === 'function') {
+    location.reload();
+  }
+}
 
 export function LoginModal() {
   const isVisible = useAuthStore((state) => state.isLoginModalVisible);
@@ -32,7 +43,11 @@ export function LoginModal() {
       return;
     }
 
-    await login(trimmedUsername, password);
+    const succeeded = await login(trimmedUsername, password);
+    if (!succeeded) {
+      return;
+    }
+    reloadCurrentPage();
   }, [username, password, login]);
 
   return (
