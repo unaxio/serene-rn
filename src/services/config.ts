@@ -9,6 +9,9 @@ export const API_BASE_URL =
 /** 测试环境 Web 部署的 API 地址 */
 export const TEST_API_BASE_URL = 'https://test.serene.org.cn/api';
 
+/** 对外可访问的 Web 站点 origin，供复制链接使用 */
+export const WEB_PUBLIC_ORIGIN = 'https://test.serene.org.cn';
+
 /** 测试环境 Web 子路径（与 experiments.baseUrl 一致） */
 export const TEST_WEB_BASE_PATH = '/flower';
 

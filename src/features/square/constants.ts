@@ -209,6 +209,30 @@ export const ASK_INVITE_LABEL = "邀请回答";
 
 export const ASK_PUBLISH_TITLE = "提问";
 
+export const ASK_PUBLISH_TIPS_HEADING = "如何更好提问";
+
+export const ASK_PUBLISH_TIPS = [
+  {
+    id: "clear",
+    title: "表达清楚",
+    description: "用一句完整的话说清你最想问的问题",
+  },
+  {
+    id: "context",
+    title: "带上关键信息",
+    description: "把必要的对象、场景或限制写进问题里",
+  },
+  {
+    id: "focus",
+    title: "聚焦问题",
+    description: "一次只问一个核心问题，更容易获得有效回答",
+  },
+] as const;
+
+export const ASK_TIP_ICON_BG = "#E8EAF3";
+
+export const ASK_TIP_DESC_COLOR = "#8A84B5";
+
 export const ASK_ANSWER_PUBLISH_TITLE = "写回答";
 
 export const ASK_LIST_EMPTY_MESSAGE = "暂无问答";
@@ -235,6 +259,12 @@ export const ASK_ANSWER_EMPTY = "暂无回答，来写第一条吧";
 export const ASK_COLLECT_LABEL = "收藏";
 
 export const ASK_SHARE_LABEL = "分享";
+
+export const SHARE_SHEET_COPY_LINK = "复制链接";
+
+export const SHARE_SHEET_COPY_SUCCESS = "链接已复制";
+
+export const SHARE_SHEET_COPY_FAIL = "复制失败";
 
 export const ASK_ANSWER_SUBMIT_LABEL = "提交";
 

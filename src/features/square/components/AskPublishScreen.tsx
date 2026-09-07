@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SquarePageHeader } from '@/src/features/square/components/SquarePageHeader';
 import { AnonymousSwitchRow } from '@/src/features/square/components/publish/AnonymousSwitchRow';
+import { AskPublishTips } from '@/src/features/square/components/publish/AskPublishTips';
 import { CountedTextInput } from '@/src/features/square/components/publish/CountedTextInput';
 import { PublishSubmitButton } from '@/src/features/square/components/publish/PublishSubmitButton';
 import { TopicTagPicker } from '@/src/features/square/components/publish/TopicTagPicker';
@@ -72,6 +73,7 @@ export function AskPublishScreen() {
           minHeight={ASK_CONTENT_MIN_HEIGHT}
         />
         <TopicTagPicker selectedId={topicTag} onSelect={setTopicTag} />
+        <AskPublishTips />
         <AnonymousSwitchRow value={isAnonymous} onChange={setIsAnonymous} />
         <View style={styles.submitWrap}>
           <PublishSubmitButton

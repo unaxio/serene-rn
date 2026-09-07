@@ -9,18 +9,17 @@ import { AskListStatus } from '@/src/features/square/components/ask/AskListStatu
 import { AskQuestionBody } from '@/src/features/square/components/ask/AskQuestionBody';
 import { AskSortTabs } from '@/src/features/square/components/ask/AskSortTabs';
 import { AskStickyBar } from '@/src/features/square/components/ask/AskStickyBar';
+import { SquareShareSheet } from '@/src/features/square/components/SquareShareSheet';
 import {
   ACCENT_COLOR,
   ASK_ANSWER_EMPTY,
   ASK_DEFAULT_SORT,
   ASK_LIST_END_REACHED_THRESHOLD,
-  COMING_SOON_MESSAGE,
   SQUARE_PAGE_BG,
 } from '@/src/features/square/constants';
 import { useAskAnswers } from '@/src/features/square/hooks/useAskAnswers';
 import { useAskDetailFlow } from '@/src/features/square/hooks/useAskDetailFlow';
 import type { Ask, AskAnswer, AskAnswerSort, SquareComment } from '@/src/features/square/types';
-import { showToast } from '@/src/utils/toast';
 
 interface AskDetailLoadedProps {
   askId: string;
@@ -34,6 +33,7 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
   const flow = useAskDetailFlow();
   const [sort, setSort] = useState<AskAnswerSort>(ASK_DEFAULT_SORT);
   const answers = useAskAnswers(askId, sort);
+  const [shareVisible, setShareVisible] = useState(false);
 
   const handleAnswer = useCallback(() => {
     router.push(`/asks/${askId}/answer`);
@@ -53,7 +53,7 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
           flow.openFlower({ targetType: 'ask_answer', targetId: answer.id })
         }
         onComment={(answer) => flow.openComments(answer)}
-        onShare={() => showToast(COMING_SOON_MESSAGE)}
+        onShare={() => setShareVisible(true)}
         onReplyComment={(answer, comment) => flow.openComments(answer, comment)}
         onViewReplies={(answer, comment) => flow.openReplyPanel(answer, comment)}
         onResonateComment={flow.resonateComment}
@@ -117,6 +117,11 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
         </View>
       ) : null}
       <AskDetailOverlays flow={flow} />
+      <SquareShareSheet
+        visible={shareVisible}
+        path={`/asks/${askId}`}
+        onClose={() => setShareVisible(false)}
+      />
     </View>
   );
 }
