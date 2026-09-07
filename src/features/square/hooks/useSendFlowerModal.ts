@@ -72,6 +72,12 @@ export function useSendFlowerModal(visible: boolean) {
     setShopQuantity(FLOWER_QUANTITY_MIN);
   }, []);
 
+  const handleBuyFromInventory = useCallback((giftFlowerId: string) => {
+    setShopSelectedId(giftFlowerId);
+    setShopQuantity(FLOWER_QUANTITY_MIN);
+    setPane('shop');
+  }, []);
+
   const handlePurchase = useCallback(async () => {
     if (!shopSelectedId) {
       return;
@@ -108,6 +114,7 @@ export function useSendFlowerModal(visible: boolean) {
     isPurchasing,
     handleSelectSend,
     handleSelectShop,
+    handleBuyFromInventory,
     handlePurchase,
   };
 }

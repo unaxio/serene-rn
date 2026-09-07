@@ -12,7 +12,8 @@ import { resolveCdnUrl } from '@/src/utils/cdn';
 interface GiftFlowerTileProps {
   name: string;
   imagePath: string;
-  badge: string;
+  badge?: string;
+  actionLabel?: string;
   selected: boolean;
   disabled?: boolean;
   onPress: () => void;
@@ -22,6 +23,7 @@ export function GiftFlowerTile({
   name,
   imagePath,
   badge,
+  actionLabel,
   selected,
   disabled = false,
   onPress,
@@ -43,9 +45,16 @@ export function GiftFlowerTile({
       <Text style={styles.name} numberOfLines={1}>
         {name}
       </Text>
-      <Text style={styles.badge} numberOfLines={1}>
-        {badge}
-      </Text>
+      {badge ? (
+        <Text style={styles.badge} numberOfLines={1}>
+          {badge}
+        </Text>
+      ) : null}
+      {actionLabel ? (
+        <View style={styles.action}>
+          <Text style={styles.actionText}>{actionLabel}</Text>
+        </View>
+      ) : null}
     </Pressable>
   );
 }
@@ -96,5 +105,17 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: MUTED_TEXT_COLOR,
     textAlign: 'center',
+  },
+  action: {
+    marginTop: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: ACCENT_COLOR,
+  },
+  actionText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
   },
 });

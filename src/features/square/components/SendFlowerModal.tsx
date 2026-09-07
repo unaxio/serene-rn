@@ -81,7 +81,7 @@ export function SendFlowerModal({
           />
         ) : (
           <GiftFlowerSendPane
-            giftableItems={modal.giftableItems}
+            items={modal.inventory.items}
             hasReceivedOnly={modal.hasReceivedOnly}
             isLoading={modal.inventory.isLoading}
             isError={modal.inventory.isError}
@@ -90,6 +90,7 @@ export function SendFlowerModal({
             isSubmitting={isSubmitting}
             onRetry={() => void modal.inventory.refetch()}
             onSelect={modal.handleSelectSend}
+            onBuy={modal.handleBuyFromInventory}
             onQuantityChange={modal.setSendQuantity}
             onSubmit={() => {
               void handleSend();
