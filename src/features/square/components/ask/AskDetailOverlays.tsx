@@ -10,9 +10,10 @@ type AskDetailFlow = ReturnType<typeof useAskDetailFlow>;
 
 interface AskDetailOverlaysProps {
   flow: AskDetailFlow;
+  askId: string;
 }
 
-export function AskDetailOverlays({ flow }: AskDetailOverlaysProps) {
+export function AskDetailOverlays({ flow, askId }: AskDetailOverlaysProps) {
   const sheet = flow.commentSheet;
   const sheetComments = useComments({
     targetType: 'ask_answer',
@@ -50,7 +51,11 @@ export function AskDetailOverlays({ flow }: AskDetailOverlaysProps) {
           }}
         />
       ) : null}
-      <AskInviteModal visible={flow.inviteVisible} onClose={() => flow.setInviteVisible(false)} />
+      <AskInviteModal
+        visible={flow.inviteVisible}
+        askId={askId}
+        onClose={() => flow.setInviteVisible(false)}
+      />
       <SendFlowerModal
         visible={flow.flowerTarget !== null}
         isSubmitting={flow.isPending}

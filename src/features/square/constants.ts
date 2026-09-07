@@ -252,7 +252,13 @@ export const ASK_INVITE_TITLE = "邀请回答";
 
 export const ASK_INVITE_EMPTY = "暂无可邀请的好友";
 
-export const ASK_INVITE_PENDING = "邀请功能即将上线";
+export const ASK_INVITE_ACTION = "邀请";
+
+export const ASK_INVITE_DONE = "已邀请";
+
+export const ASK_INVITE_COPY_HINT = "分享到站外";
+
+export const ASK_INVITE_FOLLOWING_TITLE = "邀请关注的人";
 
 export const ASK_ANSWER_EMPTY = "暂无回答，来写第一条吧";
 

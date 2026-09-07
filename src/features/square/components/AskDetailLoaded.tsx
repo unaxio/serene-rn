@@ -116,7 +116,7 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
           <AskStickyBar title={ask.title} onAnswer={handleAnswer} />
         </View>
       ) : null}
-      <AskDetailOverlays flow={flow} />
+      <AskDetailOverlays flow={flow} askId={askId} />
       <SquareShareSheet
         visible={shareVisible}
         path={`/asks/${askId}`}
