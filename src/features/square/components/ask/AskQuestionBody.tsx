@@ -8,6 +8,7 @@ import { CommentActionButton } from '@/src/features/square/components/comments/C
 import {
   ASK_COLLECT_LABEL,
   MUTED_TEXT_COLOR,
+  PAGE_SURFACE_COLOR,
 } from '@/src/features/square/constants';
 import type { Ask } from '@/src/features/square/types';
 import {
@@ -74,6 +75,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 16,
     gap: 12,
+    backgroundColor: PAGE_SURFACE_COLOR,
   },
   authorRow: {
     flexDirection: 'row',

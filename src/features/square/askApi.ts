@@ -5,6 +5,7 @@ import { unwrapResponse, type ApiEnvelope } from '@/src/features/square/api';
 import type {
   Ask,
   AskAnswer,
+  AskAnswerDetail,
   CreateAskAnswerPayload,
   CreateAskPayload,
   GetAskAnswersParams,
@@ -14,6 +15,7 @@ import type {
 import {
   normalizeAsk,
   normalizeAskAnswer,
+  normalizeAskAnswerDetail,
   unwrapPagedItems,
   type AskAnswerRaw,
   type AskRaw,
@@ -62,6 +64,13 @@ export async function getAskAnswers(
     unwrapResponse(response, '获取回答失败'),
     (item) => normalizeAskAnswer({ ...item, askId: item.askId ?? params.askId }),
   );
+}
+
+export async function getAskAnswerDetail(id: string): Promise<AskAnswerDetail> {
+  const response = await request.get<AskAnswerRaw | ApiEnvelope<AskAnswerRaw>>(
+    `${API_PATHS.SQUARE_ASK_ANSWERS}/${id}`,
+  );
+  return normalizeAskAnswerDetail(unwrapResponse(response, '获取回答详情失败'));
 }
 
 export async function createAskAnswer(

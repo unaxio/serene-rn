@@ -1,36 +1,37 @@
 import { useRouter } from 'expo-router';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { AskDetailLoaded } from '@/src/features/square/components/AskDetailLoaded';
+import { AskAnswerDetailLoaded } from '@/src/features/square/components/AskAnswerDetailLoaded';
 import { StoryDetailHeader } from '@/src/features/square/components/StoryDetailHeader';
 import {
   ACCENT_COLOR,
+  ASK_ANSWER_DETAIL_ERROR,
   MUTED_TEXT_COLOR,
   PAGE_SURFACE_COLOR,
 } from '@/src/features/square/constants';
-import { useAskDetail } from '@/src/features/square/hooks/useAskDetail';
+import { useAskAnswerDetail } from '@/src/features/square/hooks/useAskAnswerDetail';
 
-interface AskDetailScreenProps {
-  askId: string;
+interface AskAnswerDetailScreenProps {
+  answerId: string;
 }
 
-export function AskDetailScreen({ askId }: AskDetailScreenProps) {
+export function AskAnswerDetailScreen({ answerId }: AskAnswerDetailScreenProps) {
   const router = useRouter();
-  const { ask, isLoading, isError, refetch } = useAskDetail(askId);
+  const { detail, isLoading, isError, refetch } = useAskAnswerDetail(answerId);
 
   return (
     <View style={styles.root}>
       <StoryDetailHeader onBack={() => router.back()} />
       {isLoading ? <ActivityIndicator style={styles.status} color={ACCENT_COLOR} /> : null}
-      {isError || (!isLoading && !ask) ? (
+      {isError || (!isLoading && !detail) ? (
         <View style={styles.status}>
-          <Text style={styles.error}>问答加载失败</Text>
+          <Text style={styles.error}>{ASK_ANSWER_DETAIL_ERROR}</Text>
           <Pressable onPress={() => void refetch()}>
             <Text style={styles.retry}>重试</Text>
           </Pressable>
         </View>
       ) : null}
-      {ask ? <AskDetailLoaded askId={askId} ask={ask} /> : null}
+      {detail ? <AskAnswerDetailLoaded detail={detail} /> : null}
     </View>
   );
 }

@@ -15,11 +15,12 @@ import {
   ASK_ANSWER_EMPTY,
   ASK_DEFAULT_SORT,
   ASK_LIST_END_REACHED_THRESHOLD,
+  ASK_SECTION_DIVIDER_HEIGHT,
   SQUARE_PAGE_BG,
 } from '@/src/features/square/constants';
 import { useAskAnswers } from '@/src/features/square/hooks/useAskAnswers';
 import { useAskDetailFlow } from '@/src/features/square/hooks/useAskDetailFlow';
-import type { Ask, AskAnswer, AskAnswerSort, SquareComment } from '@/src/features/square/types';
+import type { Ask, AskAnswer, AskAnswerSort } from '@/src/features/square/types';
 
 interface AskDetailLoadedProps {
   askId: string;
@@ -39,10 +40,18 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
     router.push(`/asks/${askId}/answer`);
   }, [askId, router]);
 
+  const openAnswerDetail = useCallback(
+    (answerId: string) => {
+      router.push(`/ask-answers/${answerId}`);
+    },
+    [router],
+  );
+
   const renderItem = useCallback(
     ({ item }: { item: AskAnswer }) => (
       <AskAnswerItem
         answer={item}
+        onPress={() => openAnswerDetail(item.id)}
         onResonate={(id) => {
           void flow.runAction({ targetType: 'ask_answer', targetId: id, actionType: 'resonate' });
         }}
@@ -52,17 +61,11 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
         onFlower={(answer) =>
           flow.openFlower({ targetType: 'ask_answer', targetId: answer.id })
         }
-        onComment={(answer) => flow.openComments(answer)}
+        onComment={(answer) => openAnswerDetail(answer.id)}
         onShare={() => setShareVisible(true)}
-        onReplyComment={(answer, comment) => flow.openComments(answer, comment)}
-        onViewReplies={(answer, comment) => flow.openReplyPanel(answer, comment)}
-        onResonateComment={flow.resonateComment}
-        onFlowerComment={(comment: SquareComment) => {
-          flow.openFlower({ targetType: 'comment', targetId: comment.id });
-        }}
       />
     ),
-    [flow],
+    [flow, openAnswerDetail],
   );
 
   return (
@@ -95,6 +98,7 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
               onInvite={() => flow.setInviteVisible(true)}
               onLayoutHeight={flow.setQuestionHeight}
             />
+            <View style={styles.sectionDivider} />
             <AskSortTabs value={sort} onChange={setSort} />
           </View>
         }
@@ -129,6 +133,10 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: SQUARE_PAGE_BG,
+  },
+  sectionDivider: {
+    height: ASK_SECTION_DIVIDER_HEIGHT,
     backgroundColor: SQUARE_PAGE_BG,
   },
   sticky: {

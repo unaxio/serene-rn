@@ -253,6 +253,10 @@ export interface AskAnswer {
   createdAt: string;
 }
 
+export interface AskAnswerDetail extends AskAnswer {
+  ask: Ask;
+}
+
 export interface CreateAskPayload {
   title: string;
   content: string;

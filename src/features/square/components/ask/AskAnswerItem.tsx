@@ -1,13 +1,12 @@
 import { memo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { AskAnswerActions } from '@/src/features/square/components/ask/AskAnswerActions';
-import { AskAnswerComments } from '@/src/features/square/components/ask/AskAnswerComments';
 import { SquareUserAvatar } from '@/src/features/square/components/SquareUserAvatar';
 import { TopicTag } from '@/src/features/square/components/TopicTag';
 import { CARD_BORDER_COLOR, MUTED_TEXT_COLOR } from '@/src/features/square/constants';
-import type { AskAnswer, SquareComment } from '@/src/features/square/types';
+import type { AskAnswer } from '@/src/features/square/types';
 import {
   getAuthorDisplayName,
   getAuthorLevelLabel,
@@ -16,46 +15,42 @@ import { formatRelativeTime } from '@/src/features/square/utils/formatRelativeTi
 
 interface AskAnswerItemProps {
   answer: AskAnswer;
+  onPress?: () => void;
   onResonate: (answerId: string) => void;
   onCollect: (answerId: string) => void;
   onFlower: (answer: AskAnswer) => void;
   onComment: (answer: AskAnswer) => void;
   onShare: () => void;
-  onReplyComment: (answer: AskAnswer, comment: SquareComment) => void;
-  onViewReplies: (answer: AskAnswer, comment: SquareComment) => void;
-  onResonateComment: (comment: SquareComment) => void;
-  onFlowerComment: (comment: SquareComment) => void;
 }
 
 const AVATAR_SIZE = 40;
 
 function AskAnswerItemInner({
   answer,
+  onPress,
   onResonate,
   onCollect,
   onFlower,
   onComment,
   onShare,
-  onReplyComment,
-  onViewReplies,
-  onResonateComment,
-  onFlowerComment,
 }: AskAnswerItemProps) {
   return (
     <View style={styles.item}>
-      <View style={styles.header}>
-        <SquareUserAvatar author={answer.author} size={AVATAR_SIZE} />
-        <View style={styles.meta}>
-          <View style={styles.nameRow}>
-            <Text style={styles.name} numberOfLines={1}>
-              {getAuthorDisplayName(answer.author)}
-            </Text>
-            <TopicTag label={getAuthorLevelLabel(answer.author)} />
+      <Pressable onPress={onPress} disabled={!onPress}>
+        <View style={styles.header}>
+          <SquareUserAvatar author={answer.author} size={AVATAR_SIZE} />
+          <View style={styles.meta}>
+            <View style={styles.nameRow}>
+              <Text style={styles.name} numberOfLines={1}>
+                {getAuthorDisplayName(answer.author)}
+              </Text>
+              <TopicTag label={getAuthorLevelLabel(answer.author)} />
+            </View>
+            <Text style={styles.time}>{formatRelativeTime(answer.createdAt)}</Text>
           </View>
-          <Text style={styles.time}>{formatRelativeTime(answer.createdAt)}</Text>
         </View>
-      </View>
-      <Text style={styles.content}>{answer.content}</Text>
+        <Text style={styles.content}>{answer.content}</Text>
+      </Pressable>
       <AskAnswerActions
         answer={answer}
         onResonate={() => onResonate(answer.id)}
@@ -63,14 +58,6 @@ function AskAnswerItemInner({
         onFlower={() => onFlower(answer)}
         onComment={() => onComment(answer)}
         onShare={onShare}
-      />
-      <AskAnswerComments
-        answerId={answer.id}
-        commentCount={answer.commentCount}
-        onReply={(comment) => onReplyComment(answer, comment)}
-        onViewReplies={(comment) => onViewReplies(answer, comment)}
-        onResonate={onResonateComment}
-        onFlower={onFlowerComment}
       />
     </View>
   );

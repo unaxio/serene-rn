@@ -11,6 +11,7 @@ import { toastCaughtFailure } from '@/src/utils/requestError';
 import type {
   Ask,
   AskAnswer,
+  AskAnswerDetail,
   Share,
   SquareActionPayload,
   SquarePagedData,
@@ -69,6 +70,11 @@ export function useSquareAction() {
             { queryKey: ['square', 'askAnswers'] },
             (old: { pages: SquarePagedData<AskAnswer>[]; pageParams: unknown[] } | undefined) =>
               patchPagedItems(old, payload.targetId, (item) => patchAskAnswer(item, result)),
+          );
+          queryClient.setQueryData(
+            SQUARE_QUERY_KEYS.askAnswerDetail(payload.targetId),
+            (old: AskAnswerDetail | undefined) =>
+              old ? { ...patchAskAnswer(old, result), ask: old.ask } : old,
           );
         }
         if (payload.targetType === 'comment') {

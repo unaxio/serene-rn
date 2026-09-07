@@ -8,6 +8,7 @@ import type {
   Story,
   Ask,
   AskAnswer,
+  AskAnswerDetail,
 } from '@/src/features/square/types';
 import { resolveStorySummary } from '@/src/features/square/utils/storySummary';
 
@@ -197,6 +198,7 @@ export interface AskAnswerRaw {
   isCollected?: boolean;
   isFlowered?: boolean;
   createdAt?: string;
+  ask?: AskRaw;
 }
 
 function resolveAnswerSummary(
@@ -261,6 +263,16 @@ export function normalizeAskAnswer(raw: AskAnswerRaw): AskAnswer {
     isCollected: raw.isCollected ?? false,
     isFlowered: raw.isFlowered ?? false,
     createdAt: raw.createdAt ?? '',
+  };
+}
+
+export function normalizeAskAnswerDetail(raw: AskAnswerRaw): AskAnswerDetail {
+  if (!raw.ask) {
+    throw new Error('回答详情缺少问题信息');
+  }
+  return {
+    ...normalizeAskAnswer(raw),
+    ask: normalizeAsk(raw.ask),
   };
 }
 

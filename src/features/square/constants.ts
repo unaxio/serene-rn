@@ -101,6 +101,10 @@ export const COMING_SOON_MESSAGE = "功能开发中";
 
 export const SQUARE_PAGE_BG = "#F8FAFC";
 
+export const PAGE_SURFACE_COLOR = "#FFFFFF";
+
+export const ASK_SECTION_DIVIDER_HEIGHT = 6;
+
 export const MUTED_TEXT_COLOR = "#64748B";
 
 export const PLACEHOLDER_TEXT_COLOR = "#94A3B8";
@@ -272,6 +276,12 @@ export const ASK_INVITE_COPY_HINT = "分享到站外";
 
 export const ASK_INVITE_FOLLOWING_TITLE = "邀请关注的人";
 
+export const ASK_ANSWER_COUNT_SUFFIX = "条回答";
+
+export const ASK_VIEW_ALL_ANSWERS_LABEL = "查看全部回答";
+
+export const ASK_ANSWER_DETAIL_ERROR = "回答加载失败";
+
 export const ASK_ANSWER_EMPTY = "暂无回答，来写第一条吧";
 
 export const ASK_COLLECT_LABEL = "收藏";
@@ -347,6 +357,7 @@ export const SQUARE_QUERY_KEYS = {
   shares: ["square", "shares"] as const,
   asks: ["square", "asks"] as const,
   askDetail: (id: string) => ["square", "ask", id] as const,
+  askAnswerDetail: (id: string) => ["square", "askAnswer", id] as const,
   askAnswers: (id: string, sort: string) =>
     ["square", "askAnswers", id, sort] as const,
 };

@@ -16,18 +16,24 @@ import {
 import { useCommentActions } from '@/src/features/square/hooks/useCommentActions';
 import { useComments } from '@/src/features/square/hooks/useComments';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
-import type { SquareComment } from '@/src/features/square/types';
+import type { SquareComment, SquareTargetType } from '@/src/features/square/types';
 import { getReplyPlaceholder } from '@/src/features/square/utils/displayAuthor';
 
+type InlineCommentTarget = Extract<SquareTargetType, 'story' | 'ask_answer'>;
+
 export interface FlowerTarget {
-  targetType: 'story' | 'comment';
+  targetType: InlineCommentTarget | 'comment';
   targetId: string;
 }
 
-export function useStoryDetailComments(storyId: string, storyCommentCount?: number) {
+export function useStoryDetailComments(
+  targetId: string,
+  initialCommentCount?: number,
+  targetType: InlineCommentTarget = 'story',
+) {
   const comments = useComments({
-    targetType: 'story',
-    targetId: storyId,
+    targetType,
+    targetId,
     enabled: true,
   });
   const { runAction, isPending, resonateComment, collectComment } = useCommentActions();
@@ -178,7 +184,7 @@ export function useStoryDetailComments(storyId: string, storyCommentCount?: numb
     flowerTarget,
     setFlowerTarget,
     openFlowerModal,
-    displayCommentCount: commentCount ?? storyCommentCount ?? comments.total ?? 0,
+    displayCommentCount: commentCount ?? initialCommentCount ?? comments.total ?? 0,
     setCommentCount,
     openComposer,
     openReplyPanel,

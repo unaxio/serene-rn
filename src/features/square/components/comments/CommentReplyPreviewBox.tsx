@@ -22,7 +22,7 @@ export function CommentReplyPreviewBox({
   onViewReplies,
 }: CommentReplyPreviewBoxProps) {
   const previewReplies = comment.topReplies.slice(0, TOP_REPLIES_PREVIEW_COUNT);
-  const showViewMore = comment.replyCount > 0 && onViewReplies;
+  const showViewMore = Boolean(onViewReplies) && comment.replyCount > previewReplies.length;
 
   if (previewReplies.length === 0 && !showViewMore) {
     return null;
@@ -43,7 +43,7 @@ export function CommentReplyPreviewBox({
         </Pressable>
       ))}
       {showViewMore ? (
-        <Pressable onPress={() => onViewReplies(comment)}>
+        <Pressable onPress={() => onViewReplies?.(comment)}>
           <Text style={styles.viewMore}>查看 {comment.replyCount} 条回复</Text>
         </Pressable>
       ) : null}
