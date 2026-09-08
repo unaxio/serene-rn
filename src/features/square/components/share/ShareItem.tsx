@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
-import { ShareCompactComments } from '@/src/features/square/components/share/ShareCompactComments';
+import { ShareCompactComments, type ShareInlineComposer } from '@/src/features/square/components/share/ShareCompactComments';
 import { ShareImageGrid } from '@/src/features/square/components/share/ShareImageGrid';
 import { ShareItemActions } from '@/src/features/square/components/share/ShareItemActions';
 import { SquareUserAvatar } from '@/src/features/square/components/SquareUserAvatar';
@@ -17,7 +17,7 @@ import {
   SHARE_NAME_ROW_GAP,
   SHARE_SIDEBAR_WIDTH,
 } from '@/src/features/square/constants';
-import type { Share } from '@/src/features/square/types';
+import type { Share, SquareComment } from '@/src/features/square/types';
 import {
   getAuthorDisplayName,
   getAuthorLevelLabel,
@@ -29,6 +29,8 @@ interface ShareItemProps {
   onResonate: (shareId: string) => void;
   onFlower: (share: Share) => void;
   onPreviewImages: (uris: string[], index: number) => void;
+  onOpenComposer: (shareId: string, replyTo: SquareComment | null) => void;
+  inlineComposer?: ShareInlineComposer | null;
 }
 
 function ShareItemInner({
@@ -36,9 +38,10 @@ function ShareItemInner({
   onResonate,
   onFlower,
   onPreviewImages,
+  onOpenComposer,
+  inlineComposer = null,
 }: ShareItemProps) {
   const [expanded, setExpanded] = useState(false);
-  const [showComposer, setShowComposer] = useState(false);
   const previewUris = useMemo(
     () => share.images.map((path) => resolveCdnUrl(path)).filter((uri): uri is string => Boolean(uri)),
     [share.images],
@@ -75,8 +78,8 @@ function ShareItemInner({
           isResonated={share.isResonated}
           onResonate={() => onResonate(share.id)}
           onComment={() => {
-            setShowComposer(true);
             setExpanded(true);
+            onOpenComposer(share.id, null);
           }}
           onFlower={() => onFlower(share)}
         />
@@ -84,8 +87,12 @@ function ShareItemInner({
           shareId={share.id}
           commentCount={share.commentCount}
           expanded={expanded}
-          showComposer={showComposer}
           onToggleExpanded={() => setExpanded((value) => !value)}
+          onReply={(comment) => {
+            setExpanded(true);
+            onOpenComposer(share.id, comment);
+          }}
+          inlineComposer={inlineComposer}
         />
       </View>
     </View>

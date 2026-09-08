@@ -1,7 +1,7 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, type RefObject } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { ShareCompactComposer } from '@/src/features/square/components/share/ShareCompactComposer';
+import { CommentComposer, type CommentComposerHandle } from '@/src/features/square/components/comments/CommentComposer';
 import {
   ACCENT_COLOR,
   MUTED_TEXT_COLOR,
@@ -11,17 +11,27 @@ import {
   SHARE_LOAD_MORE_COMMENTS_LABEL,
 } from '@/src/features/square/constants';
 import { useComments } from '@/src/features/square/hooks/useComments';
+import type { SquareComment } from '@/src/features/square/types';
 import {
   formatCompactCommentLine,
   toCompactCommentLines,
 } from '@/src/features/square/utils/compactCommentLines';
 
+export interface ShareInlineComposer {
+  replyToId: string | null;
+  composerRef: RefObject<CommentComposerHandle | null>;
+  placeholder: string;
+  isSubmitting: boolean;
+  onSubmit: (content: string) => Promise<boolean>;
+}
+
 interface ShareCompactCommentsProps {
   shareId: string;
   commentCount: number;
   expanded: boolean;
-  showComposer: boolean;
   onToggleExpanded: () => void;
+  onReply: (comment: SquareComment) => void;
+  inlineComposer?: ShareInlineComposer | null;
 }
 
 const EXPAND_HIT_SLOP = 6;
@@ -30,16 +40,16 @@ export function ShareCompactComments({
   shareId,
   commentCount,
   expanded,
-  showComposer,
   onToggleExpanded,
+  onReply,
+  inlineComposer = null,
 }: ShareCompactCommentsProps) {
-  const enabled = commentCount > 0 || showComposer || expanded;
+  const enabled = commentCount > 0 || expanded || inlineComposer !== null;
   const comments = useComments({
     targetType: 'share',
     targetId: shareId,
     enabled,
   });
-  const [draft, setDraft] = useState('');
   const lines = useMemo(
     () => toCompactCommentLines(comments.items),
     [comments.items],
@@ -47,27 +57,33 @@ export function ShareCompactComments({
   const visibleLines = expanded ? lines : lines.slice(0, SHARE_COMPACT_COMMENT_COUNT);
   const hasHiddenLines = lines.length > SHARE_COMPACT_COMMENT_COUNT || comments.hasNextPage;
 
-  const handleSend = useCallback(async () => {
-    const trimmed = draft.trim();
-    if (!trimmed || comments.isSubmitting) {
-      return;
-    }
-    const result = await comments.submitComment(trimmed);
-    if (result) {
-      setDraft('');
-    }
-  }, [comments, draft]);
-
   if (!enabled) {
     return null;
   }
 
+  const inlineComposerNode = inlineComposer ? (
+    <CommentComposer
+      key={inlineComposer.replyToId ?? 'share'}
+      ref={inlineComposer.composerRef}
+      sticky={false}
+      placeholder={inlineComposer.placeholder}
+      isSubmitting={inlineComposer.isSubmitting}
+      onSubmit={inlineComposer.onSubmit}
+    />
+  ) : null;
+
   return (
     <View style={styles.root}>
+      {inlineComposer && inlineComposer.replyToId === null ? inlineComposerNode : null}
       {visibleLines.map((line) => (
-        <Text key={line.id} style={styles.line} numberOfLines={expanded ? undefined : 2}>
-          {formatCompactCommentLine(line)}
-        </Text>
+        <View key={line.id}>
+          <Pressable onPress={() => onReply(line.comment)} hitSlop={EXPAND_HIT_SLOP}>
+            <Text style={styles.line} numberOfLines={expanded ? undefined : 2}>
+              {formatCompactCommentLine(line)}
+            </Text>
+          </Pressable>
+          {inlineComposer && inlineComposer.replyToId === line.id ? inlineComposerNode : null}
+        </View>
       ))}
       {hasHiddenLines ? (
         <Pressable onPress={onToggleExpanded} hitSlop={EXPAND_HIT_SLOP}>
@@ -80,16 +96,6 @@ export function ShareCompactComments({
         <Pressable onPress={comments.loadMore} hitSlop={EXPAND_HIT_SLOP}>
           <Text style={styles.more}>{SHARE_LOAD_MORE_COMMENTS_LABEL}</Text>
         </Pressable>
-      ) : null}
-      {showComposer ? (
-        <ShareCompactComposer
-          value={draft}
-          isSubmitting={comments.isSubmitting}
-          onChangeText={setDraft}
-          onSubmit={() => {
-            void handleSend();
-          }}
-        />
       ) : null}
     </View>
   );

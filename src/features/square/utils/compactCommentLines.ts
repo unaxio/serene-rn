@@ -6,6 +6,7 @@ export interface CompactCommentLine {
   authorName: string;
   replyToName: string | null;
   content: string;
+  comment: SquareComment;
 }
 
 export function formatCompactCommentLine(line: CompactCommentLine): string {
@@ -24,6 +25,7 @@ export function toCompactCommentLines(comments: SquareComment[]): CompactComment
       authorName: rootName,
       replyToName: null,
       content: comment.content,
+      comment,
     });
     comment.topReplies.forEach((reply) => {
       lines.push({
@@ -33,6 +35,7 @@ export function toCompactCommentLines(comments: SquareComment[]): CompactComment
           ? getAuthorDisplayName(reply.parentAuthor)
           : rootName,
         content: reply.content,
+        comment: reply,
       });
     });
   });

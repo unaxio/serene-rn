@@ -2,6 +2,7 @@ import { FlashList } from '@shopify/flash-list';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, RefreshControl, StyleSheet, View } from 'react-native';
 
+import { CommentComposer } from '@/src/features/square/components/comments/CommentComposer';
 import { SendFlowerModal } from '@/src/features/square/components/SendFlowerModal';
 import { ShareImagePreviewModal } from '@/src/features/square/components/share/ShareImagePreviewModal';
 import { ShareItem } from '@/src/features/square/components/share/ShareItem';
@@ -12,6 +13,7 @@ import {
   SHARE_LIST_EMPTY_MESSAGE,
   SHARE_LIST_END_REACHED_THRESHOLD,
 } from '@/src/features/square/constants';
+import { useShareComposer } from '@/src/features/square/hooks/useShareComposer';
 import { useShares } from '@/src/features/square/hooks/useShares';
 import { useSquareAction } from '@/src/features/square/hooks/useSquareAction';
 import type { Share } from '@/src/features/square/types';
@@ -25,6 +27,7 @@ export function ShareList() {
   const { items, isLoading, isError, isRefreshing, isFetchingMore, loadMore, refresh, refetch } =
     useShares();
   const { runAction, isPending } = useSquareAction();
+  const composer = useShareComposer();
   const [flowerShareId, setFlowerShareId] = useState<string | null>(null);
   const [preview, setPreview] = useState<ImagePreviewState | null>(null);
 
@@ -71,9 +74,11 @@ export function ShareList() {
         onResonate={handleResonate}
         onFlower={handleFlower}
         onPreviewImages={handlePreviewImages}
+        onOpenComposer={composer.open}
+        inlineComposer={composer.getInlineComposer(item.id)}
       />
     ),
-    [handleFlower, handlePreviewImages, handleResonate],
+    [composer.getInlineComposer, composer.open, handleFlower, handlePreviewImages, handleResonate],
   );
 
   const listEmpty = (() => {
@@ -108,6 +113,14 @@ export function ShareList() {
           isFetchingMore ? <ActivityIndicator style={styles.footer} color={ACCENT_COLOR} /> : null
         }
       />
+      {composer.isSticky && composer.visible ? (
+        <CommentComposer
+          ref={composer.composerRef}
+          placeholder={composer.placeholder}
+          isSubmitting={composer.isSubmitting}
+          onSubmit={composer.submit}
+        />
+      ) : null}
       <SendFlowerModal
         visible={flowerShareId !== null}
         isSubmitting={isPending}
