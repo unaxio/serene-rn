@@ -21,7 +21,14 @@ export function AskAnswerDetailScreen({ answerId }: AskAnswerDetailScreenProps) 
 
   return (
     <View style={styles.root}>
-      <StoryDetailHeader onBack={() => router.back()} />
+      <StoryDetailHeader
+        onBack={() => router.back()}
+        targetId={answerId}
+        authorId={detail?.author.id}
+        contentKind="ask_answer"
+        askId={detail?.askId ?? detail?.ask.id}
+        onDeleted={() => router.back()}
+      />
       {isLoading ? <ActivityIndicator style={styles.status} color={ACCENT_COLOR} /> : null}
       {isError || (!isLoading && !detail) ? (
         <View style={styles.status}>

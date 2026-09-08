@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,22 +15,39 @@ import {
   ASK_CONTENT_MIN_HEIGHT,
   ASK_PUBLISH_TITLE,
   ASK_TITLE_MAX_LENGTH,
+  PUBLISH_CONFIRM_EDIT_LABEL,
   SQUARE_PAGE_BG,
 } from '@/src/features/square/constants';
-import { useCreateAsk } from '@/src/features/square/hooks/useCreateAsk';
+import { useAskDetail } from '@/src/features/square/hooks/useAskDetail';
+import { useSaveAsk } from '@/src/features/square/hooks/useSaveAsk';
+import { readRouteParam } from '@/src/features/square/utils/readRouteParam';
 import { showErrorToast } from '@/src/utils/toast';
 
 export function AskPublishScreen() {
   const router = useRouter();
-  const { submit, isSubmitting } = useCreateAsk();
+  const params = useLocalSearchParams<{ editId?: string | string[] }>();
+  const editId = readRouteParam(params.editId);
+  const { submit, isSubmitting, isEdit } = useSaveAsk(editId);
+  const detail = useAskDetail(editId ?? '');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [topicTag, setTopicTag] = useState<string | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [prefilled, setPrefilled] = useState(false);
+
+  useEffect(() => {
+    if (!isEdit || prefilled || !detail.ask) {
+      return;
+    }
+    setTitle(detail.ask.title);
+    setContent(detail.ask.content);
+    setTopicTag(detail.ask.topicTag);
+    setPrefilled(true);
+  }, [detail.ask, isEdit, prefilled]);
 
   const canSubmit = useMemo(
-    () => title.trim().length > 0 && Boolean(topicTag),
-    [title, topicTag],
+    () => title.trim().length > 0 && Boolean(topicTag) && (!isEdit || prefilled),
+    [isEdit, prefilled, title, topicTag],
   );
 
   const handleSubmit = useCallback(async () => {
@@ -45,16 +62,23 @@ export function AskPublishScreen() {
     });
     if (!ask?.id) {
       if (ask) {
-        showErrorToast('发布成功但未返回问答 ID');
+        showErrorToast('保存成功但未返回问答 ID');
       }
       return;
     }
+    if (isEdit) {
+      router.back();
+      return;
+    }
     router.replace(`/asks/${ask.id}`);
-  }, [canSubmit, content, isAnonymous, isSubmitting, router, submit, title, topicTag]);
+  }, [canSubmit, content, isAnonymous, isEdit, isSubmitting, router, submit, title, topicTag]);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <SquarePageHeader title={ASK_PUBLISH_TITLE} onBack={() => router.back()} />
+      <SquarePageHeader
+        title={isEdit ? '编辑提问' : ASK_PUBLISH_TITLE}
+        onBack={() => router.back()}
+      />
       <KeyboardAwareScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled">
@@ -79,6 +103,7 @@ export function AskPublishScreen() {
           <PublishSubmitButton
             enabled={canSubmit}
             isSubmitting={isSubmitting}
+            label={isEdit ? PUBLISH_CONFIRM_EDIT_LABEL : undefined}
             onPress={() => {
               void handleSubmit();
             }}

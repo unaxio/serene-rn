@@ -1,7 +1,7 @@
 import { API_PATHS } from '@/src/services/config';
 import { request } from '@/src/services/request';
 
-import { unwrapResponse, type ApiEnvelope } from '@/src/features/square/api';
+import { unwrapResponse, unwrapVoidResponse, type ApiEnvelope } from '@/src/features/square/api';
 import type {
   Ask,
   AskAnswer,
@@ -48,6 +48,21 @@ export async function createAsk(payload: CreateAskPayload): Promise<Ask> {
   return normalizeAsk(unwrapResponse(response, '发布提问失败'));
 }
 
+export async function updateAsk(id: string, payload: CreateAskPayload): Promise<Ask> {
+  const response = await request.put<AskRaw | ApiEnvelope<AskRaw>>(
+    `${API_PATHS.SQUARE_ASKS}/${id}`,
+    payload,
+  );
+  return normalizeAsk(unwrapResponse(response, '修改提问失败'));
+}
+
+export async function deleteAsk(id: string): Promise<void> {
+  const response = await request.delete<unknown | ApiEnvelope<unknown>>(
+    `${API_PATHS.SQUARE_ASKS}/${id}`,
+  );
+  unwrapVoidResponse(response, '删除提问失败');
+}
+
 export async function getAskAnswers(
   params: GetAskAnswersParams,
 ): Promise<SquarePagedData<AskAnswer>> {
@@ -85,4 +100,22 @@ export async function createAskAnswer(
     ...unwrapResponse(response, '提交回答失败'),
     askId,
   });
+}
+
+export async function updateAskAnswer(
+  id: string,
+  payload: CreateAskAnswerPayload,
+): Promise<AskAnswer> {
+  const response = await request.put<AskAnswerRaw | ApiEnvelope<AskAnswerRaw>>(
+    `${API_PATHS.SQUARE_ASK_ANSWERS}/${id}`,
+    payload,
+  );
+  return normalizeAskAnswer(unwrapResponse(response, '修改回答失败'));
+}
+
+export async function deleteAskAnswer(id: string): Promise<void> {
+  const response = await request.delete<unknown | ApiEnvelope<unknown>>(
+    `${API_PATHS.SQUARE_ASK_ANSWERS}/${id}`,
+  );
+  unwrapVoidResponse(response, '删除回答失败');
 }

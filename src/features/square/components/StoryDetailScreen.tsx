@@ -20,7 +20,13 @@ export function StoryDetailScreen({ storyId }: StoryDetailScreenProps) {
 
   return (
     <View style={styles.root}>
-      <StoryDetailHeader onBack={() => router.back()} />
+      <StoryDetailHeader
+        onBack={() => router.back()}
+        targetId={storyId}
+        authorId={story?.author.id}
+        contentKind="story"
+        onDeleted={() => router.back()}
+      />
       {isLoading ? (
         <ActivityIndicator style={styles.status} color={ACCENT_COLOR} />
       ) : null}

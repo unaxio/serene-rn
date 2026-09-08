@@ -54,6 +54,22 @@ export function unwrapResponse<T>(payload: T | ApiEnvelope<T>, fallbackMessage: 
   return payload;
 }
 
+/** 删除 / 举报等无业务 data 的成功响应 */
+export function unwrapVoidResponse(
+  payload: unknown | ApiEnvelope<unknown>,
+  fallbackMessage: string,
+): void {
+  if (isApiEnvelope(payload)) {
+    if (payload.statusCode >= HTTP_STATUS.BAD_REQUEST) {
+      const rawMessage = typeof payload.message === 'string' ? payload.message.trim() : '';
+      throw new Error(rawMessage.length > 0 ? rawMessage : NETWORK_ERROR_MESSAGE);
+    }
+    if (payload.statusCode !== API_SUCCESS_CODE) {
+      throw new Error(payload.message || fallbackMessage);
+    }
+  }
+}
+
 function toCommentCreateResult(
   data: CreateCommentResponse | CommentRaw,
 ): CreateCommentResponse {
@@ -93,6 +109,24 @@ export async function createStory(payload: CreateStoryPayload): Promise<Story> {
     payload,
   );
   return normalizeStory(unwrapResponse(response, '发布故事失败'));
+}
+
+export async function updateStory(
+  id: string,
+  payload: CreateStoryPayload,
+): Promise<Story> {
+  const response = await request.put<StoryRaw | ApiEnvelope<StoryRaw>>(
+    `${API_PATHS.SQUARE_STORIES}/${id}`,
+    payload,
+  );
+  return normalizeStory(unwrapResponse(response, '修改故事失败'));
+}
+
+export async function deleteStory(id: string): Promise<void> {
+  const response = await request.delete<unknown | ApiEnvelope<unknown>>(
+    `${API_PATHS.SQUARE_STORIES}/${id}`,
+  );
+  unwrapVoidResponse(response, '删除故事失败');
 }
 
 export async function getComments(

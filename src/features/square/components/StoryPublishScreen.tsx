@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,32 +11,51 @@ import { CoverImageUploader } from '@/src/features/square/components/publish/Cov
 import { PublishSubmitButton } from '@/src/features/square/components/publish/PublishSubmitButton';
 import { TopicTagPicker } from '@/src/features/square/components/publish/TopicTagPicker';
 import {
+  PUBLISH_CONFIRM_EDIT_LABEL,
   SQUARE_PAGE_BG,
   STORY_CONTENT_MAX_LENGTH,
   STORY_TITLE_MAX_LENGTH,
 } from '@/src/features/square/constants';
-import { useCreateStory } from '@/src/features/square/hooks/useCreateStory';
+import { useSaveStory } from '@/src/features/square/hooks/useSaveStory';
+import { useStoryDetail } from '@/src/features/square/hooks/useStoryDetail';
+import { readRouteParam } from '@/src/features/square/utils/readRouteParam';
 import { showErrorToast } from '@/src/utils/toast';
 
 const CONTENT_MIN_HEIGHT = 160;
 
 export function StoryPublishScreen() {
   const router = useRouter();
-  const { submit, isSubmitting } = useCreateStory();
+  const params = useLocalSearchParams<{ editId?: string | string[] }>();
+  const editId = readRouteParam(params.editId);
+  const { submit, isSubmitting, isEdit } = useSaveStory(editId);
+  const detail = useStoryDetail(editId ?? '');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [topicTag, setTopicTag] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [prefilled, setPrefilled] = useState(false);
+
+  useEffect(() => {
+    if (!isEdit || prefilled || !detail.story) {
+      return;
+    }
+    setTitle(detail.story.title);
+    setContent(detail.story.content);
+    setTopicTag(detail.story.topicTag);
+    setCoverImage(detail.story.coverImagePath);
+    setPrefilled(true);
+  }, [detail.story, isEdit, prefilled]);
 
   const canSubmit = useMemo(
     () =>
       title.trim().length > 0 &&
       content.trim().length > 0 &&
       Boolean(topicTag) &&
-      !isUploadingCover,
-    [content, isUploadingCover, title, topicTag],
+      !isUploadingCover &&
+      (!isEdit || prefilled),
+    [content, isEdit, isUploadingCover, prefilled, title, topicTag],
   );
 
   const handleSubmit = useCallback(async () => {
@@ -53,8 +72,12 @@ export function StoryPublishScreen() {
     });
     if (!story?.id) {
       if (story) {
-        showErrorToast('发布成功但未返回故事 ID');
+        showErrorToast('保存成功但未返回故事 ID');
       }
+      return;
+    }
+    if (isEdit) {
+      router.back();
       return;
     }
     router.replace(`/stories/${story.id}`);
@@ -63,6 +86,7 @@ export function StoryPublishScreen() {
     content,
     coverImage,
     isAnonymous,
+    isEdit,
     isSubmitting,
     isUploadingCover,
     router,
@@ -73,7 +97,7 @@ export function StoryPublishScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <SquarePageHeader title="投稿" onBack={() => router.back()} />
+      <SquarePageHeader title={isEdit ? '编辑故事' : '投稿'} onBack={() => router.back()} />
       <KeyboardAwareScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled">
@@ -102,6 +126,7 @@ export function StoryPublishScreen() {
           <PublishSubmitButton
             enabled={canSubmit}
             isSubmitting={isSubmitting}
+            label={isEdit ? PUBLISH_CONFIRM_EDIT_LABEL : undefined}
             onPress={() => {
               void handleSubmit();
             }}

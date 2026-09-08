@@ -1,5 +1,22 @@
 export type SquareTargetType = 'story' | 'share' | 'ask' | 'ask_answer' | 'comment';
 
+export type SquareReportTargetType = Extract<
+  SquareTargetType,
+  'story' | 'share' | 'ask' | 'ask_answer'
+>;
+
+export interface CreateReportPayload {
+  targetType: SquareReportTargetType;
+  targetId: string;
+  reason: string;
+  detail?: string;
+}
+
+export interface CreateNotInterestedPayload {
+  targetType: SquareReportTargetType;
+  targetId: string;
+}
+
 export type SquareActionType = 'resonate' | 'collect' | 'flower';
 
 export type SquareSubTabId = 'story' | 'share' | 'ask';

@@ -1,7 +1,7 @@
 import { API_PATHS } from '@/src/services/config';
 import { request } from '@/src/services/request';
 
-import { unwrapResponse, type ApiEnvelope } from '@/src/features/square/api';
+import { unwrapResponse, unwrapVoidResponse, type ApiEnvelope } from '@/src/features/square/api';
 import type {
   CreateSharePayload,
   GetSharesParams,
@@ -34,4 +34,29 @@ export async function createShare(payload: CreateSharePayload): Promise<Share> {
     payload,
   );
   return normalizeShare(unwrapResponse(response, '发布分享失败'));
+}
+
+export async function getShareDetail(id: string): Promise<Share> {
+  const response = await request.get<ShareRaw | ApiEnvelope<ShareRaw>>(
+    `${API_PATHS.SQUARE_SHARES}/${id}`,
+  );
+  return normalizeShare(unwrapResponse(response, '获取分享失败'));
+}
+
+export async function updateShare(
+  id: string,
+  payload: CreateSharePayload,
+): Promise<Share> {
+  const response = await request.put<ShareRaw | ApiEnvelope<ShareRaw>>(
+    `${API_PATHS.SQUARE_SHARES}/${id}`,
+    payload,
+  );
+  return normalizeShare(unwrapResponse(response, '修改分享失败'));
+}
+
+export async function deleteShare(id: string): Promise<void> {
+  const response = await request.delete<unknown | ApiEnvelope<unknown>>(
+    `${API_PATHS.SQUARE_SHARES}/${id}`,
+  );
+  unwrapVoidResponse(response, '删除分享失败');
 }

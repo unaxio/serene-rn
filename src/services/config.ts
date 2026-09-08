@@ -53,6 +53,8 @@ export const API_PATHS = {
   SQUARE_SEARCH: '/soul-flower/app/search',
   SQUARE_COMMENTS: '/soul-flower/app/comments',
   SQUARE_ACTIONS: '/soul-flower/app/actions',
+  SQUARE_REPORTS: '/soul-flower/app/reports',
+  SQUARE_NOT_INTERESTED: '/soul-flower/app/not-interested',
   SQUARE_IMAGE_UPLOAD: '/upload/sf-square-image',
   GIFT_FLOWERS: '/soul-flower/app/gift-flowers',
   GIFT_FLOWER_INVENTORY: '/soul-flower/app/gift-flowers/inventory',

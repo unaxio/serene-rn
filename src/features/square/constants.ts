@@ -314,6 +314,53 @@ export const SHARE_SHEET_COPY_SUCCESS = "链接已复制";
 
 export const SHARE_SHEET_COPY_FAIL = "复制失败";
 
+export const PUBLISH_CONFIRM_EDIT_LABEL = "确认修改";
+
+export const REPORT_MODAL_TITLE = "举报";
+
+export const REPORT_DETAIL_PLACEHOLDER = "补充说明（选填）";
+
+export const REPORT_SUBMIT_LABEL = "提交举报";
+
+export const REPORT_SUCCESS_MESSAGE = "举报已提交";
+
+export const REPORT_REASON_REQUIRED = "请选择举报类型";
+
+export const NOT_INTERESTED_SUCCESS = "已标记不感兴趣";
+
+export const FOLLOW_SUCCESS_MESSAGE = "关注成功";
+
+export const UNFOLLOW_SUCCESS_MESSAGE = "已取消关注";
+
+export const FOLLOW_ANONYMOUS_BLOCKED = "无法关注匿名用户";
+
+export const DELETE_CONFIRM_TITLE = "确认删除？";
+
+export const DELETE_CONFIRM_MESSAGE = "删除后将从列表中移除，确认继续？";
+
+export const DELETE_CONFIRM_LABEL = "删除";
+
+export const DELETE_SUCCESS_MESSAGE = "已删除";
+
+export const EDIT_SUCCESS_MESSAGE = "修改成功";
+
+export const REPORT_REASON_OPTIONS = [
+  "涉政有害",
+  "不友善",
+  "垃圾广告",
+  "违法违规",
+  "色情低俗",
+  "涉嫌侵权",
+  "网络暴力",
+  "涉未成年",
+  "自杀自残",
+  "不实信息",
+  "引人不适",
+  "抄袭",
+  "扰乱社区秩序",
+  "滥用AI创作",
+] as const;
+
 export const ASK_ANSWER_SUBMIT_LABEL = "提交";
 
 export const ASK_COMMENT_PREVIEW_INDENT = 46;
@@ -376,6 +423,7 @@ export const SQUARE_QUERY_KEYS = {
   giftFlowerLedgers: (targetType: string, targetId: string) =>
     [...GIFT_FLOWER_LEDGERS_QUERY_ROOT, targetType, targetId] as const,
   shares: ["square", "shares"] as const,
+  shareDetail: (id: string) => ["square", "share", id] as const,
   asks: ["square", "asks"] as const,
   askDetail: (id: string) => ["square", "ask", id] as const,
   askAnswerDetail: (id: string) => ["square", "askAnswer", id] as const,

@@ -20,7 +20,13 @@ export function AskDetailScreen({ askId }: AskDetailScreenProps) {
 
   return (
     <View style={styles.root}>
-      <StoryDetailHeader onBack={() => router.back()} />
+      <StoryDetailHeader
+        onBack={() => router.back()}
+        targetId={askId}
+        authorId={ask?.author.id}
+        contentKind="ask"
+        onDeleted={() => router.back()}
+      />
       {isLoading ? <ActivityIndicator style={styles.status} color={ACCENT_COLOR} /> : null}
       {isError || (!isLoading && !ask) ? (
         <View style={styles.status}>

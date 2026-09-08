@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,6 +11,7 @@ import { ShareImageUploader } from '@/src/features/square/components/publish/Sha
 import { TopicTagPicker } from '@/src/features/square/components/publish/TopicTagPicker';
 import { VisibleRangePicker } from '@/src/features/square/components/publish/VisibleRangePicker';
 import {
+  PUBLISH_CONFIRM_EDIT_LABEL,
   SHARE_CONTENT_MAX_LENGTH,
   SHARE_CONTENT_MIN_HEIGHT,
   SHARE_CONTENT_PLACEHOLDER,
@@ -19,12 +20,17 @@ import {
   SHARE_TOPIC_OPTIONAL_LABEL,
   SQUARE_PAGE_BG,
 } from '@/src/features/square/constants';
-import { useCreateShare } from '@/src/features/square/hooks/useCreateShare';
+import { useSaveShare } from '@/src/features/square/hooks/useSaveShare';
+import { useShareDetail } from '@/src/features/square/hooks/useShareDetail';
 import type { ShareVisibleRange } from '@/src/features/square/types';
+import { readRouteParam } from '@/src/features/square/utils/readRouteParam';
 
 export function SharePublishScreen() {
   const router = useRouter();
-  const { submit, isSubmitting } = useCreateShare();
+  const params = useLocalSearchParams<{ editId?: string | string[] }>();
+  const editId = readRouteParam(params.editId);
+  const { submit, isSubmitting, isEdit } = useSaveShare(editId);
+  const detail = useShareDetail(editId ?? '');
   const [content, setContent] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [topicTag, setTopicTag] = useState<string | null>(null);
@@ -32,10 +38,25 @@ export function SharePublishScreen() {
     SHARE_DEFAULT_VISIBLE_RANGE,
   );
   const [isUploadingImages, setIsUploadingImages] = useState(false);
+  const [prefilled, setPrefilled] = useState(false);
+
+  useEffect(() => {
+    if (!isEdit || prefilled || !detail.share) {
+      return;
+    }
+    setContent(detail.share.content);
+    setImages(detail.share.images);
+    setTopicTag(detail.share.topicTag);
+    setVisibleRange(detail.share.visibleRange);
+    setPrefilled(true);
+  }, [detail.share, isEdit, prefilled]);
 
   const canSubmit = useMemo(
-    () => (content.trim().length > 0 || images.length > 0) && !isUploadingImages,
-    [content, images.length, isUploadingImages],
+    () =>
+      (content.trim().length > 0 || images.length > 0) &&
+      !isUploadingImages &&
+      (!isEdit || prefilled),
+    [content, images.length, isEdit, isUploadingImages, prefilled],
   );
 
   const handleSubmit = useCallback(async () => {
@@ -66,7 +87,10 @@ export function SharePublishScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <SquarePageHeader title={SHARE_PUBLISH_TITLE} onBack={() => router.back()} />
+      <SquarePageHeader
+        title={isEdit ? '编辑分享' : SHARE_PUBLISH_TITLE}
+        onBack={() => router.back()}
+      />
       <KeyboardAwareScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled">
@@ -94,6 +118,7 @@ export function SharePublishScreen() {
           <PublishSubmitButton
             enabled={canSubmit}
             isSubmitting={isSubmitting}
+            label={isEdit ? PUBLISH_CONFIRM_EDIT_LABEL : undefined}
             onPress={() => {
               void handleSubmit();
             }}

@@ -2,6 +2,8 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
+import { ContentMoreButton } from '@/src/features/square/components/ContentMoreButton';
+import { ContentMoreOverlays } from '@/src/features/square/components/ContentMoreOverlays';
 import { ShareCompactComments, type ShareInlineComposer } from '@/src/features/square/components/share/ShareCompactComments';
 import { ShareImageGrid } from '@/src/features/square/components/share/ShareImageGrid';
 import { ShareItemActions } from '@/src/features/square/components/share/ShareItemActions';
@@ -17,6 +19,7 @@ import {
   SHARE_NAME_ROW_GAP,
   SHARE_SIDEBAR_WIDTH,
 } from '@/src/features/square/constants';
+import { useContentMoreController } from '@/src/features/square/hooks/useContentMoreController';
 import type { Share, SquareComment } from '@/src/features/square/types';
 import {
   getAuthorDisplayName,
@@ -42,6 +45,12 @@ function ShareItemInner({
   inlineComposer = null,
 }: ShareItemProps) {
   const [expanded, setExpanded] = useState(false);
+  const more = useContentMoreController({
+    contentKind: 'share',
+    targetId: share.id,
+    authorId: share.author.id,
+    shareSnapshot: share,
+  });
   const previewUris = useMemo(
     () => share.images.map((path) => resolveCdnUrl(path)).filter((uri): uri is string => Boolean(uri)),
     [share.images],
@@ -65,6 +74,9 @@ function ShareItemInner({
             {getAuthorDisplayName(share.author)}
           </Text>
           <TopicTag label={getAuthorLevelLabel(share.author)} />
+          <View style={styles.moreWrap}>
+            <ContentMoreButton onPress={more.openMenu} size={18} />
+          </View>
         </View>
         {share.topicTag ? <TopicTag label={share.topicTag} /> : null}
         {share.content.trim().length > 0 ? (
@@ -95,6 +107,7 @@ function ShareItemInner({
           inlineComposer={inlineComposer}
         />
       </View>
+      <ContentMoreOverlays controller={more} contentKind="share" />
     </View>
   );
 }
@@ -123,6 +136,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: SHARE_NAME_ROW_GAP,
+  },
+  moreWrap: {
+    marginLeft: 'auto',
   },
   name: {
     flexShrink: 1,

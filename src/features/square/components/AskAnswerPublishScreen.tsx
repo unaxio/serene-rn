@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,9 +13,12 @@ import {
   ASK_ANSWER_MIN_HEIGHT,
   ASK_ANSWER_PUBLISH_TITLE,
   ASK_ANSWER_SUBMIT_LABEL,
+  PUBLISH_CONFIRM_EDIT_LABEL,
   SQUARE_PAGE_BG,
 } from '@/src/features/square/constants';
-import { useCreateAskAnswer } from '@/src/features/square/hooks/useCreateAskAnswer';
+import { useAskAnswerDetail } from '@/src/features/square/hooks/useAskAnswerDetail';
+import { useSaveAskAnswer } from '@/src/features/square/hooks/useSaveAskAnswer';
+import { readRouteParam } from '@/src/features/square/utils/readRouteParam';
 
 interface AskAnswerPublishScreenProps {
   askId: string;
@@ -23,10 +26,26 @@ interface AskAnswerPublishScreenProps {
 
 export function AskAnswerPublishScreen({ askId }: AskAnswerPublishScreenProps) {
   const router = useRouter();
-  const { submit, isSubmitting } = useCreateAskAnswer(askId);
+  const params = useLocalSearchParams<{ editId?: string | string[] }>();
+  const editId = readRouteParam(params.editId);
+  const { submit, isSubmitting, isEdit } = useSaveAskAnswer(askId, editId);
+  const detail = useAskAnswerDetail(editId ?? '');
   const [content, setContent] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
-  const canSubmit = useMemo(() => content.trim().length > 0, [content]);
+  const [prefilled, setPrefilled] = useState(false);
+
+  useEffect(() => {
+    if (!isEdit || prefilled || !detail.detail) {
+      return;
+    }
+    setContent(detail.detail.content);
+    setPrefilled(true);
+  }, [detail.detail, isEdit, prefilled]);
+
+  const canSubmit = useMemo(
+    () => content.trim().length > 0 && (!isEdit || prefilled),
+    [content, isEdit, prefilled],
+  );
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit || isSubmitting || !askId) {
@@ -44,7 +63,10 @@ export function AskAnswerPublishScreen({ askId }: AskAnswerPublishScreenProps) {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <SquarePageHeader title={ASK_ANSWER_PUBLISH_TITLE} onBack={() => router.back()} />
+      <SquarePageHeader
+        title={isEdit ? '编辑回答' : ASK_ANSWER_PUBLISH_TITLE}
+        onBack={() => router.back()}
+      />
       <KeyboardAwareScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled">
@@ -61,7 +83,7 @@ export function AskAnswerPublishScreen({ askId }: AskAnswerPublishScreenProps) {
           <PublishSubmitButton
             enabled={canSubmit}
             isSubmitting={isSubmitting}
-            label={ASK_ANSWER_SUBMIT_LABEL}
+            label={isEdit ? PUBLISH_CONFIRM_EDIT_LABEL : ASK_ANSWER_SUBMIT_LABEL}
             onPress={() => {
               void handleSubmit();
             }}
