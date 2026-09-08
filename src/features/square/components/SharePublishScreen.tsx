@@ -39,7 +39,7 @@ export function SharePublishScreen() {
   );
 
   const handleSubmit = useCallback(async () => {
-    if (!canSubmit || isSubmitting) {
+    if (!canSubmit || isSubmitting || isUploadingImages) {
       return;
     }
     const share = await submit({
@@ -52,7 +52,17 @@ export function SharePublishScreen() {
       return;
     }
     router.back();
-  }, [canSubmit, content, images, isSubmitting, router, submit, topicTag, visibleRange]);
+  }, [
+    canSubmit,
+    content,
+    images,
+    isSubmitting,
+    isUploadingImages,
+    router,
+    submit,
+    topicTag,
+    visibleRange,
+  ]);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>

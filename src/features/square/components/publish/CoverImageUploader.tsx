@@ -16,11 +16,16 @@ import { showErrorToast } from '@/src/utils/toast';
 interface CoverImageUploaderProps {
   relativePath: string | null;
   onChange: (relativePath: string | null) => void;
+  onUploadingChange?: (isUploading: boolean) => void;
 }
 
 const COVER_HEIGHT = 160;
 
-export function CoverImageUploader({ relativePath, onChange }: CoverImageUploaderProps) {
+export function CoverImageUploader({
+  relativePath,
+  onChange,
+  onUploadingChange,
+}: CoverImageUploaderProps) {
   const [localPreview, setLocalPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -36,6 +41,7 @@ export function CoverImageUploader({ relativePath, onChange }: CoverImageUploade
     }
     setLocalPreview(file.uri);
     setIsUploading(true);
+    onUploadingChange?.(true);
     try {
       const uploaded = await uploadSquareImage(file);
       onChange(uploaded.relativePath);
@@ -47,8 +53,9 @@ export function CoverImageUploader({ relativePath, onChange }: CoverImageUploade
       }
     } finally {
       setIsUploading(false);
+      onUploadingChange?.(false);
     }
-  }, [isUploading, onChange]);
+  }, [isUploading, onChange, onUploadingChange]);
 
   if (previewUri) {
     return (

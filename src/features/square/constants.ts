@@ -345,6 +345,7 @@ export const STORY_TOPIC_TABS = [
   { id: "成长", name: "成长" },
   { id: "人际", name: "人际" },
   { id: "家庭", name: "家庭" },
+  { id: "其他", name: "其他" },
 ] as const;
 
 export const STORY_TOPIC_OPTIONS = STORY_TOPIC_TABS.filter(

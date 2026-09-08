@@ -28,14 +28,19 @@ export function StoryPublishScreen() {
   const [topicTag, setTopicTag] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
 
   const canSubmit = useMemo(
-    () => title.trim().length > 0 && content.trim().length > 0 && Boolean(topicTag),
-    [content, title, topicTag],
+    () =>
+      title.trim().length > 0 &&
+      content.trim().length > 0 &&
+      Boolean(topicTag) &&
+      !isUploadingCover,
+    [content, isUploadingCover, title, topicTag],
   );
 
   const handleSubmit = useCallback(async () => {
-    if (!canSubmit || !topicTag || isSubmitting) {
+    if (!canSubmit || !topicTag || isSubmitting || isUploadingCover) {
       return;
     }
     const story = await submit({
@@ -53,7 +58,18 @@ export function StoryPublishScreen() {
       return;
     }
     router.replace(`/stories/${story.id}`);
-  }, [canSubmit, content, coverImage, isAnonymous, isSubmitting, router, submit, title, topicTag]);
+  }, [
+    canSubmit,
+    content,
+    coverImage,
+    isAnonymous,
+    isSubmitting,
+    isUploadingCover,
+    router,
+    submit,
+    title,
+    topicTag,
+  ]);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -76,7 +92,11 @@ export function StoryPublishScreen() {
           minHeight={CONTENT_MIN_HEIGHT}
         />
         <TopicTagPicker selectedId={topicTag} onSelect={setTopicTag} />
-        <CoverImageUploader relativePath={coverImage} onChange={setCoverImage} />
+        <CoverImageUploader
+          relativePath={coverImage}
+          onChange={setCoverImage}
+          onUploadingChange={setIsUploadingCover}
+        />
         <AnonymousSwitchRow value={isAnonymous} onChange={setIsAnonymous} />
         <View style={styles.submitWrap}>
           <PublishSubmitButton
