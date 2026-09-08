@@ -225,7 +225,7 @@ export const SHARE_IMAGE_PREVIEW_TITLE = "图片";
 
 export const SHARE_LIST_EMPTY_MESSAGE = "暂无分享";
 
-export const ASK_TITLE_MAX_LENGTH = 100;
+export const ASK_TITLE_MAX_LENGTH = 200;
 
 export const ASK_CONTENT_MAX_LENGTH = 2000;
 
@@ -234,6 +234,10 @@ export const ASK_ANSWER_MAX_LENGTH = 2000;
 export const ASK_CONTENT_MIN_HEIGHT = 120;
 
 export const ASK_ANSWER_MIN_HEIGHT = 180;
+
+export const ASK_ANSWER_LIST_GAP = 5;
+
+export const ASK_ANSWER_CONTENT_TOP_GAP = 8;
 
 export const ASK_REPLY_EXPAND_COUNT = 5;
 

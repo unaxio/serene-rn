@@ -11,8 +11,6 @@ import { CountedTextInput } from '@/src/features/square/components/publish/Count
 import { PublishSubmitButton } from '@/src/features/square/components/publish/PublishSubmitButton';
 import { TopicTagPicker } from '@/src/features/square/components/publish/TopicTagPicker';
 import {
-  ASK_CONTENT_MAX_LENGTH,
-  ASK_CONTENT_MIN_HEIGHT,
   ASK_PUBLISH_TITLE,
   ASK_TITLE_MAX_LENGTH,
   PUBLISH_CONFIRM_EDIT_LABEL,
@@ -40,6 +38,7 @@ export function AskPublishScreen() {
       return;
     }
     setTitle(detail.ask.title);
+    // 保留原 content，避免编辑时误清空历史补充描述
     setContent(detail.ask.content);
     setTopicTag(detail.ask.topicTag);
     setPrefilled(true);
@@ -87,14 +86,7 @@ export function AskPublishScreen() {
           onChangeText={setTitle}
           placeholder="请输入问题（必填）"
           maxLength={ASK_TITLE_MAX_LENGTH}
-        />
-        <CountedTextInput
-          value={content}
-          onChangeText={setContent}
-          placeholder="补充描述（选填）"
-          maxLength={ASK_CONTENT_MAX_LENGTH}
           multiline
-          minHeight={ASK_CONTENT_MIN_HEIGHT}
         />
         <TopicTagPicker selectedId={topicTag} onSelect={setTopicTag} />
         <AskPublishTips />

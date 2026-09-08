@@ -5,7 +5,11 @@ import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { AskAnswerActions } from '@/src/features/square/components/ask/AskAnswerActions';
 import { SquareUserAvatar } from '@/src/features/square/components/SquareUserAvatar';
 import { TopicTag } from '@/src/features/square/components/TopicTag';
-import { CARD_BORDER_COLOR, MUTED_TEXT_COLOR } from '@/src/features/square/constants';
+import {
+  ASK_ANSWER_CONTENT_TOP_GAP,
+  ASK_ANSWER_LIST_GAP,
+  MUTED_TEXT_COLOR,
+} from '@/src/features/square/constants';
 import type { AskAnswer } from '@/src/features/square/types';
 import {
   getAuthorDisplayName,
@@ -70,8 +74,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     gap: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: CARD_BORDER_COLOR,
+    marginBottom: ASK_ANSWER_LIST_GAP,
     backgroundColor: '#FFFFFF',
   },
   header: {
@@ -100,6 +103,7 @@ const styles = StyleSheet.create({
     color: MUTED_TEXT_COLOR,
   },
   content: {
+    marginTop: ASK_ANSWER_CONTENT_TOP_GAP,
     fontSize: 15,
     lineHeight: 24,
     color: APP_TEXT_COLOR,

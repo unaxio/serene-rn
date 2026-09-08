@@ -12,8 +12,7 @@ export type ContentMoreActionId =
   | 'report'
   | 'notInterested'
   | 'edit'
-  | 'delete'
-  | 'visibleRange';
+  | 'delete';
 
 export type ContentMoreSymbolName = ComponentProps<typeof SymbolView>['name'];
 
@@ -43,11 +42,10 @@ const PROMOTE_ICON: ContentMoreSymbolName = {
 
 export function buildContentMoreActions({
   isOwn,
-  contentKind,
   isFollowing = false,
 }: BuildContentMoreActionsParams): ContentMoreAction[] {
   if (isOwn) {
-    const actions: ContentMoreAction[] = [
+    return [
       { id: 'promote', label: '推广', icon: PROMOTE_ICON },
       { id: 'share', label: '分享', icon: SHARE_ICON },
       {
@@ -61,14 +59,6 @@ export function buildContentMoreActions({
         icon: { ios: 'trash', android: 'delete', web: 'delete' },
       },
     ];
-    if (contentKind === 'share') {
-      actions.push({
-        id: 'visibleRange',
-        label: '可见范围',
-        icon: { ios: 'eye', android: 'visibility', web: 'visibility' },
-      });
-    }
-    return actions;
   }
 
   return [

@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { CommentComposer } from '@/src/features/square/components/comments/CommentComposer';
+import { CommentComposerLayer } from '@/src/features/square/components/comments/CommentComposerLayer';
 import { CommentReplyPanel } from '@/src/features/square/components/comments/CommentReplyPanel';
 import { CommentSection } from '@/src/features/square/components/comments/CommentSection';
 import { StoryInlineComments } from '@/src/features/square/components/comments/StoryInlineComments';
@@ -46,7 +47,8 @@ export function StoryDetailLoaded({ storyId, story }: StoryDetailLoadedProps) {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
         scrollEventThrottle={SCROLL_EVENT_THROTTLE}
-        onScroll={flow.handleScroll}>
+        onScroll={flow.handleScroll}
+        onLayout={flow.handleScrollViewLayout}>
         <StoryDetailBody story={story} />
         <StoryFlowerLedger
           storyId={storyId}
@@ -64,19 +66,10 @@ export function StoryDetailLoaded({ storyId, story }: StoryDetailLoadedProps) {
           onResonate={flow.resonateComment}
           onCollect={flow.collectComment}
           onFlower={handleFlowerComment}
-          onLayoutY={(y) => {
-            flow.commentsYRef.current = y;
-          }}
+          onLayoutY={flow.handleCommentsLayoutY}
         />
       </KeyboardAwareScrollView>
-      {flow.composerOpen ? (
-        <CommentComposer
-          ref={flow.composerRef}
-          placeholder={flow.composerPlaceholder}
-          isSubmitting={flow.comments.isSubmitting}
-          onSubmit={flow.handleComposerSubmit}
-        />
-      ) : (
+      {!flow.composerOpen ? (
         <StoryActionBar
           resonateCount={story.resonateCount}
           collectCount={story.collectCount}
@@ -92,7 +85,15 @@ export function StoryDetailLoaded({ storyId, story }: StoryDetailLoadedProps) {
           onComment={flow.handleCommentIcon}
           onShare={() => setShareVisible(true)}
         />
-      )}
+      ) : null}
+      <CommentComposerLayer visible={flow.composerOpen} onDismiss={flow.closeComposer}>
+        <CommentComposer
+          ref={flow.composerRef}
+          placeholder={flow.composerPlaceholder}
+          isSubmitting={flow.comments.isSubmitting}
+          onSubmit={flow.handleComposerSubmit}
+        />
+      </CommentComposerLayer>
       <CommentSection
         visible={flow.sheetVisible}
         onClose={() => flow.setSheetVisible(false)}

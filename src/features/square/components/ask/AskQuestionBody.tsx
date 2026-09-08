@@ -54,9 +54,6 @@ export function AskQuestionBody({
         {ask.topicTag ? <TopicTag label={ask.topicTag} /> : null}
       </View>
       <Text style={styles.title}>{ask.title}</Text>
-      {ask.content.trim().length > 0 ? (
-        <Text style={styles.content}>{ask.content}</Text>
-      ) : null}
       <View style={styles.collectRow}>
         <CommentActionButton
           icon={{ ios: 'star', android: 'star_border', web: 'star_border' }}
@@ -106,11 +103,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
     lineHeight: 30,
-    color: APP_TEXT_COLOR,
-  },
-  content: {
-    fontSize: 15,
-    lineHeight: 24,
     color: APP_TEXT_COLOR,
   },
   collectRow: {

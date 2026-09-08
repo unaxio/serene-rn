@@ -1,23 +1,19 @@
-import { useRouter } from "expo-router";
-import { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import { AskAnswerItem } from "@/src/features/square/components/ask/AskAnswerItem";
-import { AskAnswerQuestionHeader } from "@/src/features/square/components/ask/AskAnswerQuestionHeader";
-// import { AskAnswerViewAllButton } from '@/src/features/square/components/ask/AskAnswerViewAllButton';
-import { CommentComposer } from "@/src/features/square/components/comments/CommentComposer";
-import { CommentReplyPanel } from "@/src/features/square/components/comments/CommentReplyPanel";
-import { CommentSection } from "@/src/features/square/components/comments/CommentSection";
-import { StoryInlineComments } from "@/src/features/square/components/comments/StoryInlineComments";
-import { SendFlowerModal } from "@/src/features/square/components/SendFlowerModal";
-import { SquareShareSheet } from "@/src/features/square/components/SquareShareSheet";
-import { PAGE_SURFACE_COLOR } from "@/src/features/square/constants";
-import { useStoryDetailComments } from "@/src/features/square/hooks/useStoryDetailComments";
-import type {
-  AskAnswerDetail,
-  SquareComment,
-} from "@/src/features/square/types";
+import { AskAnswerItem } from '@/src/features/square/components/ask/AskAnswerItem';
+import { AskAnswerQuestionHeader } from '@/src/features/square/components/ask/AskAnswerQuestionHeader';
+import { CommentComposer } from '@/src/features/square/components/comments/CommentComposer';
+import { CommentComposerLayer } from '@/src/features/square/components/comments/CommentComposerLayer';
+import { CommentReplyPanel } from '@/src/features/square/components/comments/CommentReplyPanel';
+import { StoryInlineComments } from '@/src/features/square/components/comments/StoryInlineComments';
+import { SendFlowerModal } from '@/src/features/square/components/SendFlowerModal';
+import { SquareShareSheet } from '@/src/features/square/components/SquareShareSheet';
+import { PAGE_SURFACE_COLOR } from '@/src/features/square/constants';
+import { useStoryDetailComments } from '@/src/features/square/hooks/useStoryDetailComments';
+import type { AskAnswerDetail, SquareComment } from '@/src/features/square/types';
 
 interface AskAnswerDetailLoadedProps {
   detail: AskAnswerDetail;
@@ -27,11 +23,7 @@ const SCROLL_EVENT_THROTTLE = 16;
 
 export function AskAnswerDetailLoaded({ detail }: AskAnswerDetailLoadedProps) {
   const router = useRouter();
-  const flow = useStoryDetailComments(
-    detail.id,
-    detail.commentCount,
-    "ask_answer",
-  );
+  const flow = useStoryDetailComments(detail.id, detail.commentCount, 'ask_answer');
   const [shareVisible, setShareVisible] = useState(false);
 
   const openAsk = useCallback(() => {
@@ -40,7 +32,7 @@ export function AskAnswerDetailLoaded({ detail }: AskAnswerDetailLoadedProps) {
 
   const handleFlowerComment = useCallback(
     (comment: SquareComment) => {
-      flow.openFlowerModal({ targetType: "comment", targetId: comment.id });
+      flow.openFlowerModal({ targetType: 'comment', targetId: comment.id });
     },
     [flow],
   );
@@ -53,31 +45,31 @@ export function AskAnswerDetailLoaded({ detail }: AskAnswerDetailLoadedProps) {
         keyboardDismissMode="interactive"
         scrollEventThrottle={SCROLL_EVENT_THROTTLE}
         onScroll={flow.handleScroll}
-      >
+        onLayout={flow.handleScrollViewLayout}>
         <AskAnswerQuestionHeader ask={detail.ask} onOpenAsk={openAsk} />
         <AskAnswerItem
           answer={{ ...detail, commentCount: flow.displayCommentCount }}
           onResonate={(id) => {
             void flow.runAction({
-              targetType: "ask_answer",
+              targetType: 'ask_answer',
               targetId: id,
-              actionType: "resonate",
+              actionType: 'resonate',
             });
           }}
           onCollect={(id) => {
             void flow.runAction({
-              targetType: "ask_answer",
+              targetType: 'ask_answer',
               targetId: id,
-              actionType: "collect",
+              actionType: 'collect',
             });
           }}
           onFlower={(answer) =>
             flow.openFlowerModal({
-              targetType: "ask_answer",
+              targetType: 'ask_answer',
               targetId: answer.id,
             })
           }
-          onComment={flow.handleCommentIcon}
+          onComment={() => flow.openComposer(null)}
           onShare={() => setShareVisible(true)}
         />
         <StoryInlineComments
@@ -89,29 +81,17 @@ export function AskAnswerDetailLoaded({ detail }: AskAnswerDetailLoadedProps) {
           onResonate={flow.resonateComment}
           onCollect={flow.collectComment}
           onFlower={handleFlowerComment}
-          onLayoutY={(y) => {
-            flow.commentsYRef.current = y;
-          }}
+          onLayoutY={flow.handleCommentsLayoutY}
         />
-        {/* <AskAnswerViewAllButton onPress={openAsk} /> */}
       </KeyboardAwareScrollView>
-      {flow.composerOpen ? (
+      <CommentComposerLayer visible={flow.composerOpen} onDismiss={flow.closeComposer}>
         <CommentComposer
           ref={flow.composerRef}
           placeholder={flow.composerPlaceholder}
           isSubmitting={flow.comments.isSubmitting}
           onSubmit={flow.handleComposerSubmit}
         />
-      ) : null}
-      <CommentSection
-        visible={flow.sheetVisible}
-        onClose={() => flow.setSheetVisible(false)}
-        targetType="ask_answer"
-        targetId={detail.id}
-        enableFlower
-        onCommentCountChange={flow.setCommentCount}
-        onFlower={handleFlowerComment}
-      />
+      </CommentComposerLayer>
       {flow.activeRoot ? (
         <CommentReplyPanel
           visible

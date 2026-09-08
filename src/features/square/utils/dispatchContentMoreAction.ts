@@ -74,7 +74,7 @@ export function dispatchContentMoreAction(
       .catch(() => undefined);
     return;
   }
-  if (actionId === 'edit' || actionId === 'visibleRange') {
+  if (actionId === 'edit') {
     openContentEdit(ctx);
     return;
   }
