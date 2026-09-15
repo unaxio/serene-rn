@@ -72,7 +72,7 @@ export function ProfileAccountScreen() {
   const loading = securityQuery.isLoading || devicesQuery.isLoading;
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="账号与安全" onBack={() => router.back()} />
       {loading ? (
         <ActivityIndicator style={styles.loading} color={PROFILE_ACCENT} />

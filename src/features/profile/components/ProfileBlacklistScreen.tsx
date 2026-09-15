@@ -77,7 +77,7 @@ export function ProfileBlacklistScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="黑名单" onBack={() => router.back()} />
       {query.isLoading ? (
         <ActivityIndicator style={styles.loading} color={PROFILE_ACCENT} />

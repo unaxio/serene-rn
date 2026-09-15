@@ -62,7 +62,7 @@ export function AskAnswerPublishScreen({ askId }: AskAnswerPublishScreenProps) {
   }, [askId, canSubmit, content, isAnonymous, isSubmitting, router, submit]);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader
         title={isEdit ? '编辑回答' : ASK_ANSWER_PUBLISH_TITLE}
         onBack={() => router.back()}

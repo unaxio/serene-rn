@@ -51,7 +51,7 @@ export function FullScreenModal({
       <View
         style={[
           styles.container,
-          { backgroundColor, paddingTop: Math.max(insets.top, MIN_TOP_INSET) },
+          { backgroundColor, paddingTop: insets.top + MIN_TOP_INSET },
         ]}>
         <View style={styles.header}>
           <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>

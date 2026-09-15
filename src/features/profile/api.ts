@@ -42,6 +42,14 @@ import type {
   UserHomeData,
 } from './types';
 
+/** 列表接口统一：`data` 为 `{ items: T[] }`，兼容历史裸数组 */
+function unwrapItemsList<T>(data: T[] | { items?: T[] } | null | undefined): T[] {
+  if (Array.isArray(data)) {
+    return data;
+  }
+  return data?.items ?? [];
+}
+
 function asAuthor(raw: Partial<ProfileAuthor> | null | undefined): ProfileAuthor {
   const rawAvatar = raw?.avatarUrl ?? '';
   return {
@@ -413,9 +421,11 @@ export async function getUserContents(
 
 export async function getPromotePlans(): Promise<PromotePlan[]> {
   const response = await request.get<
-    { items: PromotePlan[] } | ApiEnvelope<{ items: PromotePlan[] }>
+    | PromotePlan[]
+    | { items: PromotePlan[] }
+    | ApiEnvelope<PromotePlan[] | { items: PromotePlan[] }>
   >(API_PATHS.PROFILE_PROMOTE_PLANS);
-  return unwrapResponse(response, '获取推广方案失败').items ?? [];
+  return unwrapItemsList(unwrapResponse(response, '获取推广方案失败'));
 }
 
 export async function createPromoteOrder(
@@ -459,13 +469,9 @@ export async function putNotificationSettings(payload: NotificationSettings): Pr
 
 export async function getBlacklist(): Promise<BlacklistItem[]> {
   const response = await request.get<
-    BlacklistItem[] | SquarePagedData<BlacklistItem> | ApiEnvelope<BlacklistItem[] | SquarePagedData<BlacklistItem>>
+    BlacklistItem[] | { items: BlacklistItem[] } | ApiEnvelope<BlacklistItem[] | { items: BlacklistItem[] }>
   >(API_PATHS.PROFILE_BLACKLIST);
-  const data = unwrapResponse(response, '获取黑名单失败');
-  if (Array.isArray(data)) {
-    return data;
-  }
-  return data.items ?? [];
+  return unwrapItemsList(unwrapResponse(response, '获取黑名单失败'));
 }
 
 export async function addBlacklist(userId: string): Promise<void> {
@@ -504,9 +510,11 @@ export async function getAccountSecurity(): Promise<AccountSecurityInfo> {
 
 export async function getAccountDevices(): Promise<AccountDevice[]> {
   const response = await request.get<
-    AccountDevice[] | ApiEnvelope<AccountDevice[]>
+    | AccountDevice[]
+    | { items: AccountDevice[] }
+    | ApiEnvelope<AccountDevice[] | { items: AccountDevice[] }>
   >(API_PATHS.PROFILE_ACCOUNT_DEVICES);
-  return unwrapResponse(response, '获取登录设备失败');
+  return unwrapItemsList(unwrapResponse(response, '获取登录设备失败'));
 }
 
 export async function deleteAccountDevice(deviceId: string): Promise<void> {
@@ -524,10 +532,10 @@ export async function deleteAccount(): Promise<void> {
 }
 
 export async function getHelpFaqs(): Promise<HelpFaq[]> {
-  const response = await request.get<HelpFaq[] | ApiEnvelope<HelpFaq[]>>(
-    API_PATHS.PROFILE_HELP_FAQS,
-  );
-  return unwrapResponse(response, '获取常见问题失败');
+  const response = await request.get<
+    HelpFaq[] | { items: HelpFaq[] } | ApiEnvelope<HelpFaq[] | { items: HelpFaq[] }>
+  >(API_PATHS.PROFILE_HELP_FAQS);
+  return unwrapItemsList(unwrapResponse(response, '获取常见问题失败'));
 }
 
 export async function submitHelpFeedback(payload: HelpFeedbackPayload): Promise<void> {
@@ -539,10 +547,10 @@ export async function submitHelpFeedback(payload: HelpFeedbackPayload): Promise<
 }
 
 export async function getHelpTickets(): Promise<HelpTicket[]> {
-  const response = await request.get<HelpTicket[] | ApiEnvelope<HelpTicket[]>>(
-    API_PATHS.PROFILE_HELP_TICKETS,
-  );
-  return unwrapResponse(response, '获取反馈记录失败');
+  const response = await request.get<
+    HelpTicket[] | { items: HelpTicket[] } | ApiEnvelope<HelpTicket[] | { items: HelpTicket[] }>
+  >(API_PATHS.PROFILE_HELP_TICKETS);
+  return unwrapItemsList(unwrapResponse(response, '获取反馈记录失败'));
 }
 
 export async function getNotifications(

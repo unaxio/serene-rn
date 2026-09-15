@@ -54,7 +54,7 @@ export function UserProfileScreen({ userId }: UserProfileScreenProps) {
   } = useUserProfileActions(userId);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="用户主页" onBack={() => router.back()} />
       {homeQuery.isLoading ? (
         <ActivityIndicator style={styles.loading} color={PROFILE_ACCENT} />

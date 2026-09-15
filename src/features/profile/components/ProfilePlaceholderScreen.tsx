@@ -19,7 +19,7 @@ export function ProfilePlaceholderScreen({
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title={title} onBack={() => router.back()} />
       <View style={styles.body}>
         <Text style={styles.text}>{message}</Text>

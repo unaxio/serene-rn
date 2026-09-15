@@ -68,7 +68,7 @@ export function ProfileHelpScreen() {
   }, [contact, content, mutation, type]);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="帮助与反馈" onBack={() => router.back()} />
       <KeyboardAwareScrollView
         contentContainerStyle={styles.content}

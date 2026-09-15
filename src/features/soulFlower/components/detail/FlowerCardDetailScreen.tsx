@@ -2,7 +2,7 @@ import { SymbolView } from 'expo-symbols';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AwarenessSummary } from '@/src/features/soulFlower/components/detail/AwarenessSummary';
 import { FlowerCardShowcase } from '@/src/features/soulFlower/components/detail/FlowerCardShowcase';
@@ -23,8 +23,11 @@ interface FlowerCardDetailScreenProps {
   onBack?: () => void;
 }
 
+const MIN_TOP_INSET = 12;
+
 export function FlowerCardDetailScreen({ flowerId, onBack }: FlowerCardDetailScreenProps) {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { flowerCards, categories, answeredQuestionIds, isLoading } = useMindMap();
   const { records, isLoading: isAnswersLoading, isError, refetch } =
     useFlowerCardAnswers(flowerId);
@@ -58,38 +61,39 @@ export function FlowerCardDetailScreen({ flowerId, onBack }: FlowerCardDetailScr
 
   return (
     <View style={styles.root}>
-      <SafeAreaView style={styles.safe} edges={['top']}>
-        <Pressable onPress={handleBack} hitSlop={12} style={styles.backButton}>
-          <SymbolView
-            name={{ ios: 'chevron.left', android: 'arrow_back_ios', web: 'arrow_back_ios' }}
-            size={22}
-            tintColor={APP_TEXT_COLOR}
-          />
-        </Pressable>
+      <Pressable
+        onPress={handleBack}
+        hitSlop={12}
+        style={[styles.backButton, { marginTop: insets.top + MIN_TOP_INSET }]}>
+        <SymbolView
+          name={{ ios: 'chevron.left', android: 'arrow_back_ios', web: 'arrow_back_ios' }}
+          size={22}
+          tintColor={APP_TEXT_COLOR}
+        />
+      </Pressable>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-          {!card && !isLoading ? (
-            <Text style={styles.empty}>未找到该花卡</Text>
-          ) : null}
-          {card ? (
-            <>
-              <FlowerCardShowcase
-                card={card}
-                categoryName={categoryName}
-                progress={progress}
-              />
-              <AwarenessSummary
-                records={records}
-                isLoading={isAnswersLoading}
-                isError={isError}
-                onRetry={() => void refetch()}
-                themeColor={card.themeColor}
-                flowerHex={flowerHex}
-              />
-            </>
-          ) : null}
-        </ScrollView>
-      </SafeAreaView>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+        {!card && !isLoading ? (
+          <Text style={styles.empty}>未找到该花卡</Text>
+        ) : null}
+        {card ? (
+          <>
+            <FlowerCardShowcase
+              card={card}
+              categoryName={categoryName}
+              progress={progress}
+            />
+            <AwarenessSummary
+              records={records}
+              isLoading={isAnswersLoading}
+              isError={isError}
+              onRetry={() => void refetch()}
+              themeColor={card.themeColor}
+              flowerHex={flowerHex}
+            />
+          </>
+        ) : null}
+      </ScrollView>
     </View>
   );
 }
@@ -99,17 +103,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: DETAIL_PAGE_BG,
   },
-  safe: {
-    flex: 1,
-    backgroundColor: DETAIL_PAGE_BG,
-  },
   backButton: {
     width: 44,
     height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 8,
-    marginTop: 8,
     marginBottom: 12,
   },
   content: {

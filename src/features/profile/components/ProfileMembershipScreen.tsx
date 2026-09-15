@@ -25,7 +25,7 @@ export function ProfileMembershipScreen() {
   const data = query.data;
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="会员中心" onBack={() => router.back()} />
       {query.isLoading ? (
         <ActivityIndicator style={styles.loading} color={PROFILE_ACCENT} />

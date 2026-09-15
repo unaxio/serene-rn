@@ -11,3 +11,11 @@ alwaysApply: true
 - 左上角 `<` 返回，禁止右上角「关闭」文字
 - 标题居中，与返回按钮同一行、垂直居中对齐
 - 居中浮层、底部 sheet 等非全屏弹窗不要套用
+
+# 带返回的页面顶栏
+
+带左上角返回的页面标题栏（含 `SquarePageHeader`、`StoryDetailHeader`、`SquareSearchHeader`）必须：
+
+- 顶距使用 `paddingTop: insets.top + 12`（`useSafeAreaInsets`），**禁止**只有 `paddingBottom`、顶栏贴屏幕上沿
+- 顶距由 Header 自己处理时，外层 `SafeAreaView` **不要**再设 `edges={['top']}`，避免双重安全区
+- 新建同类页优先复用 `SquarePageHeader`，不要手写一套无顶距的返回栏

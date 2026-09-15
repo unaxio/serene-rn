@@ -96,7 +96,7 @@ export function StoryPublishScreen() {
   ]);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title={isEdit ? '编辑故事' : '投稿'} onBack={() => router.back()} />
       <KeyboardAwareScrollView
         contentContainerStyle={styles.content}

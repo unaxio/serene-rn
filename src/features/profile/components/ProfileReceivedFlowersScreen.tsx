@@ -58,7 +58,7 @@ export function ProfileReceivedFlowersScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="收到的花" onBack={() => router.back()} />
       <FlashList
         data={list.items}

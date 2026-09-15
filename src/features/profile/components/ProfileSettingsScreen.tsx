@@ -41,7 +41,7 @@ export function ProfileSettingsScreen() {
   }, [logout, router]);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="设置与服务" onBack={() => router.back()} />
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>账号与隐私</Text>

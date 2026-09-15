@@ -58,7 +58,7 @@ export function ProfileLikesScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="获赞记录" onBack={() => router.back()} />
       <FlashList
         data={list.items}

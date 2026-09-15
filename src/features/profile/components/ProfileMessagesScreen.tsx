@@ -74,7 +74,7 @@ export function ProfileMessagesScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="消息中心" onBack={() => router.back()} />
       <View style={styles.toolbar}>
         <Text style={styles.unread}>未读 {unreadQuery.data ?? 0}</Text>

@@ -11,7 +11,7 @@ interface ProfileHomeHeaderProps {
 }
 
 const ICON_SIZE = 22;
-const MIN_TOP_INSET = 8;
+const MIN_TOP_INSET = 12;
 
 export function ProfileHomeHeader({
   onPressNotifications,
@@ -20,7 +20,7 @@ export function ProfileHomeHeader({
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.wrap, { paddingTop: Math.max(insets.top, MIN_TOP_INSET) }]}>
+    <View style={[styles.wrap, { paddingTop: insets.top + MIN_TOP_INSET }]}>
       <Text style={styles.title}>我的</Text>
       <View style={styles.actions}>
         <Pressable onPress={onPressNotifications} hitSlop={10} style={styles.iconBtn}>

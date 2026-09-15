@@ -5,13 +5,13 @@ import {
   ActivityIndicator,
   Pressable,
   StyleSheet,
-  Switch,
   Text,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
+import { AppSwitch } from '@/src/components/AppSwitch';
 import {
   getNotificationSettings,
   putNotificationSettings,
@@ -86,7 +86,7 @@ export function ProfileNotificationSettingsScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="通知设置" onBack={() => router.back()} />
       {query.isLoading ? (
         <ActivityIndicator style={styles.loading} color={PROFILE_ACCENT} />
@@ -96,10 +96,10 @@ export function ProfileNotificationSettingsScreen() {
             {BOOL_ROWS.map((row) => (
               <View key={row.key} style={styles.switchRow}>
                 <Text style={styles.label}>{row.label}</Text>
-                <Switch
+                <AppSwitch
                   value={draft[row.key]}
                   onValueChange={(value) => toggle(row.key, value)}
-                  trackColor={{ true: PROFILE_ACCENT }}
+                  activeTrackColor={PROFILE_ACCENT}
                 />
               </View>
             ))}

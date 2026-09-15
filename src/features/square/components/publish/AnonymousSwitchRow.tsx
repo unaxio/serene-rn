@@ -1,6 +1,7 @@
-import { StyleSheet, Switch, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
+import { AppSwitch } from '@/src/components/AppSwitch';
 import { ACCENT_COLOR, MUTED_TEXT_COLOR } from '@/src/features/square/constants';
 
 interface AnonymousSwitchRowProps {
@@ -17,12 +18,7 @@ export function AnonymousSwitchRow({ value, onChange }: AnonymousSwitchRowProps)
           <Text style={styles.hint}>开启后，你的昵称和头像将不对外展示</Text>
         ) : null}
       </View>
-      <Switch
-        value={value}
-        onValueChange={onChange}
-        trackColor={{ false: '#E2E8F0', true: ACCENT_COLOR }}
-        thumbColor="#FFFFFF"
-      />
+      <AppSwitch value={value} onValueChange={onChange} activeTrackColor={ACCENT_COLOR} />
     </View>
   );
 }

@@ -84,7 +84,7 @@ export function ProfilePromoteScreen() {
   }, [hasTarget, mutation, selectedPlan, targetId, targetType]);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="内容推广" onBack={() => router.back()} />
       <View style={styles.body}>
         {!hasTarget ? (

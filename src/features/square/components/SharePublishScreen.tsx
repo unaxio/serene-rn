@@ -86,7 +86,7 @@ export function SharePublishScreen() {
   ]);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader
         title={isEdit ? '编辑分享' : SHARE_PUBLISH_TITLE}
         onBack={() => router.back()}

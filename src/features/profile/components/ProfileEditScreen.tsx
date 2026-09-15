@@ -22,7 +22,7 @@ export function ProfileEditScreen() {
   const form = useProfileEditForm();
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="编辑资料" onBack={() => router.back()} />
       <KeyboardAwareScrollView
         contentContainerStyle={styles.content}

@@ -108,7 +108,7 @@ export function ProfileFollowListScreen({ mode }: ProfileFollowListScreenProps) 
   );
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title={title} onBack={() => router.back()} />
       <View style={styles.searchWrap}>
         <TextInput
