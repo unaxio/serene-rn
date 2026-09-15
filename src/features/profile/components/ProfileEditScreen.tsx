@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
+import { ProfileBirthdaySelect } from '@/src/features/profile/components/ProfileBirthdaySelect';
 import { ProfileChipGroup } from '@/src/features/profile/components/ProfileChipGroup';
 import { ProfileEditAvatarField } from '@/src/features/profile/components/ProfileEditAvatarField';
 import {
@@ -62,14 +63,8 @@ export function ProfileEditScreen() {
           value={form.gender}
           onChange={form.setGender}
         />
-        <Text style={styles.label}>生日（YYYY-MM-DD）</Text>
-        <TextInput
-          style={styles.input}
-          value={form.birthday}
-          onChangeText={form.setBirthday}
-          placeholder="2000-01-01"
-          placeholderTextColor={PROFILE_MUTED}
-        />
+        <Text style={styles.label}>生日</Text>
+        <ProfileBirthdaySelect value={form.birthday} onChange={form.setBirthday} />
         <Text style={styles.label}>星座</Text>
         <Text style={styles.readOnly}>{form.constellation}</Text>
         <Text style={styles.label}>所在地区</Text>

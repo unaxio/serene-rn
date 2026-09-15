@@ -29,7 +29,9 @@ export function useProfileEditForm() {
   const [nickName, setNickName] = useState(user?.nickName ?? '');
   const [bio, setBio] = useState('');
   const [gender, setGender] = useState<UserGender>(user?.gender ?? 'secret');
-  const [birthday, setBirthday] = useState(formatBirthdayInput(user?.birthday));
+  const [birthday, setBirthday] = useState(
+    formatBirthdayInput(user?.birthday) || '2000-01-01',
+  );
   const [region, setRegion] = useState('');
   const [relationshipStatus, setRelationshipStatus] = useState('');
 
@@ -38,7 +40,9 @@ export function useProfileEditForm() {
     setNickName(profile?.nickName ?? user?.nickName ?? '');
     setBio(profile?.bio ?? user?.bio ?? '');
     setGender(profile?.gender ?? user?.gender ?? 'secret');
-    setBirthday(formatBirthdayInput(profile?.birthday ?? user?.birthday));
+    setBirthday(
+      formatBirthdayInput(profile?.birthday ?? user?.birthday) || '2000-01-01',
+    );
     setRegion(profile?.region ?? user?.region ?? '');
     setRelationshipStatus(
       profile?.relationshipStatus ?? user?.relationshipStatus ?? '',
