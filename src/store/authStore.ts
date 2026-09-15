@@ -192,6 +192,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           nickName: params.nickName,
           gender: params.gender,
           birthday: params.birthday,
+          bio: params.bio ?? user.bio,
+          region: params.region !== undefined ? params.region : user.region,
+          relationshipStatus:
+            params.relationshipStatus !== undefined
+              ? params.relationshipStatus
+              : user.relationshipStatus,
         },
       });
       showToast(response.message || '资料已更新');

@@ -1,5 +1,5 @@
-import { ProfileScreen } from '@/src/features/auth/components/ProfileScreen';
+import { ProfileHomeScreen } from '@/src/features/profile/components/ProfileHomeScreen';
 
 export default function ProfileTabScreen() {
-  return <ProfileScreen />;
+  return <ProfileHomeScreen />;
 }

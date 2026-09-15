@@ -31,6 +31,10 @@ export interface AuthUserData {
   nickName?: string;
   gender?: UserGender;
   birthday?: string;
+  bio?: string;
+  avatarUrl?: string;
+  region?: string | null;
+  relationshipStatus?: string | null;
 }
 
 export interface AuthStatusResponse {
@@ -44,6 +48,10 @@ export interface UpdateUserProfileRequest {
   nickName: string;
   gender: UserGender;
   birthday: string;
+  bio?: string;
+  avatarPath?: string;
+  region?: string | null;
+  relationshipStatus?: string | null;
 }
 
 export interface UpdateUserProfileResponse {

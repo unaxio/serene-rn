@@ -1,4 +1,11 @@
-export type SquareTargetType = 'story' | 'share' | 'ask' | 'ask_answer' | 'comment';
+export type SquareTargetType =
+  | 'story'
+  | 'share'
+  | 'ask'
+  | 'ask_answer'
+  | 'comment'
+  | 'user'
+  | 'user_action';
 
 export type SquareReportTargetType = Extract<
   SquareTargetType,
@@ -157,6 +164,7 @@ export interface SquareActionPayload {
   actionType: SquareActionType;
   quantity?: number;
   giftFlowerId?: string;
+  message?: string;
 }
 
 export interface GiftFlower {

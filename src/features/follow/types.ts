@@ -1,3 +1,6 @@
+/** 当前用户与对方的关注关系 */
+export type FollowRelation = 'none' | 'following' | 'followed_by' | 'mutual';
+
 /** 关注相关用户信息（列表 / 搜索共用） */
 export interface FollowUser {
   userId: string;
@@ -6,6 +9,9 @@ export interface FollowUser {
   avatarUrl?: string;
   avatarPath?: string;
   avatar?: string;
+  level?: string | number | null;
+  identityTags?: string[];
+  relation?: FollowRelation;
 }
 
 /** 后端原始用户字段 */
@@ -16,6 +22,9 @@ export interface FollowUserRaw {
   avatarUrl?: string;
   avatarPath?: string;
   avatar?: string;
+  level?: string | number | null;
+  identityTags?: string[];
+  relation?: FollowRelation;
 }
 
 /** 关注列表 / 搜索分页结构 */

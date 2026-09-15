@@ -53,6 +53,9 @@ function normalizeFollowUser(raw: FollowUserRaw): FollowUser {
     avatarUrl: raw.avatarUrl,
     avatarPath: raw.avatarPath,
     avatar: raw.avatar,
+    level: raw.level ?? null,
+    identityTags: raw.identityTags ?? [],
+    relation: raw.relation ?? 'none',
   };
 }
 
