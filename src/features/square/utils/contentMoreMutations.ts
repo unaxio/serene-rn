@@ -6,6 +6,8 @@ import { SQUARE_QUERY_KEYS } from '@/src/features/square/constants';
 import { deleteShare } from '@/src/features/square/shareApi';
 import type { ContentMoreKind } from '@/src/features/square/utils/contentMoreActions';
 
+const PROFILE_ME_CONTENTS_QUERY_ROOT = ['profile', 'me', 'contents'] as const;
+
 export async function deleteContentByKind(
   contentKind: ContentMoreKind,
   targetId: string,
@@ -31,6 +33,7 @@ export async function invalidateAfterContentDelete(
   targetId: string,
   askId?: string | null,
 ): Promise<void> {
+  await queryClient.invalidateQueries({ queryKey: PROFILE_ME_CONTENTS_QUERY_ROOT });
   switch (contentKind) {
     case 'story':
       await queryClient.invalidateQueries({ queryKey: ['square', 'stories'] });

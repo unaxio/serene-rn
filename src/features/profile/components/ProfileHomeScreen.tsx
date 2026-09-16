@@ -15,6 +15,7 @@ import { ProfileEmptyPane } from '@/src/features/profile/components/ProfileEmpty
 import { ProfileEntrySection } from '@/src/features/profile/components/ProfileEntrySection';
 import { ProfileHomeHeader } from '@/src/features/profile/components/ProfileHomeHeader';
 import { ProfileInfoCard } from '@/src/features/profile/components/ProfileInfoCard';
+import { ProfileShareDetailModal } from '@/src/features/profile/components/ProfileShareDetailModal';
 import { ProfileStatsBar } from '@/src/features/profile/components/ProfileStatsBar';
 import { ProfileSubTabs } from '@/src/features/profile/components/ProfileSubTabs';
 import {
@@ -27,6 +28,7 @@ import {
 } from '@/src/features/profile/constants';
 import { useProfileContentList } from '@/src/features/profile/hooks/useProfileContentList';
 import { useProfileHomeData } from '@/src/features/profile/hooks/useProfileHomeData';
+import type { ProfileShareItem } from '@/src/features/profile/types';
 import { useAuthStore } from '@/src/store/authStore';
 
 const EMPTY_BY_TAB: Record<ProfileContentTabId, string> = {
@@ -45,6 +47,7 @@ export function ProfileHomeScreen() {
   const [publishSub, setPublishSub] = useState<'story' | 'share' | 'ask'>('story');
   const [collectSub, setCollectSub] = useState<'story' | 'ask' | 'comment'>('story');
   const [resonateSub, setResonateSub] = useState<'story' | 'ask' | 'share' | 'comment'>('story');
+  const [detailShare, setDetailShare] = useState<ProfileShareItem | null>(null);
   const content = useProfileContentList({
     main: mainTab,
     publishSub,
@@ -55,6 +58,12 @@ export function ProfileHomeScreen() {
   const openSettings = useCallback(() => {
     router.push('/profile/settings');
   }, [router]);
+
+  const handlePressShare = useCallback((share: ProfileShareItem) => {
+    setDetailShare(share);
+  }, []);
+
+  const canOpenShareDetail = mainTab === 'resonate' && resonateSub === 'share';
 
   const header = (
     <ProfileHomeHeader
@@ -156,8 +165,15 @@ export function ProfileHomeScreen() {
             void content.refetch();
           }}
           onLoadMore={content.loadMore}
+          onPressShare={canOpenShareDetail ? handlePressShare : undefined}
+          showPublishMoreMenu={mainTab === 'publish'}
         />
       </ScrollView>
+      <ProfileShareDetailModal
+        share={detailShare}
+        visible={detailShare !== null}
+        onClose={() => setDetailShare(null)}
+      />
     </View>
   );
 }

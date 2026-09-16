@@ -8,24 +8,34 @@ interface ContentMoreButtonProps {
   size?: number;
   hitSlop?: number;
   style?: StyleProp<ViewStyle>;
+  /** 竖向三点；默认横向 */
+  vertical?: boolean;
 }
 
 const DEFAULT_ICON_SIZE = 22;
 const DEFAULT_HIT_SLOP = 12;
 const BUTTON_WIDTH = 30;
 
+const ELLIPSIS_ICON = {
+  ios: 'ellipsis',
+  android: 'more_horiz',
+  web: 'more_horiz',
+} as const;
+
 export function ContentMoreButton({
   onPress,
   size = DEFAULT_ICON_SIZE,
   hitSlop = DEFAULT_HIT_SLOP,
   style,
+  vertical = false,
 }: ContentMoreButtonProps) {
   return (
     <Pressable onPress={onPress} hitSlop={hitSlop} style={[styles.button, style]}>
       <SymbolView
-        name={{ ios: 'ellipsis', android: 'more_horiz', web: 'more_horiz' }}
+        name={ELLIPSIS_ICON}
         size={size}
         tintColor={APP_TEXT_COLOR}
+        style={vertical ? styles.verticalIcon : undefined}
       />
     </Pressable>
   );
@@ -37,5 +47,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 4,
+  },
+  verticalIcon: {
+    transform: [{ rotate: '90deg' }],
   },
 });

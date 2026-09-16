@@ -3,7 +3,9 @@ import { useRouter } from 'expo-router';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
+import { ProfileCommentRow } from '@/src/features/profile/components/ProfileCommentRow';
 import { ProfileEmptyPane } from '@/src/features/profile/components/ProfileEmptyPane';
+import { ProfilePublishMoreAnchor } from '@/src/features/profile/components/ProfilePublishMoreAnchor';
 import { PROFILE_ACCENT, PROFILE_MUTED } from '@/src/features/profile/constants';
 import type {
   FlowerSentItem,
@@ -29,6 +31,10 @@ interface ProfileContentPaneProps {
   hasNextPage?: boolean;
   onRetry: () => void;
   onLoadMore: () => void;
+  /** 仅「共鸣 → 分享」传入，用于打开分享详情弹窗 */
+  onPressShare?: (share: ProfileShareItem) => void;
+  /** 「发布」下各类内容右上角肉串菜单 */
+  showPublishMoreMenu?: boolean;
 }
 
 export function ProfileContentPane({
@@ -40,6 +46,8 @@ export function ProfileContentPane({
   hasNextPage,
   onRetry,
   onLoadMore,
+  onPressShare,
+  showPublishMoreMenu = false,
 }: ProfileContentPaneProps) {
   const router = useRouter();
 
@@ -65,6 +73,15 @@ export function ProfileContentPane({
       {kind === 'stories'
         ? (items as ProfileStoryItem[]).map((story) => (
             <View key={story.id} style={styles.cardWrap}>
+              {showPublishMoreMenu ? (
+                <View style={styles.moreCorner}>
+                  <ProfilePublishMoreAnchor
+                    contentKind="story"
+                    targetId={story.id}
+                    authorId={story.author.id}
+                  />
+                </View>
+              ) : null}
               {story.isPinned ? <Text style={styles.pin}>置顶</Text> : null}
               <StoryCard story={story} onPress={(id) => router.push(`/stories/${id}`)} />
               <Text style={styles.meta}>阅读 {story.viewCount}</Text>
@@ -72,28 +89,63 @@ export function ProfileContentPane({
           ))
         : null}
       {kind === 'shares'
-        ? (items as ProfileShareItem[]).map((share) => (
-            <View key={share.id} style={styles.simpleRow}>
-              <Text style={styles.simpleBody} numberOfLines={3}>
-                {share.content}
-              </Text>
-              <Text style={styles.muted}>阅读 {share.viewCount}</Text>
-            </View>
-          ))
+        ? (items as ProfileShareItem[]).map((share) => {
+            const body = (
+              <>
+                <Text style={styles.simpleBody} numberOfLines={3}>
+                  {share.content}
+                </Text>
+                <Text style={styles.muted}>阅读 {share.viewCount}</Text>
+              </>
+            );
+            const more = showPublishMoreMenu ? (
+              <View style={styles.moreCorner}>
+                <ProfilePublishMoreAnchor
+                  contentKind="share"
+                  targetId={share.id}
+                  authorId={share.author.id}
+                  shareSnapshot={share}
+                />
+              </View>
+            ) : null;
+            if (onPressShare) {
+              return (
+                <Pressable
+                  key={share.id}
+                  style={styles.simpleRow}
+                  onPress={() => onPressShare(share)}>
+                  {more}
+                  {body}
+                </Pressable>
+              );
+            }
+            return (
+              <View key={share.id} style={styles.simpleRow}>
+                {more}
+                {body}
+              </View>
+            );
+          })
         : null}
       {kind === 'asks'
         ? (items as ProfileAskItem[]).map((ask) => (
             <View key={ask.id} style={styles.cardWrap}>
+              {showPublishMoreMenu ? (
+                <View style={styles.moreCorner}>
+                  <ProfilePublishMoreAnchor
+                    contentKind="ask"
+                    targetId={ask.id}
+                    authorId={ask.author.id}
+                  />
+                </View>
+              ) : null}
               <AskCard ask={ask} onPress={(id) => router.push(`/asks/${id}`)} />
             </View>
           ))
         : null}
       {kind === 'comments'
         ? (items as ProfileCommentItem[]).map((item) => (
-            <View key={item.id} style={styles.simpleRow}>
-              <Text style={styles.simpleBody}>{item.content}</Text>
-              <Text style={styles.muted}>{item.source.titleOrSummary}</Text>
-            </View>
+            <ProfileCommentRow key={item.id} item={item} />
           ))
         : null}
       {kind === 'flowersSent'
@@ -129,7 +181,13 @@ export function ProfileContentPane({
 
 const styles = StyleSheet.create({
   list: { paddingHorizontal: 12, paddingBottom: 24, gap: 10 },
-  cardWrap: { gap: 4 },
+  cardWrap: { gap: 4, position: 'relative' },
+  moreCorner: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    zIndex: 2,
+  },
   pin: {
     alignSelf: 'flex-start',
     fontSize: 11,
@@ -142,7 +200,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 12,
+    paddingRight: 36,
     gap: 4,
+    position: 'relative',
   },
   simpleBody: { fontSize: 14, color: APP_TEXT_COLOR, lineHeight: 20 },
   muted: { fontSize: 12, color: PROFILE_MUTED },
