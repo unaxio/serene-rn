@@ -46,6 +46,7 @@ export function CommentReplyRoot({
     <View>
       <CommentItem
         comment={{ ...root, topReplies: [] }}
+        scrollIntoView={false}
         enableCollect={enableCollect}
         enableFlower={enableFlower}
         onResonate={onResonate}

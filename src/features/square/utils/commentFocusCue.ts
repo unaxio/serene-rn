@@ -6,13 +6,28 @@ const HIGHLIGHT_DURATION_MS = 2000;
 
 let pendingHighlightId: string | null = null;
 let pendingReplyId: string | null = null;
+let pendingThreadRootId: string | null = null;
 
 export function armCommentFocus(next: {
   highlightId?: string;
   replyToId?: string;
+  threadRootId?: string;
 }): void {
   pendingHighlightId = next.highlightId ?? null;
   pendingReplyId = next.replyToId ?? null;
+  pendingThreadRootId = next.threadRootId ?? null;
+}
+
+export function peekCommentHighlightId(): string | null {
+  return pendingHighlightId;
+}
+
+export function peekThreadRootId(): string | null {
+  return pendingThreadRootId;
+}
+
+export function clearThreadRootId(): void {
+  pendingThreadRootId = null;
 }
 
 export function useCommentHighlight(commentId: string): boolean {

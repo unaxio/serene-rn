@@ -1,9 +1,12 @@
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
+import { useCallback } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { PROFILE_ACCENT, PROFILE_MUTED } from '@/src/features/profile/constants';
 import type { FlowerReceivedLedgerItem } from '@/src/features/profile/types';
+import { openContentAnchor } from '@/src/features/square/utils/contentAnchor';
 import { formatRelativeTime } from '@/src/features/square/utils/formatRelativeTime';
 import { resolveCdnUrl } from '@/src/utils/cdn';
 
@@ -15,8 +18,16 @@ interface ProfileReceivedFlowerRowProps {
 }
 
 export function ProfileReceivedFlowerRow({ item, onReply }: ProfileReceivedFlowerRowProps) {
+  const router = useRouter();
   const flowerUri =
     resolveCdnUrl(item.giftFlower.imagePath) ?? item.giftFlower.imagePath;
+  const openRelated = useCallback(() => {
+    if (!item.relatedContent) {
+      return;
+    }
+    openContentAnchor(router, item.relatedContent);
+  }, [item.relatedContent, router]);
+
   return (
     <View style={styles.row}>
       {flowerUri ? (
@@ -36,10 +47,12 @@ export function ProfileReceivedFlowerRow({ item, onReply }: ProfileReceivedFlowe
             {item.message}
           </Text>
         ) : null}
-        {item.relatedContent ? (
-          <Text style={styles.related} numberOfLines={1}>
-            相关：{item.relatedContent.titleOrSummary}
-          </Text>
+        {item.relatedContent?.titleOrSummary ? (
+          <Pressable onPress={openRelated}>
+            <Text style={styles.related} numberOfLines={2}>
+              相关：{item.relatedContent.titleOrSummary}
+            </Text>
+          </Pressable>
         ) : null}
         <Text style={styles.time}>{formatRelativeTime(item.createdAt)}</Text>
       </View>

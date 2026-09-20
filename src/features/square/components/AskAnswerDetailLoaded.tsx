@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 
 import { AskAnswerItem } from '@/src/features/square/components/ask/AskAnswerItem';
 import { AskAnswerQuestionHeader } from '@/src/features/square/components/ask/AskAnswerQuestionHeader';
@@ -12,6 +12,7 @@ import { StoryInlineComments } from '@/src/features/square/components/comments/S
 import { SendFlowerModal } from '@/src/features/square/components/SendFlowerModal';
 import { SquareShareSheet } from '@/src/features/square/components/SquareShareSheet';
 import { PAGE_SURFACE_COLOR } from '@/src/features/square/constants';
+import { useBindCommentFocusScroll } from '@/src/features/square/hooks/useBindCommentFocusScroll';
 import { useStoryDetailComments } from '@/src/features/square/hooks/useStoryDetailComments';
 import type { AskAnswerDetail, SquareComment } from '@/src/features/square/types';
 
@@ -25,6 +26,8 @@ export function AskAnswerDetailLoaded({ detail }: AskAnswerDetailLoadedProps) {
   const router = useRouter();
   const flow = useStoryDetailComments(detail.id, detail.commentCount, 'ask_answer');
   const [shareVisible, setShareVisible] = useState(false);
+  const scrollRef = useRef<KeyboardAwareScrollViewRef>(null);
+  useBindCommentFocusScroll(scrollRef, flow.getScrollOffsetY);
 
   const openAsk = useCallback(() => {
     router.push(`/asks/${detail.ask.id}`);
@@ -40,6 +43,7 @@ export function AskAnswerDetailLoaded({ detail }: AskAnswerDetailLoadedProps) {
   return (
     <View style={styles.root}>
       <KeyboardAwareScrollView
+        ref={scrollRef}
         style={styles.scroll}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"

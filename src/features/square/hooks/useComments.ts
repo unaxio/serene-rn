@@ -8,6 +8,8 @@ import {
 } from '@/src/features/square/constants';
 import type { SquareTargetType } from '@/src/features/square/types';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
+import { peekCommentHighlightId } from '@/src/features/square/utils/commentFocusCue';
+import { dedupeComments, getCommentNextPage } from '@/src/features/square/utils/commentListPaging';
 
 interface UseCommentsParams {
   targetType: SquareTargetType;
@@ -15,19 +17,16 @@ interface UseCommentsParams {
   enabled: boolean;
 }
 
-function getNextPageParam(lastPage: {
-  page: number;
-  pageSize: number;
-  total: number;
-}): number | undefined {
-  const loaded = lastPage.page * lastPage.pageSize;
-  return loaded < lastPage.total ? lastPage.page + 1 : undefined;
-}
-
 export function useComments({ targetType, targetId, enabled }: UseCommentsParams) {
   const requireAuth = useRequireAuth();
   const queryClient = useQueryClient();
-  const queryKey = SQUARE_QUERY_KEYS.comments(targetType, targetId);
+  // 定位锚点在进页前写入；高亮结束后不能改 queryKey，否则会丢掉 focusId 请求。
+  const focusId = useMemo(
+    () => peekCommentHighlightId() ?? undefined,
+    [targetId, targetType],
+  );
+  const commentsKey = SQUARE_QUERY_KEYS.comments(targetType, targetId);
+  const queryKey = focusId ? ([...commentsKey, focusId] as const) : commentsKey;
 
   const query = useInfiniteQuery({
     queryKey,
@@ -37,21 +36,22 @@ export function useComments({ targetType, targetId, enabled }: UseCommentsParams
         targetId,
         page: pageParam,
         pageSize: SQUARE_PAGE_SIZE,
+        focusId: pageParam === 1 ? focusId : undefined,
       }),
     initialPageParam: 1,
-    getNextPageParam,
+    getNextPageParam: getCommentNextPage,
     enabled,
   });
 
   const items = useMemo(
-    () => query.data?.pages.flatMap((page) => page.items) ?? [],
+    () => dedupeComments(query.data?.pages.flatMap((page) => page.items) ?? []),
     [query.data?.pages],
   );
 
   const total = query.data?.pages[0]?.total ?? items.length;
 
   const invalidate = useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey });
+    await queryClient.invalidateQueries({ queryKey: commentsKey });
     if (targetType === 'story') {
       await queryClient.invalidateQueries({
         queryKey: SQUARE_QUERY_KEYS.storyDetail(targetId),
@@ -68,7 +68,7 @@ export function useComments({ targetType, targetId, enabled }: UseCommentsParams
     if (targetType === 'ask_answer') {
       await queryClient.invalidateQueries({ queryKey: ['square', 'askAnswers'] });
     }
-  }, [queryClient, queryKey, targetId, targetType]);
+  }, [commentsKey, queryClient, targetId, targetType]);
 
   const createMutation = useMutation({
     mutationFn: (content: string) => createComment({ targetType, targetId, content }),

@@ -5,9 +5,11 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { PROFILE_MUTED } from '@/src/features/profile/constants';
 import type { ProfileCommentItem } from '@/src/features/profile/types';
-import { resolveCommentSourceHref } from '@/src/features/profile/utils/resolveCommentSourceHref';
-import { COMING_SOON_MESSAGE } from '@/src/features/square/constants';
-import { showToast } from '@/src/utils/toast';
+import {
+  CONTENT_ORIGIN_LABEL,
+  CONTENT_PARENT_LABEL,
+  openContentAnchor,
+} from '@/src/features/square/utils/contentAnchor';
 
 interface ProfileCommentRowProps {
   item: ProfileCommentItem;
@@ -15,22 +17,28 @@ interface ProfileCommentRowProps {
 
 export function ProfileCommentRow({ item }: ProfileCommentRowProps) {
   const router = useRouter();
+  const originTitle = item.source.titleOrSummary?.trim() ?? '';
+  const parentSummary = item.source.parentSummary?.trim() ?? '';
 
   const handlePress = useCallback(() => {
-    const href = resolveCommentSourceHref(item.source);
-    if (!href) {
-      showToast(COMING_SOON_MESSAGE);
-      return;
-    }
-    router.push(href);
-  }, [item.source, router]);
+    openContentAnchor(router, item.source, {
+      highlightId: item.source.highlightId?.trim() || item.id,
+    });
+  }, [item.id, item.source, router]);
 
   return (
     <Pressable style={styles.row} onPress={handlePress}>
       <Text style={styles.body}>{item.content}</Text>
-      <Text style={styles.source} numberOfLines={1}>
-        {item.source.titleOrSummary}
-      </Text>
+      {originTitle ? (
+        <Text style={styles.source} numberOfLines={2}>
+          {CONTENT_ORIGIN_LABEL}：{originTitle}
+        </Text>
+      ) : null}
+      {parentSummary ? (
+        <Text style={styles.source} numberOfLines={2}>
+          {CONTENT_PARENT_LABEL}：{parentSummary}
+        </Text>
+      ) : null}
     </Pressable>
   );
 }
@@ -43,5 +51,5 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   body: { fontSize: 14, color: APP_TEXT_COLOR, lineHeight: 20 },
-  source: { fontSize: 12, color: PROFILE_MUTED },
+  source: { fontSize: 12, color: PROFILE_MUTED, lineHeight: 18 },
 });

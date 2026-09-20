@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 
 import { CommentComposer } from '@/src/features/square/components/comments/CommentComposer';
 import { CommentComposerLayer } from '@/src/features/square/components/comments/CommentComposerLayer';
@@ -12,6 +12,7 @@ import { SquareShareSheet } from '@/src/features/square/components/SquareShareSh
 import { StoryActionBar } from '@/src/features/square/components/StoryActionBar';
 import { StoryDetailBody } from '@/src/features/square/components/StoryDetailBody';
 import { StoryFlowerLedger } from '@/src/features/square/components/flowerLedger/StoryFlowerLedger';
+import { useBindCommentFocusScroll } from '@/src/features/square/hooks/useBindCommentFocusScroll';
 import { useStoryDetailComments } from '@/src/features/square/hooks/useStoryDetailComments';
 import type { SquareComment, Story } from '@/src/features/square/types';
 
@@ -25,6 +26,8 @@ const SCROLL_EVENT_THROTTLE = 16;
 export function StoryDetailLoaded({ storyId, story }: StoryDetailLoadedProps) {
   const flow = useStoryDetailComments(storyId, story.commentCount);
   const [shareVisible, setShareVisible] = useState(false);
+  const scrollRef = useRef<KeyboardAwareScrollViewRef>(null);
+  useBindCommentFocusScroll(scrollRef, flow.getScrollOffsetY);
 
   const handleStoryToggle = useCallback(
     (actionType: 'resonate' | 'collect') => {
@@ -43,6 +46,7 @@ export function StoryDetailLoaded({ storyId, story }: StoryDetailLoadedProps) {
   return (
     <View style={styles.root}>
       <KeyboardAwareScrollView
+        ref={scrollRef}
         style={styles.scroll}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"

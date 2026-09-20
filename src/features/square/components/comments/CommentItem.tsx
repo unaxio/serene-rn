@@ -17,6 +17,7 @@ interface CommentItemProps {
   enableCollect?: boolean;
   enableFlower?: boolean;
   showReplyPreview?: boolean;
+  scrollIntoView?: boolean;
   parentReplyName?: string | null;
   onResonate: (comment: SquareComment) => void;
   onCollect?: (comment: SquareComment) => void;
@@ -34,6 +35,7 @@ function CommentItemComponent({
   enableCollect = false,
   enableFlower = false,
   showReplyPreview = true,
+  scrollIntoView = true,
   parentReplyName,
   onResonate,
   onCollect,
@@ -46,7 +48,7 @@ function CommentItemComponent({
   }, [comment.content]);
 
   return (
-    <CommentHighlight commentId={comment.id}>
+    <CommentHighlight commentId={comment.id} scrollIntoView={scrollIntoView}>
     <View style={styles.item}>
       <Pressable
         style={styles.header}

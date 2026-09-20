@@ -140,6 +140,7 @@ export async function getComments(
       targetId: params.targetId,
       page: params.page,
       pageSize: params.pageSize,
+      ...(params.focusId ? { focusId: params.focusId } : {}),
     },
   });
   return unwrapPagedItems(unwrapResponse(response, '获取评论失败'), normalizeComment);

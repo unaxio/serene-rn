@@ -2,6 +2,7 @@ import type { UserGender } from '@/src/features/auth/types';
 import type { FollowRelation } from '@/src/features/follow/types';
 import type { ProfileContentTabId } from '@/src/features/profile/constants';
 import type { Ask, Share, Story } from '@/src/features/square/types';
+import type { ContentAnchor } from '@/src/features/square/utils/contentAnchor';
 
 export type { FollowRelation };
 
@@ -99,11 +100,7 @@ export interface FlowerReceivedLedgerItem {
   quantity: number;
   message: string | null;
   createdAt: string;
-  relatedContent: null | {
-    targetType: string;
-    targetId: string;
-    titleOrSummary: string;
-  };
+  relatedContent: ContentAnchor | null;
 }
 
 export interface FlowerSentItem {
@@ -113,22 +110,14 @@ export interface FlowerSentItem {
   createdAt: string;
   receiver: ProfileAuthor;
   message: string | null;
-  relatedContent: null | {
-    targetType: string;
-    targetId: string;
-    titleOrSummary: string;
-  };
+  relatedContent: ContentAnchor | null;
 }
 
 export interface ProfileCommentItem {
   id: string;
   content: string;
   createdAt: string;
-  source: {
-    targetType: string;
-    targetId: string;
-    titleOrSummary: string;
-  };
+  source: ContentAnchor;
 }
 
 export type ProfileStoryItem = Story & { viewCount: number; isPinned: boolean };

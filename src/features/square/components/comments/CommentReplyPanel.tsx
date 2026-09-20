@@ -82,6 +82,7 @@ export function CommentReplyPanel({
     ({ item }: { item: SquareComment }) => (
       <CommentItem
         comment={item}
+        scrollIntoView={false}
         enableFlower={enableFlower}
         parentReplyName={resolveParentReplyName(item, parentNameMap)}
         onResonate={onResonate}

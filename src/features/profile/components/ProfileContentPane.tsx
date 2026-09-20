@@ -1,10 +1,10 @@
-import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { ProfileCommentRow } from '@/src/features/profile/components/ProfileCommentRow';
 import { ProfileEmptyPane } from '@/src/features/profile/components/ProfileEmptyPane';
+import { ProfileFlowerSentRow } from '@/src/features/profile/components/ProfileFlowerSentRow';
 import { ProfilePublishMoreAnchor } from '@/src/features/profile/components/ProfilePublishMoreAnchor';
 import { PROFILE_ACCENT, PROFILE_MUTED } from '@/src/features/profile/constants';
 import type {
@@ -16,7 +16,6 @@ import type {
 } from '@/src/features/profile/types';
 import { AskCard } from '@/src/features/square/components/ask/AskCard';
 import { StoryCard } from '@/src/features/square/components/StoryCard';
-import { resolveCdnUrl } from '@/src/utils/cdn';
 
 type ContentKind = 'stories' | 'shares' | 'asks' | 'comments' | 'flowersSent';
 
@@ -149,26 +148,9 @@ export function ProfileContentPane({
           ))
         : null}
       {kind === 'flowersSent'
-        ? (items as FlowerSentItem[]).map((item) => {
-            const uri = resolveCdnUrl(item.giftFlower.imagePath);
-            return (
-              <View key={item.id} style={styles.simpleRow}>
-                <View style={styles.flowerRow}>
-                  {uri ? (
-                    <Image source={{ uri }} style={styles.thumb} contentFit="cover" />
-                  ) : (
-                    <View style={[styles.thumb, styles.thumbFallback]} />
-                  )}
-                  <View style={styles.flex}>
-                    <Text style={styles.simpleBody}>
-                      送给 {item.receiver.nickName} · {item.giftFlower.name} ×{item.quantity}
-                    </Text>
-                    {item.message ? <Text style={styles.muted}>{item.message}</Text> : null}
-                  </View>
-                </View>
-              </View>
-            );
-          })
+        ? (items as FlowerSentItem[]).map((item) => (
+            <ProfileFlowerSentRow key={item.id} item={item} />
+          ))
         : null}
       {hasNextPage ? (
         <Pressable style={styles.more} onPress={onLoadMore}>
@@ -206,10 +188,6 @@ const styles = StyleSheet.create({
   },
   simpleBody: { fontSize: 14, color: APP_TEXT_COLOR, lineHeight: 20 },
   muted: { fontSize: 12, color: PROFILE_MUTED },
-  flowerRow: { flexDirection: 'row', gap: 10, alignItems: 'center' },
-  thumb: { width: 40, height: 40, borderRadius: 8, backgroundColor: '#E2E8F0' },
-  thumbFallback: { backgroundColor: '#CBD5E1' },
-  flex: { flex: 1, gap: 2 },
   status: { paddingVertical: 40, alignItems: 'center', gap: 8 },
   retry: { fontSize: 14, fontWeight: '600', color: PROFILE_ACCENT },
   more: { alignItems: 'center', paddingVertical: 12 },

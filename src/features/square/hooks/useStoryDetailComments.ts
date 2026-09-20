@@ -13,6 +13,7 @@ import { useCommentsViewport } from '@/src/features/square/hooks/useCommentsView
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import type { SquareComment, SquareTargetType } from '@/src/features/square/types';
 import { getReplyPlaceholder } from '@/src/features/square/utils/displayAuthor';
+import { useLocateFocusedComment } from '@/src/features/square/hooks/useLocateFocusedComment';
 import { usePendingCommentReply } from '@/src/features/square/utils/commentFocusCue';
 
 type InlineCommentTarget = Extract<SquareTargetType, 'story' | 'ask_answer'>;
@@ -96,6 +97,8 @@ export function useStoryDetailComments(
     setReplyTo(null);
     setActiveRoot(comment);
   }, []);
+
+  useLocateFocusedComment(comments.items, comments.isLoading, openReplyPanel);
 
   const handleCommentIcon = useCallback(() => {
     if (viewport.isCommentsInView()) {
@@ -182,6 +185,7 @@ export function useStoryDetailComments(
     handleScroll: viewport.handleScroll,
     handleScrollViewLayout: viewport.handleScrollViewLayout,
     handleCommentsLayoutY: viewport.handleCommentsLayoutY,
+    getScrollOffsetY: viewport.getOffsetY,
     handleComposerSubmit,
     handleReplyToRoot,
     handleSendFlower,

@@ -60,6 +60,8 @@ export interface ConnectLink {
   rootType?: string;
   rootId?: string;
   highlightId?: string;
+  /** 回复时的一级评论 id，用于展开回复并定位 */
+  threadRootId?: string;
 }
 
 export interface ConnectNotificationExtra {

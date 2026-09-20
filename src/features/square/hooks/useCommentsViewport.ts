@@ -70,10 +70,13 @@ export function useCommentsViewport(onNearEnd?: () => void) {
     return isCommentsInViewRef.current;
   }, [refreshCommentsInView]);
 
+  const getOffsetY = useCallback(() => scrollMetricsRef.current.offsetY, []);
+
   return {
     handleScroll,
     handleScrollViewLayout,
     handleCommentsLayoutY,
     isCommentsInView,
+    getOffsetY,
   };
 }

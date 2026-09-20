@@ -142,6 +142,8 @@ export interface GetCommentsParams {
   targetId: string;
   page: number;
   pageSize: number;
+  /** 只在第 1 页传入，保证目标评论所在的一级评论出现在本页 */
+  focusId?: string;
 }
 
 export interface CreateCommentPayload {
