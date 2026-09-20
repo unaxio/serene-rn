@@ -60,7 +60,11 @@ function pushContentPage(
     router.push(`/users/${pageId}`);
     return 'pushed';
   }
-  if (pageType === 'share' || pageType === 'topic') {
+  if (pageType === 'share') {
+    router.push(`/shares/${pageId}`);
+    return 'pushed';
+  }
+  if (pageType === 'topic') {
     return 'soon';
   }
   return 'miss';

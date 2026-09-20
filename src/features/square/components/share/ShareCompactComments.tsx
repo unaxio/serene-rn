@@ -2,6 +2,7 @@ import { useMemo, type RefObject } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { CommentComposer, type CommentComposerHandle } from '@/src/features/square/components/comments/CommentComposer';
+import { CommentHighlight } from '@/src/features/square/components/comments/CommentHighlight';
 import {
   ACCENT_COLOR,
   MUTED_TEXT_COLOR,
@@ -12,6 +13,7 @@ import {
 } from '@/src/features/square/constants';
 import { useComments } from '@/src/features/square/hooks/useComments';
 import type { SquareComment } from '@/src/features/square/types';
+import { usePendingCommentReply } from '@/src/features/square/utils/commentFocusCue';
 import {
   formatCompactCommentLine,
   toCompactCommentLines,
@@ -32,6 +34,7 @@ interface ShareCompactCommentsProps {
   onToggleExpanded: () => void;
   onReply: (comment: SquareComment) => void;
   inlineComposer?: ShareInlineComposer | null;
+  locateComments?: boolean;
 }
 
 const EXPAND_HIT_SLOP = 6;
@@ -43,6 +46,7 @@ export function ShareCompactComments({
   onToggleExpanded,
   onReply,
   inlineComposer = null,
+  locateComments = false,
 }: ShareCompactCommentsProps) {
   const enabled = commentCount > 0 || expanded || inlineComposer !== null;
   const comments = useComments({
@@ -54,6 +58,11 @@ export function ShareCompactComments({
     () => toCompactCommentLines(comments.items),
     [comments.items],
   );
+  const replyTargets = useMemo(
+    () => comments.items.flatMap((item) => [item, ...item.topReplies]),
+    [comments.items],
+  );
+  usePendingCommentReply(replyTargets, !locateComments || comments.isLoading, onReply);
   const visibleLines = expanded ? lines : lines.slice(0, SHARE_COMPACT_COMMENT_COUNT);
   const hasHiddenLines = lines.length > SHARE_COMPACT_COMMENT_COUNT || comments.hasNextPage;
 
@@ -77,11 +86,19 @@ export function ShareCompactComments({
       {inlineComposer && inlineComposer.replyToId === null ? inlineComposerNode : null}
       {visibleLines.map((line) => (
         <View key={line.id}>
-          <Pressable onPress={() => onReply(line.comment)} hitSlop={EXPAND_HIT_SLOP}>
-            <Text style={styles.line} numberOfLines={expanded ? undefined : 2}>
-              {formatCompactCommentLine(line)}
-            </Text>
-          </Pressable>
+          {locateComments ? (
+            <CommentHighlight commentId={line.id}>
+              <Pressable onPress={() => onReply(line.comment)} hitSlop={EXPAND_HIT_SLOP}>
+                <Text style={styles.line}>{formatCompactCommentLine(line)}</Text>
+              </Pressable>
+            </CommentHighlight>
+          ) : (
+            <Pressable onPress={() => onReply(line.comment)} hitSlop={EXPAND_HIT_SLOP}>
+              <Text style={styles.line} numberOfLines={expanded ? undefined : 2}>
+                {formatCompactCommentLine(line)}
+              </Text>
+            </Pressable>
+          )}
           {inlineComposer && inlineComposer.replyToId === line.id ? inlineComposerNode : null}
         </View>
       ))}
