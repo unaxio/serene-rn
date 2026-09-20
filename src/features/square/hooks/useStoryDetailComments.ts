@@ -11,7 +11,7 @@ import { useCommentActions } from '@/src/features/square/hooks/useCommentActions
 import { useComments } from '@/src/features/square/hooks/useComments';
 import { useCommentsViewport } from '@/src/features/square/hooks/useCommentsViewport';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
-import type { SquareComment, SquareTargetType } from '@/src/features/square/types';
+import type { CommentMention, SquareComment, SquareTargetType } from '@/src/features/square/types';
 import { getReplyPlaceholder } from '@/src/features/square/utils/displayAuthor';
 import { useLocateFocusedComment } from '@/src/features/square/hooks/useLocateFocusedComment';
 import { usePendingCommentReply } from '@/src/features/square/utils/commentFocusCue';
@@ -111,10 +111,10 @@ export function useStoryDetailComments(
   }, [openComposer, viewport]);
 
   const handleComposerSubmit = useCallback(
-    async (content: string) => {
+    async (content: string, mentions: CommentMention[] = []) => {
       const result = replyTo
-        ? await comments.submitReply(replyTo.rootId, replyTo.id, content)
-        : await comments.submitComment(content);
+        ? await comments.submitReply(replyTo.rootId, replyTo.id, content, mentions)
+        : await comments.submitComment(content, mentions);
       if (!result) {
         return false;
       }
@@ -127,11 +127,11 @@ export function useStoryDetailComments(
   );
 
   const handleReplyToRoot = useCallback(
-    async (parentId: string, content: string) => {
+    async (parentId: string, content: string, mentions: CommentMention[] = []) => {
       if (!activeRoot) {
         return false;
       }
-      const result = await comments.submitReply(activeRoot.id, parentId, content);
+      const result = await comments.submitReply(activeRoot.id, parentId, content, mentions);
       if (!result) {
         return false;
       }

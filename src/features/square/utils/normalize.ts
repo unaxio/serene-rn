@@ -50,9 +50,17 @@ export interface CommentRaw {
   isResonated?: boolean;
   isCollected?: boolean;
   isFlowered?: boolean;
+  mentions?: CommentMentionRaw[];
   topReplies?: CommentRaw[];
   parentAuthor?: SquareAuthor | null;
   createdAt?: string;
+}
+
+interface CommentMentionRaw {
+  userId?: string;
+  nickName?: string;
+  start?: number;
+  end?: number;
 }
 
 export function toEntityId(raw: { id?: string; _id?: string } | null | undefined): string {
@@ -155,11 +163,26 @@ export function normalizeShare(raw: ShareRaw): Share {
   };
 }
 
+function normalizeMentions(content: string, raw: CommentMentionRaw[] | null | undefined): SquareComment['mentions'] {
+  return (raw ?? []).flatMap((item) => {
+    const userId = item.userId?.trim() ?? '';
+    const nickName = item.nickName ?? '';
+    const start = item.start ?? -1;
+    const end = item.end ?? -1;
+    if (!userId || start < 0 || end <= start || content.slice(start, end) !== `@${nickName}`) {
+      return [];
+    }
+    return [{ userId, nickName, start, end }];
+  });
+}
+
 export function normalizeComment(raw: CommentRaw): SquareComment {
   const id = toEntityId(raw);
+  const content = raw.content ?? '';
   return {
     id,
-    content: raw.content ?? '',
+    content,
+    mentions: normalizeMentions(content, raw.mentions),
     author: normalizeAuthor(raw.author),
     parentId: raw.parentId ?? null,
     rootId: raw.rootId ?? id,

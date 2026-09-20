@@ -72,6 +72,36 @@ function extractFollowUsers(
   return normalizeFollowUsers(list);
 }
 
+export interface FollowPage {
+  items: FollowUser[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+function toFollowPage(
+  data: FollowUserRaw[] | FollowPagedData,
+  page: number,
+  pageSize: number,
+): FollowPage {
+  if (isFollowPagedData(data)) {
+    return {
+      items: normalizeFollowUsers(data.items),
+      total: data.total,
+      page: data.page > 0 ? data.page : page,
+      pageSize: data.pageSize > 0 ? data.pageSize : pageSize,
+    };
+  }
+  const users = normalizeFollowUsers(data);
+  const start = (page - 1) * pageSize;
+  return {
+    items: users.slice(start, start + pageSize),
+    total: users.length,
+    page,
+    pageSize,
+  };
+}
+
 /**
  * 我关注的列表 GET /follow/following
  */
@@ -80,6 +110,13 @@ export async function getFollowingList(): Promise<FollowUser[]> {
     FollowUserRaw[] | FollowPagedData | ApiEnvelope<FollowUserRaw[] | FollowPagedData>
   >(API_PATHS.FOLLOW_FOLLOWING);
   return extractFollowUsers(unwrapResponse(response, '获取关注列表失败'));
+}
+
+export async function getFollowingPage(page: number, pageSize: number): Promise<FollowPage> {
+  const response = await request.get<
+    FollowUserRaw[] | FollowPagedData | ApiEnvelope<FollowUserRaw[] | FollowPagedData>
+  >(API_PATHS.FOLLOW_FOLLOWING, { params: { page, pageSize } });
+  return toFollowPage(unwrapResponse(response, '获取关注列表失败'), page, pageSize);
 }
 
 /**
@@ -125,4 +162,17 @@ export async function searchUsersByNickName(
     params: { nickName },
   });
   return extractFollowUsers(unwrapResponse(response, '搜索用户失败'));
+}
+
+export async function searchUsersPage(
+  nickName: string,
+  page: number,
+  pageSize: number,
+): Promise<FollowPage> {
+  const response = await request.get<
+    FollowUserRaw[] | FollowPagedData | ApiEnvelope<FollowUserRaw[] | FollowPagedData>
+  >(API_PATHS.FOLLOW_SEARCH, {
+    params: { nickName, page, pageSize },
+  });
+  return toFollowPage(unwrapResponse(response, '搜索用户失败'), page, pageSize);
 }

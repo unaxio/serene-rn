@@ -16,7 +16,7 @@ import {
   MUTED_TEXT_COLOR,
 } from '@/src/features/square/constants';
 import { useCommentReplies } from '@/src/features/square/hooks/useCommentReplies';
-import type { SquareComment } from '@/src/features/square/types';
+import type { CommentMention, SquareComment } from '@/src/features/square/types';
 import { getAuthorDisplayName, getReplyPlaceholder } from '@/src/features/square/utils/displayAuthor';
 import { resolveParentReplyName } from '@/src/features/square/utils/resolveParentReplyName';
 
@@ -30,7 +30,7 @@ interface CommentReplyPanelProps {
   onResonate: (comment: SquareComment) => void;
   onCollect?: (comment: SquareComment) => void;
   onFlower?: (comment: SquareComment) => void;
-  onSubmitReply: (parentId: string, content: string) => Promise<boolean>;
+  onSubmitReply: (parentId: string, content: string, mentions?: CommentMention[]) => Promise<boolean>;
 }
 
 export function CommentReplyPanel({
@@ -68,8 +68,8 @@ export function CommentReplyPanel({
   }, []);
 
   const handleSubmit = useCallback(
-    async (content: string) => {
-      const ok = await onSubmitReply(replyTo.id, content);
+    async (content: string, mentions: CommentMention[] = []) => {
+      const ok = await onSubmitReply(replyTo.id, content, mentions);
       if (ok) {
         setReplyTo(root);
       }

@@ -85,9 +85,17 @@ export interface Story {
   createdAt: string;
 }
 
+export interface CommentMention {
+  userId: string;
+  nickName: string;
+  start: number;
+  end: number;
+}
+
 export interface SquareComment {
   id: string;
   content: string;
+  mentions: CommentMention[];
   author: SquareAuthor;
   parentId: string | null;
   rootId: string;
@@ -150,6 +158,7 @@ export interface CreateCommentPayload {
   targetType: SquareTargetType;
   targetId: string;
   content: string;
+  mentions?: CommentMention[];
 }
 
 export interface CreateReplyPayload {
@@ -158,6 +167,7 @@ export interface CreateReplyPayload {
   rootId: string;
   parentId: string;
   content: string;
+  mentions?: CommentMention[];
 }
 
 export interface SquareActionPayload {

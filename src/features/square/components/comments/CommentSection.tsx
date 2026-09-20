@@ -11,7 +11,7 @@ import {
 } from '@/src/features/square/constants';
 import { useCommentActions } from '@/src/features/square/hooks/useCommentActions';
 import { useComments } from '@/src/features/square/hooks/useComments';
-import type { SquareComment, SquareTargetType } from '@/src/features/square/types';
+import type { SquareComment, SquareTargetType, CommentMention } from '@/src/features/square/types';
 
 interface CommentSectionProps {
   visible: boolean;
@@ -68,10 +68,10 @@ export function CommentSection({
   );
 
   const handleSubmit = useCallback(
-    async (content: string) => {
+    async (content: string, mentions: CommentMention[] = []) => {
       const result = replyTo
-        ? await comments.submitReply(replyTo.rootId, replyTo.id, content)
-        : await comments.submitComment(content);
+        ? await comments.submitReply(replyTo.rootId, replyTo.id, content, mentions)
+        : await comments.submitComment(content, mentions);
       if (!result) {
         return false;
       }
@@ -83,11 +83,11 @@ export function CommentSection({
   );
 
   const handleReplyToRoot = useCallback(
-    async (parentId: string, content: string) => {
+    async (parentId: string, content: string, mentions: CommentMention[] = []) => {
       if (!activeRoot) {
         return false;
       }
-      const result = await comments.submitReply(activeRoot.id, parentId, content);
+      const result = await comments.submitReply(activeRoot.id, parentId, content, mentions);
       if (!result) {
         return false;
       }

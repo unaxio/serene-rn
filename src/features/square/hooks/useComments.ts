@@ -6,7 +6,7 @@ import {
   SQUARE_PAGE_SIZE,
   SQUARE_QUERY_KEYS,
 } from '@/src/features/square/constants';
-import type { SquareTargetType } from '@/src/features/square/types';
+import type { CommentMention, SquareTargetType } from '@/src/features/square/types';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import { peekCommentHighlightId } from '@/src/features/square/utils/commentFocusCue';
 import { dedupeComments, getCommentNextPage } from '@/src/features/square/utils/commentListPaging';
@@ -71,27 +71,39 @@ export function useComments({ targetType, targetId, enabled }: UseCommentsParams
   }, [commentsKey, queryClient, targetId, targetType]);
 
   const createMutation = useMutation({
-    mutationFn: (content: string) => createComment({ targetType, targetId, content }),
+    mutationFn: (input: { content: string; mentions: CommentMention[] }) =>
+      createComment({
+        targetType,
+        targetId,
+        content: input.content,
+        mentions: input.mentions.length > 0 ? input.mentions : undefined,
+      }),
   });
 
   const replyMutation = useMutation({
-    mutationFn: (payload: { rootId: string; parentId: string; content: string }) =>
+    mutationFn: (payload: {
+      rootId: string;
+      parentId: string;
+      content: string;
+      mentions: CommentMention[];
+    }) =>
       createReply({
         targetType,
         targetId,
         rootId: payload.rootId,
         parentId: payload.parentId,
         content: payload.content,
+        mentions: payload.mentions.length > 0 ? payload.mentions : undefined,
       }),
   });
 
   const submitComment = useCallback(
-    async (content: string) => {
+    async (content: string, mentions: CommentMention[] = []) => {
       if (!requireAuth()) {
         return null;
       }
       try {
-        const result = await createMutation.mutateAsync(content);
+        const result = await createMutation.mutateAsync({ content, mentions });
         await invalidate();
         return result;
       } catch {
@@ -102,12 +114,12 @@ export function useComments({ targetType, targetId, enabled }: UseCommentsParams
   );
 
   const submitReply = useCallback(
-    async (rootId: string, parentId: string, content: string) => {
+    async (rootId: string, parentId: string, content: string, mentions: CommentMention[] = []) => {
       if (!requireAuth()) {
         return null;
       }
       try {
-        const result = await replyMutation.mutateAsync({ rootId, parentId, content });
+        const result = await replyMutation.mutateAsync({ rootId, parentId, content, mentions });
         await invalidate();
         await queryClient.invalidateQueries({
           queryKey: SQUARE_QUERY_KEYS.commentReplies(rootId),

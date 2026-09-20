@@ -10,7 +10,7 @@ import {
 } from '@/src/features/square/constants';
 import { useComments } from '@/src/features/square/hooks/useComments';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
-import type { SquareComment } from '@/src/features/square/types';
+import type { CommentMention, SquareComment } from '@/src/features/square/types';
 import { getReplyPlaceholder } from '@/src/features/square/utils/displayAuthor';
 
 interface ShareComposerTarget {
@@ -63,13 +63,13 @@ export function useShareComposer() {
   }, [target]);
 
   const submit = useCallback(
-    async (content: string) => {
+    async (content: string, mentions: CommentMention[] = []) => {
       if (!target) {
         return false;
       }
       const result = target.replyTo
-        ? await comments.submitReply(target.replyTo.rootId, target.replyTo.id, content)
-        : await comments.submitComment(content);
+        ? await comments.submitReply(target.replyTo.rootId, target.replyTo.id, content, mentions)
+        : await comments.submitComment(content, mentions);
       if (!result) {
         return false;
       }

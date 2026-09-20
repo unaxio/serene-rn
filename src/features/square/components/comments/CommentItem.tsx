@@ -5,6 +5,7 @@ import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { SquareUserAvatar } from '@/src/features/square/components/SquareUserAvatar';
 import { CommentActionButton } from '@/src/features/square/components/comments/CommentActionButton';
 import { CommentHighlight } from '@/src/features/square/components/comments/CommentHighlight';
+import { CommentMentionText } from '@/src/features/square/components/comments/CommentMentionText';
 import { CommentReplyPreviewBox } from '@/src/features/square/components/comments/CommentReplyPreviewBox';
 import { MUTED_TEXT_COLOR, COMMENT_LONG_PRESS_DELAY_MS } from '@/src/features/square/constants';
 import type { SquareComment } from '@/src/features/square/types';
@@ -63,7 +64,7 @@ function CommentItemComponent({
               <Text style={styles.replyHint}> 回复 {parentReplyName}</Text>
             ) : null}
           </Text>
-          <Text style={styles.content}>{comment.content}</Text>
+          <CommentMentionText content={comment.content} mentions={comment.mentions} style={styles.content} />
           <Text style={styles.time}>{formatRelativeTime(comment.createdAt)}</Text>
         </View>
       </Pressable>

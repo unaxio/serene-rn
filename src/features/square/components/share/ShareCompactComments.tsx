@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { CommentComposer, type CommentComposerHandle } from '@/src/features/square/components/comments/CommentComposer';
 import { CommentHighlight } from '@/src/features/square/components/comments/CommentHighlight';
+import { CommentMentionText } from '@/src/features/square/components/comments/CommentMentionText';
 import {
   ACCENT_COLOR,
   MUTED_TEXT_COLOR,
@@ -12,11 +13,11 @@ import {
   SHARE_LOAD_MORE_COMMENTS_LABEL,
 } from '@/src/features/square/constants';
 import { useComments } from '@/src/features/square/hooks/useComments';
-import type { SquareComment } from '@/src/features/square/types';
+import type { CommentMention, SquareComment } from '@/src/features/square/types';
 import { usePendingCommentReply } from '@/src/features/square/utils/commentFocusCue';
 import {
-  formatCompactCommentLine,
   toCompactCommentLines,
+  type CompactCommentLine,
 } from '@/src/features/square/utils/compactCommentLines';
 
 export interface ShareInlineComposer {
@@ -24,7 +25,7 @@ export interface ShareInlineComposer {
   composerRef: RefObject<CommentComposerHandle | null>;
   placeholder: string;
   isSubmitting: boolean;
-  onSubmit: (content: string) => Promise<boolean>;
+  onSubmit: (content: string, mentions: CommentMention[]) => Promise<boolean>;
 }
 
 interface ShareCompactCommentsProps {
@@ -38,6 +39,13 @@ interface ShareCompactCommentsProps {
 }
 
 const EXPAND_HIT_SLOP = 6;
+
+function compactPrefix(line: CompactCommentLine): string {
+  if (line.replyToName) {
+    return `${line.authorName}：回复${line.replyToName}：`;
+  }
+  return `${line.authorName}：`;
+}
 
 export function ShareCompactComments({
   shareId,
@@ -89,13 +97,17 @@ export function ShareCompactComments({
           {locateComments ? (
             <CommentHighlight commentId={line.id}>
               <Pressable onPress={() => onReply(line.comment)} hitSlop={EXPAND_HIT_SLOP}>
-                <Text style={styles.line}>{formatCompactCommentLine(line)}</Text>
+              <Text style={styles.line}>
+                {compactPrefix(line)}
+                <CommentMentionText content={line.content} mentions={line.comment.mentions} />
+              </Text>
               </Pressable>
             </CommentHighlight>
           ) : (
             <Pressable onPress={() => onReply(line.comment)} hitSlop={EXPAND_HIT_SLOP}>
               <Text style={styles.line} numberOfLines={expanded ? undefined : 2}>
-                {formatCompactCommentLine(line)}
+                {compactPrefix(line)}
+                <CommentMentionText content={line.content} mentions={line.comment.mentions} />
               </Text>
             </Pressable>
           )}
