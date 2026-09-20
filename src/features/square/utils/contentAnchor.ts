@@ -16,6 +16,8 @@ export interface ContentAnchor {
   targetId: string;
   titleOrSummary?: string | null;
   parentSummary?: string | null;
+  /** 被回复评论的作者昵称，用于「回复了某某人的评论」 */
+  parentAuthorNickName?: string | null;
   rootType?: string | null;
   rootId?: string | null;
   highlightId?: string | null;
