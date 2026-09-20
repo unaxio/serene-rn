@@ -73,6 +73,7 @@ function RootLayoutNav() {
         <Stack.Screen name="ask-answers/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="square/search" options={{ headerShown: false }} />
         <Stack.Screen name="profile" options={{ headerShown: false }} />
+        <Stack.Screen name="connect" options={{ headerShown: false }} />
         <Stack.Screen name="users/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>

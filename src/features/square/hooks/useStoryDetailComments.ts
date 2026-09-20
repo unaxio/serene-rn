@@ -13,6 +13,7 @@ import { useCommentsViewport } from '@/src/features/square/hooks/useCommentsView
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import type { SquareComment, SquareTargetType } from '@/src/features/square/types';
 import { getReplyPlaceholder } from '@/src/features/square/utils/displayAuthor';
+import { usePendingCommentReply } from '@/src/features/square/utils/commentFocusCue';
 
 type InlineCommentTarget = Extract<SquareTargetType, 'story' | 'ask_answer'>;
 
@@ -81,6 +82,8 @@ export function useStoryDetailComments(
     setReplyTo(target);
     setComposerOpen(true);
   }, []);
+
+  usePendingCommentReply(comments.items, comments.isLoading, openComposer);
 
   const closeComposer = useCallback(() => {
     setComposerOpen(false);

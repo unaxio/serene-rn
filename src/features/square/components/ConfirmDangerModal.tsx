@@ -8,6 +8,7 @@ interface ConfirmDangerModalProps {
   title: string;
   message: string;
   confirmLabel: string;
+  cancelLabel?: string;
   isSubmitting?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
@@ -24,6 +25,7 @@ export function ConfirmDangerModal({
   title,
   message,
   confirmLabel,
+  cancelLabel = '取消',
   isSubmitting = false,
   onConfirm,
   onCancel,
@@ -40,7 +42,7 @@ export function ConfirmDangerModal({
               style={[styles.button, styles.cancel]}
               disabled={isSubmitting}
               onPress={onCancel}>
-              <Text style={styles.cancelText}>取消</Text>
+              <Text style={styles.cancelText}>{cancelLabel}</Text>
             </Pressable>
             <Pressable
               style={[styles.button, styles.confirm, isSubmitting && styles.disabled]}

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { SymbolView } from 'expo-symbols';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,6 +8,7 @@ import { APP_TEXT_COLOR } from '@/constants/Colors';
 interface SquarePageHeaderProps {
   title: string;
   onBack: () => void;
+  right?: ReactNode;
 }
 
 const BACK_ICON_SIZE = 22;
@@ -17,7 +19,7 @@ const HEADER_TITLE_SIZE = 18;
 const MIN_TOP_INSET = 12;
 const HEADER_BOTTOM_PADDING = 8;
 
-export function SquarePageHeader({ title, onBack }: SquarePageHeaderProps) {
+export function SquarePageHeader({ title, onBack, right }: SquarePageHeaderProps) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -32,7 +34,7 @@ export function SquarePageHeader({ title, onBack }: SquarePageHeaderProps) {
       <Text style={styles.title} numberOfLines={1}>
         {title}
       </Text>
-      <View style={styles.side} />
+      <View style={styles.side}>{right}</View>
     </View>
   );
 }

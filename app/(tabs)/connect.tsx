@@ -1,5 +1,10 @@
-import { PlaceholderScreen } from '@/src/components/PlaceholderScreen';
+import { ConnectAuthGate } from '@/src/features/connect/components/ConnectAuthGate';
+import { ConnectHomeScreen } from '@/src/features/connect/components/ConnectHomeScreen';
 
-export default function ConnectScreen() {
-  return <PlaceholderScreen title="连接" message="连接功能建设中" />;
+export default function ConnectTabScreen() {
+  return (
+    <ConnectAuthGate>
+      <ConnectHomeScreen />
+    </ConnectAuthGate>
+  );
 }

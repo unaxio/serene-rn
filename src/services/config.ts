@@ -84,6 +84,15 @@ export const API_PATHS = {
   PROFILE_NOTIFICATIONS_READ: '/soul-flower/app/me/notifications/read',
   PROFILE_NOTIFICATIONS_UNREAD: '/soul-flower/app/me/notifications/unread-count',
   PROFILE_MEMBERSHIP: '/soul-flower/app/me/membership',
+  CONNECT_HOME: '/soul-flower/app/connect/home',
+  CONNECT_UNREAD: '/soul-flower/app/connect/unread',
+  CONNECT_CONVERSATIONS: '/soul-flower/app/connect/conversations',
+  CONNECT_NOTIFICATIONS: '/soul-flower/app/connect/notifications',
+  CONNECT_SYSTEM_MESSAGES: '/soul-flower/app/connect/system-messages',
+  CONNECT_AI_ROLES: '/soul-flower/app/connect/ai-chat/roles',
+  CONNECT_AI_SESSIONS: '/soul-flower/app/connect/ai-chat/sessions',
+  CONNECT_AI_STREAM: '/soul-flower/app/connect/ai-chat/stream',
+  CONNECT_DM: '/soul-flower/app/connect/dm',
 } as const;
 
 export const STORAGE_KEYS = {

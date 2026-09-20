@@ -3,6 +3,8 @@ import { Tabs } from 'expo-router';
 import { Platform, StyleSheet, Text } from 'react-native';
 
 import Colors from '@/constants/Colors';
+import { useConnectUnreadCount } from '@/src/features/connect/hooks/useConnectUnread';
+import { formatUnreadBadge } from '@/src/features/connect/utils/formatUnreadBadge';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
@@ -23,6 +25,7 @@ function TabLabel({ label, color }: TabLabelProps) {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const connectBadge = formatUnreadBadge(useConnectUnreadCount());
 
   return (
     <Tabs
@@ -96,6 +99,7 @@ export default function TabLayout() {
         options={{
           title: '连接',
           headerShown: false,
+          tabBarBadge: connectBadge,
           tabBarLabel: ({ color }) => <TabLabel label="连接" color={color} />,
           tabBarIcon: ({ color }) => (
             <SymbolView

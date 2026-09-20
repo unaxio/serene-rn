@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { SquareUserAvatar } from '@/src/features/square/components/SquareUserAvatar';
 import { CommentActionButton } from '@/src/features/square/components/comments/CommentActionButton';
+import { CommentHighlight } from '@/src/features/square/components/comments/CommentHighlight';
 import { CommentReplyPreviewBox } from '@/src/features/square/components/comments/CommentReplyPreviewBox';
 import { MUTED_TEXT_COLOR, COMMENT_LONG_PRESS_DELAY_MS } from '@/src/features/square/constants';
 import type { SquareComment } from '@/src/features/square/types';
@@ -45,6 +46,7 @@ function CommentItemComponent({
   }, [comment.content]);
 
   return (
+    <CommentHighlight commentId={comment.id}>
     <View style={styles.item}>
       <Pressable
         style={styles.header}
@@ -97,6 +99,7 @@ function CommentItemComponent({
         ) : null}
       </View>
     </View>
+    </CommentHighlight>
   );
 }
 
