@@ -66,10 +66,7 @@ export function ProfileHomeScreen() {
   const canOpenShareDetail = mainTab === 'resonate' && resonateSub === 'share';
 
   const header = (
-    <ProfileHomeHeader
-      onPressNotifications={() => router.push('/profile/messages')}
-      onPressSettings={openSettings}
-    />
+    <ProfileHomeHeader onPressSettings={openSettings} />
   );
 
   if (!user) {

@@ -1,10 +1,9 @@
-import { Image } from 'expo-image';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import type { DmMessage } from '@/src/features/connect/types';
+import { dmMessageText } from '@/src/features/connect/utils/dmMessageText';
 import { MUTED_TEXT_COLOR } from '@/src/features/square/constants';
-import { resolveCdnUrl } from '@/src/utils/cdn';
 
 interface DmBubbleProps {
   message: DmMessage;
@@ -12,8 +11,6 @@ interface DmBubbleProps {
   highlighted: boolean;
   onLongPress: (message: DmMessage) => void;
 }
-
-const IMAGE_SIZE = 120;
 
 export function DmBubble({ message, mine, highlighted, onLongPress }: DmBubbleProps) {
   return (
@@ -25,14 +22,7 @@ export function DmBubble({ message, mine, highlighted, onLongPress }: DmBubblePr
           {message.quote.missing ? '引用内容已不可见' : `${message.quote.senderName}：${message.quote.summary}`}
         </Text>
       ) : null}
-      {message.kind === 'image'
-        ? message.imagePaths.map((path) => {
-            const uri = resolveCdnUrl(path);
-            return uri ? (
-              <Image key={path} source={{ uri }} style={styles.image} contentFit="cover" />
-            ) : null;
-          })
-        : <Text style={mine ? styles.mineText : styles.text}>{message.content}</Text>}
+      <Text style={mine ? styles.mineText : styles.text}>{dmMessageText(message)}</Text>
       {message.status === 'failed' ? <Text style={styles.failed}>发送失败</Text> : null}
     </Pressable>
   );
@@ -53,6 +43,5 @@ const styles = StyleSheet.create({
   text: { color: APP_TEXT_COLOR, fontSize: 15 },
   mineText: { color: '#FFFFFF', fontSize: 15 },
   quote: { fontSize: 12, color: MUTED_TEXT_COLOR },
-  image: { width: IMAGE_SIZE, height: IMAGE_SIZE, borderRadius: 8 },
   failed: { color: '#FECACA', fontSize: 12 },
 });

@@ -16,6 +16,8 @@ export const CONNECT_UNAVAILABLE_MESSAGE = '该内容暂不可查看';
 
 export const CONNECT_COMING_SOON_MESSAGE = '功能开发中';
 
+export const DM_PEER_UNAVAILABLE_MESSAGE = '暂时无法发起私信';
+
 export const CONNECT_BLOCKED_HINT = '已加入黑名单';
 
 export const CONNECT_WITHDRAWN_MESSAGE = '该通知已撤回';

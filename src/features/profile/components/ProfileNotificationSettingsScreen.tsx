@@ -103,7 +103,9 @@ export function ProfileNotificationSettingsScreen() {
                 />
               </View>
             ))}
-            <Text style={styles.hint}>预览模式：{draft.previewMode}</Text>
+            <Text style={styles.hint}>
+              关闭私信通知后仍可收到私信并计入未读，只是不再推送。预览：{draft.previewMode}
+            </Text>
           </View>
           <Pressable
             style={[styles.save, mutation.isPending && styles.saveDisabled]}

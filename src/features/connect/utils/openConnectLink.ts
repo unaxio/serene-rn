@@ -20,6 +20,10 @@ export function openConnectLink(
     router.push(`/connect/system/${link.id}`);
     return;
   }
+  if (link.type === 'dm') {
+    router.push(`/connect/dm/${link.id}`);
+    return;
+  }
   openContentAnchor(
     router,
     {

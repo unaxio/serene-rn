@@ -64,9 +64,9 @@ export function AiChatComposer({ disabled, onSend }: AiChatComposerProps) {
           placeholder={disabled ? '正在回复…' : '说点什么'}
           placeholderTextColor={PLACEHOLDER_TEXT_COLOR}
           onChangeText={setText}
-          multiline
-          numberOfLines={1}
-          scrollEnabled
+          returnKeyType="send"
+          submitBehavior="submit"
+          onSubmitEditing={handleSend}
         />
         <Pressable style={styles.send} disabled={disabled} onPress={handleSend}>
           <Text style={styles.sendText}>发送</Text>

@@ -1,15 +1,15 @@
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   getDmMessages,
   hideDmMessage,
+  markDmRead,
   sendDmMessage,
 } from '@/src/features/connect/api';
-import { CONNECT_PAGE_SIZE, CONNECT_QUERY_KEYS } from '@/src/features/connect/constants';
+import { CONNECT_BLOCKED_HINT, CONNECT_PAGE_SIZE, CONNECT_QUERY_KEYS } from '@/src/features/connect/constants';
 import type { DmMessage, DmQuote } from '@/src/features/connect/types';
-import { uploadSquareImage } from '@/src/features/square/api';
-import type { PickedImageFile } from '@/src/features/square/utils/pickSquareImage';
+import { DM_TEXT_MESSAGE_TYPE, dmMessageText } from '@/src/features/connect/utils/dmMessageText';
 import { toastCaughtFailure } from '@/src/utils/requestError';
 
 export function useDmThread(conversationId: string) {
@@ -31,6 +31,29 @@ export function useDmThread(conversationId: string) {
 
   const conversation = query.data?.pages[0]?.conversation;
   const blocked = Boolean(conversation?.blockedByMe || conversation?.blockedMe);
+  const inputHint = conversation?.inputHint?.trim() || (blocked ? CONNECT_BLOCKED_HINT : '');
+
+  useEffect(() => {
+    if (conversationId.length === 0) {
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        await markDmRead(conversationId);
+        if (cancelled) {
+          return;
+        }
+        await queryClient.invalidateQueries({ queryKey: CONNECT_QUERY_KEYS.unread });
+        await queryClient.invalidateQueries({ queryKey: CONNECT_QUERY_KEYS.home });
+      } catch {
+        // 已读失败不打断聊天
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [conversationId, queryClient]);
 
   const refresh = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: CONNECT_QUERY_KEYS.dmMessages(conversationId) });
@@ -41,30 +64,8 @@ export function useDmThread(conversationId: string) {
     async (content: string) => {
       try {
         await sendDmMessage(conversationId, {
-          kind: 'text',
-          content,
-          quoteMessageId: quote?.id,
-        });
-        setQuote(null);
-        await refresh();
-      } catch (error) {
-        toastCaughtFailure(error);
-      }
-    },
-    [conversationId, quote?.id, refresh],
-  );
-
-  const sendImages = useCallback(
-    async (files: PickedImageFile[]) => {
-      try {
-        const imagePaths: string[] = [];
-        for (const file of files) {
-          const uploaded = await uploadSquareImage(file);
-          imagePaths.push(uploaded.relativePath);
-        }
-        await sendDmMessage(conversationId, {
-          kind: 'image',
-          imagePaths,
+          messageType: DM_TEXT_MESSAGE_TYPE,
+          payload: { text: content },
           quoteMessageId: quote?.id,
         });
         setQuote(null);
@@ -92,7 +93,7 @@ export function useDmThread(conversationId: string) {
     setQuote({
       id: message.id,
       senderName: '',
-      summary: message.kind === 'image' ? '[图片]' : message.content,
+      summary: dmMessageText(message),
       missing: false,
     });
   }, []);
@@ -100,7 +101,8 @@ export function useDmThread(conversationId: string) {
   return {
     messages,
     conversation,
-    blocked,
+    blocked: blocked || inputHint.length > 0,
+    inputHint,
     quote,
     clearQuote: () => setQuote(null),
     quoteMessage,
@@ -114,7 +116,6 @@ export function useDmThread(conversationId: string) {
       }
     },
     sendText,
-    sendImages,
     hide,
   };
 }

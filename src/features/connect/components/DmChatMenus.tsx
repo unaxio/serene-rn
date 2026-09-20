@@ -3,6 +3,7 @@ import * as Clipboard from 'expo-clipboard';
 import { DmActionSheet } from '@/src/features/connect/components/DmActionSheet';
 import { CONNECT_COPIED_MESSAGE } from '@/src/features/connect/constants';
 import type { DmMessage } from '@/src/features/connect/types';
+import { dmMessageText } from '@/src/features/connect/utils/dmMessageText';
 import { ReportContentModal } from '@/src/features/square/components/ReportContentModal';
 import { showToast } from '@/src/utils/toast';
 
@@ -38,7 +39,7 @@ export function DmChatMenus({
         mine={mine}
         onClose={onCloseMenu}
         onCopy={() => {
-          void Clipboard.setStringAsync(active?.content ?? '');
+          void Clipboard.setStringAsync(active ? dmMessageText(active) : '');
           showToast(CONNECT_COPIED_MESSAGE);
         }}
         onQuote={() => {

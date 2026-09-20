@@ -6,30 +6,19 @@ import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { PROFILE_SURFACE } from '@/src/features/profile/constants';
 
 interface ProfileHomeHeaderProps {
-  onPressNotifications: () => void;
   onPressSettings: () => void;
 }
 
 const ICON_SIZE = 22;
 const MIN_TOP_INSET = 12;
 
-export function ProfileHomeHeader({
-  onPressNotifications,
-  onPressSettings,
-}: ProfileHomeHeaderProps) {
+export function ProfileHomeHeader({ onPressSettings }: ProfileHomeHeaderProps) {
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.wrap, { paddingTop: insets.top + MIN_TOP_INSET }]}>
       <Text style={styles.title}>我的</Text>
       <View style={styles.actions}>
-        <Pressable onPress={onPressNotifications} hitSlop={10} style={styles.iconBtn}>
-          <SymbolView
-            name={{ ios: 'bell', android: 'notifications', web: 'notifications' }}
-            size={ICON_SIZE}
-            tintColor={APP_TEXT_COLOR}
-          />
-        </Pressable>
         <Pressable onPress={onPressSettings} hitSlop={10} style={styles.iconBtn}>
           <SymbolView
             name={{ ios: 'gearshape', android: 'settings', web: 'settings' }}

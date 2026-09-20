@@ -14,7 +14,8 @@ export type ConnectLinkType =
   | 'comment'
   | 'user'
   | 'system'
-  | 'topic';
+  | 'topic'
+  | 'dm';
 
 export type ConnectFollowRelation = 'none' | 'following' | 'followed_by' | 'mutual';
 
@@ -175,6 +176,7 @@ export interface DmConversationMeta {
   pinned: boolean;
   blockedByMe: boolean;
   blockedMe: boolean;
+  inputHint?: string | null;
 }
 
 export interface DmQuote {
@@ -184,12 +186,15 @@ export interface DmQuote {
   missing: boolean;
 }
 
+export interface DmPayload {
+  text?: string;
+}
+
 export interface DmMessage {
   id: string;
   senderId: string;
-  kind: 'text' | 'image';
-  content: string;
-  imagePaths: string[];
+  messageType: string;
+  payload: DmPayload;
   quote: DmQuote | null;
   createdAt: string;
   status: 'sent' | 'failed';
@@ -204,9 +209,8 @@ export interface DmMessagePage {
 }
 
 export interface SendDmMessagePayload {
-  kind: 'text' | 'image';
-  content?: string;
-  imagePaths?: string[];
+  messageType: 'text';
+  payload: { text: string };
   quoteMessageId?: string;
 }
 

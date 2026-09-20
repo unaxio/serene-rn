@@ -133,6 +133,21 @@ export async function endAiSession(sessionId: string): Promise<void> {
   unwrapVoidResponse(response, '结束对话失败');
 }
 
+export async function openDmConversation(userId: string): Promise<{ conversationId: string }> {
+  const response = await request.post<
+    { conversationId: string } | ApiEnvelope<{ conversationId: string }>
+  >(`${API_PATHS.CONNECT_DM}/open`, { userId });
+  return unwrapResponse(response, '无法发起私信');
+}
+
+export async function markDmRead(conversationId: string): Promise<void> {
+  const response = await request.post<unknown | ApiEnvelope<unknown>>(
+    `${API_PATHS.CONNECT_DM}/${conversationId}/read`,
+    {},
+  );
+  unwrapVoidResponse(response, '标记已读失败');
+}
+
 export async function getDmMessages(
   conversationId: string,
   page: number,

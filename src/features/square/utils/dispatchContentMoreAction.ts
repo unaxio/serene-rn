@@ -14,6 +14,8 @@ import type {
   ContentMoreActionId,
   ContentMoreKind,
 } from '@/src/features/square/utils/contentMoreActions';
+import { DM_PEER_UNAVAILABLE_MESSAGE } from '@/src/features/connect/constants';
+import { startDirectMessage } from '@/src/features/connect/utils/startDirectMessage';
 import { showToast } from '@/src/utils/toast';
 
 type AppRouter = ReturnType<typeof useRouter>;
@@ -41,8 +43,19 @@ export function dispatchContentMoreAction(
     void copySquareLink(buildContentSharePath(ctx.contentKind, ctx.targetId));
     return;
   }
-  if (actionId === 'promote' || actionId === 'message') {
+  if (actionId === 'promote') {
     showToast(COMING_SOON_MESSAGE);
+    return;
+  }
+  if (actionId === 'message') {
+    if (!ctx.requireAuth()) {
+      return;
+    }
+    if (!ctx.authorId) {
+      showToast(DM_PEER_UNAVAILABLE_MESSAGE);
+      return;
+    }
+    void startDirectMessage(ctx.router, ctx.authorId);
     return;
   }
   if (actionId === 'follow' || actionId === 'unfollow') {

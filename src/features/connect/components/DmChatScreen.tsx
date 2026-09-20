@@ -10,7 +10,7 @@ import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { ConnectAuthGate } from '@/src/features/connect/components/ConnectAuthGate';
 import { DmBubble } from '@/src/features/connect/components/DmBubble';
 import { DmChatMenus } from '@/src/features/connect/components/DmChatMenus';
-import { DmComposer, pickDmImages } from '@/src/features/connect/components/DmComposer';
+import { DmComposer } from '@/src/features/connect/components/DmComposer';
 import { useDmThread } from '@/src/features/connect/hooks/useDmThread';
 import type { DmMessage } from '@/src/features/connect/types';
 import { reportUser } from '@/src/features/profile/api';
@@ -45,13 +45,6 @@ export function DmChatScreen({ conversationId, focusMessageId }: DmChatScreenPro
     const timer = setTimeout(() => setFocusedId(undefined), FOCUS_MS);
     return () => clearTimeout(timer);
   }, [focusMessageId]);
-
-  const handlePickImages = useCallback(async () => {
-    const files = await pickDmImages();
-    if (files.length > 0) {
-      await thread.sendImages(files);
-    }
-  }, [thread]);
 
   const handleReport = useCallback(
     async (reason: string, detail: string) => {
@@ -110,10 +103,10 @@ export function DmChatScreen({ conversationId, focusMessageId }: DmChatScreenPro
           <View style={{ paddingBottom: insets.bottom }}>
             <DmComposer
               blocked={thread.blocked}
+              inputHint={thread.inputHint}
               quote={thread.quote}
               onClearQuote={thread.clearQuote}
               onSendText={(content) => void thread.sendText(content)}
-              onPickImages={() => void handlePickImages()}
             />
           </View>
         </KeyboardStickyView>

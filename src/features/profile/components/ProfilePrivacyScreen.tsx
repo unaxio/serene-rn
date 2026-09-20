@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { AppSwitch } from '@/src/components/AppSwitch';
 import { getPrivacySettings, putPrivacySettings } from '@/src/features/profile/api';
+import { MessagePermissionField } from '@/src/features/profile/components/MessagePermissionField';
 import {
   PROFILE_ACCENT,
   PROFILE_MUTED,
@@ -84,7 +85,12 @@ export function ProfilePrivacyScreen() {
           <View style={styles.card}>
             <Text style={styles.hint}>资料可见：{draft.profileVisibility}</Text>
             <Text style={styles.hint}>动态可见：{draft.feedVisibility}</Text>
-            <Text style={styles.hint}>私信权限：{draft.messagePermission}</Text>
+            <MessagePermissionField
+              value={draft.messagePermission}
+              onChange={(messagePermission) =>
+                setDraft((prev) => ({ ...prev, messagePermission }))
+              }
+            />
           </View>
           <View style={styles.card}>
             {BOOL_ROWS.map((row) => (

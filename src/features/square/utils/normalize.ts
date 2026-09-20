@@ -59,9 +59,19 @@ export function toEntityId(raw: { id?: string; _id?: string } | null | undefined
   return raw?.id ?? raw?._id ?? '';
 }
 
-export function normalizeAuthor(raw: SquareAuthor | null | undefined): SquareAuthor {
+interface AuthorRaw {
+  id?: string | null;
+  _id?: string | null;
+  userId?: string | null;
+  nickName?: string | null;
+  avatarUrl?: string | null;
+  level?: string | number | null;
+}
+
+export function normalizeAuthor(raw: AuthorRaw | null | undefined): SquareAuthor {
+  const id = (raw?.id ?? raw?._id ?? raw?.userId ?? '').trim();
   return {
-    id: raw?.id ?? null,
+    id: id.length > 0 ? id : null,
     nickName: raw?.nickName ?? '',
     avatarUrl: raw?.avatarUrl ?? '',
     level: raw?.level ?? null,

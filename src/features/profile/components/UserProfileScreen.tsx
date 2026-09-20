@@ -29,7 +29,9 @@ import {
 } from '@/src/features/profile/utils/followActionLabel';
 import { SendFlowerModal } from '@/src/features/square/components/SendFlowerModal';
 import { SquarePageHeader } from '@/src/features/square/components/SquarePageHeader';
+import { startDirectMessage } from '@/src/features/connect/utils/startDirectMessage';
 import { COMING_SOON_MESSAGE } from '@/src/features/square/constants';
+import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import { showToast } from '@/src/utils/toast';
 
 interface UserProfileScreenProps {
@@ -38,6 +40,7 @@ interface UserProfileScreenProps {
 
 export function UserProfileScreen({ userId }: UserProfileScreenProps) {
   const router = useRouter();
+  const requireAuth = useRequireAuth();
   const {
     homeQuery,
     home,
@@ -98,7 +101,12 @@ export function UserProfileScreen({ userId }: UserProfileScreenProps) {
             onFollow={() => {
               void followMutation.mutateAsync(shouldFollowNext(home.relation));
             }}
-            onMessage={() => showToast(COMING_SOON_MESSAGE)}
+            onMessage={() => {
+              if (!requireAuth()) {
+                return;
+              }
+              void startDirectMessage(router, userId);
+            }}
             onFlower={() => setFlowerOpen(true)}
           />
         </>
