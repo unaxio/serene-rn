@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { BackHandler, Pressable, StyleSheet, Text, View } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { endAiSession } from '@/src/features/connect/api';
@@ -25,7 +24,6 @@ const BUBBLE_RADIUS = 12;
 
 export function AiChatScreen({ sessionId }: AiChatScreenProps) {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const chat = useAiChat(sessionId);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [ending, setEnding] = useState(false);
@@ -79,9 +77,7 @@ export function AiChatScreen({ sessionId }: AiChatScreenProps) {
           <Text style={styles.missing}>这次对话已结束</Text>
         )}
         <KeyboardStickyView offset={{ closed: 0, opened: 0 }}>
-          <View style={{ paddingBottom: insets.bottom }}>
-            <AiChatComposer disabled={!chat.ready || chat.generating} onSend={(content) => void chat.send(content)} />
-          </View>
+          <AiChatComposer disabled={!chat.ready || chat.generating} onSend={(content) => void chat.send(content)} />
         </KeyboardStickyView>
         <ConfirmDangerModal
           visible={confirmVisible}

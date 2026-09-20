@@ -55,6 +55,7 @@ interface SubmitAnswerEnvelope extends ApiEnvelope<SubmitAnswerResponse> {
   summary?: string;
   explain?: string;
   success?: boolean;
+  id?: string;
 }
 
 function unwrapSubmitAnswer(
@@ -71,6 +72,7 @@ function unwrapSubmitAnswer(
     return {
       success: inner?.success ?? envelope.success ?? true,
       message: inner?.message ?? envelope.message,
+      id: inner?.id ?? envelope.id,
       summary: inner?.summary ?? envelope.summary,
       explain: inner?.explain ?? envelope.explain,
     };
@@ -79,6 +81,7 @@ function unwrapSubmitAnswer(
   return {
     success: payload.success ?? true,
     message: payload.message,
+    id: payload.id,
     summary: payload.summary,
     explain: payload.explain,
   };

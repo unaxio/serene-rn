@@ -140,10 +140,18 @@ export interface AiChatOpening {
   createdAt: string;
 }
 
+export interface AiChatSeedMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  createdAt: string;
+}
+
 export interface AiChatSession {
   sessionId: string;
   role: { id: string; name: string; avatarUrl: string };
-  opening: AiChatOpening;
+  opening?: AiChatOpening;
+  messages?: AiChatSeedMessage[];
 }
 
 export interface AiStreamRequest {

@@ -114,6 +114,7 @@ export function TodayAwarenessCard({
 
   const todayAnswerResult = data?.todayAnswer
     ? {
+        id: data.todayAnswer.id,
         answerContent: data.todayAnswer.answerContent,
         summary: data.todayAnswer.summary ?? "",
         explain: data.todayAnswer.explain ?? "",

@@ -26,6 +26,7 @@ export interface TodayAnswer {
 
 /** 今日答题结果（查看模式） */
 export interface TodayAnswerResult {
+  id?: string;
   answerContent: string;
   summary: string;
   explain: string;
@@ -46,6 +47,7 @@ export interface SubmitAnswerRequest {
 export interface SubmitAnswerResponse {
   success?: boolean;
   message?: string;
+  id?: string;
   summary?: string;
   explain?: string;
 }

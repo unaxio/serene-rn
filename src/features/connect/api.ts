@@ -114,6 +114,17 @@ export async function createAiSession(roleId: string): Promise<AiChatSession> {
   return unwrapResponse(response, '创建对话失败');
 }
 
+export async function createAiSessionFromAnswer(
+  answerId: string,
+  roleId: string,
+): Promise<AiChatSession> {
+  const response = await request.post<AiChatSession | ApiEnvelope<AiChatSession>>(
+    API_PATHS.CONNECT_AI_SESSION_FROM_ANSWER,
+    { answerId, roleId },
+  );
+  return unwrapResponse(response, '创建对话失败');
+}
+
 export async function endAiSession(sessionId: string): Promise<void> {
   const response = await request.post<unknown | ApiEnvelope<unknown>>(
     `${API_PATHS.CONNECT_AI_SESSIONS}/${sessionId}/end`,

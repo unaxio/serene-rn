@@ -91,6 +91,7 @@ export const API_PATHS = {
   CONNECT_SYSTEM_MESSAGES: '/soul-flower/app/connect/system-messages',
   CONNECT_AI_ROLES: '/soul-flower/app/connect/ai-chat/roles',
   CONNECT_AI_SESSIONS: '/soul-flower/app/connect/ai-chat/sessions',
+  CONNECT_AI_SESSION_FROM_ANSWER: '/soul-flower/app/connect/ai-chat/sessions/from-answer',
   CONNECT_AI_STREAM: '/soul-flower/app/connect/ai-chat/stream',
   CONNECT_DM: '/soul-flower/app/connect/dm',
 } as const;

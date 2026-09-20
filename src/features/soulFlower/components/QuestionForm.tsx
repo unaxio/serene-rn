@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { AiResponseLoading } from "@/src/features/soulFlower/components/AiResponseLoading";
 import { ChoiceOptionRow } from "@/src/features/soulFlower/components/ChoiceOptionRow";
+import { QuestionAiChatEntry } from "@/src/features/soulFlower/components/QuestionAiChatEntry";
 import {
   AI_ACCENT_COLOR,
   APP_TEXT_COLOR,
@@ -25,6 +26,8 @@ interface QuestionFormProps {
   onSubmit: (answerContent: string) => Promise<SubmitAnswerResponse | null>;
   /** 传入时直接进入 result 状态，用于查看今日答题结果 */
   initialResult?: TodayAnswerResult;
+  /** 进入一对一聊天后关闭外层觉察弹窗 */
+  onLeaveForChat?: () => void | Promise<void>;
 }
 
 const PLACEHOLDER_COLOR = "#9CA3AF";
@@ -41,6 +44,7 @@ function buildInitialAnswerState(
       textAnswer: "",
       phase: "idle" as FormPhase,
       aiResult: null as AiResult | null,
+      answerId: null as string | null,
     };
   }
 
@@ -53,6 +57,7 @@ function buildInitialAnswerState(
       summary: initialResult.summary,
       explain: initialResult.explain,
     },
+    answerId: initialResult.id ?? null,
   };
 }
 
@@ -60,6 +65,7 @@ export function QuestionForm({
   question,
   onSubmit,
   initialResult,
+  onLeaveForChat,
 }: QuestionFormProps) {
   const initialState = buildInitialAnswerState(question, initialResult);
   const [selectedOption, setSelectedOption] = useState<string | null>(
@@ -68,6 +74,7 @@ export function QuestionForm({
   const [textAnswer, setTextAnswer] = useState(initialState.textAnswer);
   const [phase, setPhase] = useState<FormPhase>(initialState.phase);
   const [aiResult, setAiResult] = useState<AiResult | null>(initialState.aiResult);
+  const [answerId, setAnswerId] = useState<string | null>(initialState.answerId);
 
   const isLocked = phase !== "idle";
 
@@ -86,6 +93,9 @@ export function QuestionForm({
         summary: result.summary ?? "",
         explain: result.explain ?? "",
       });
+      if (result.id) {
+        setAnswerId(result.id);
+      }
       setPhase("result");
     } catch {
       setPhase("idle");
@@ -142,7 +152,7 @@ export function QuestionForm({
               <Text style={styles.summary}>{aiResult.summary}</Text>
               <Text style={styles.explain}>{aiResult.explain}</Text>
               <View style={styles.actionLinks}>
-                <Text style={styles.actionLink}>AI一对一聊→</Text>
+                <QuestionAiChatEntry answerId={answerId} onOpened={onLeaveForChat} />
                 <Text style={styles.actionLink}>AI众议厅→</Text>
               </View>
             </View>

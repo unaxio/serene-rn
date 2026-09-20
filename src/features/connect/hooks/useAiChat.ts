@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { streamAiChat } from '@/src/features/connect/sse';
-import type { AiChatBubble } from '@/src/features/connect/types';
+import type { AiChatBubble, AiChatSession } from '@/src/features/connect/types';
 import { readAiSessionDraft } from '@/src/features/connect/utils/aiSessionDraft';
 import { toastCaughtFailure } from '@/src/utils/requestError';
 import { showToast } from '@/src/utils/toast';
@@ -12,13 +12,26 @@ function isAbortError(error: unknown): boolean {
   return error instanceof Error && error.name === 'AbortError';
 }
 
+function seedBubbles(draft: AiChatSession | null): AiChatBubble[] {
+  if (!draft) {
+    return [];
+  }
+  if (draft.messages && draft.messages.length > 0) {
+    return draft.messages.map((item) => ({
+      id: item.id,
+      role: item.role,
+      content: item.content,
+    }));
+  }
+  if (draft.opening) {
+    return [{ id: draft.opening.id, role: 'assistant', content: draft.opening.content }];
+  }
+  return [];
+}
+
 export function useAiChat(sessionId: string) {
   const draft = readAiSessionDraft(sessionId);
-  const [messages, setMessages] = useState<AiChatBubble[]>(() =>
-    draft
-      ? [{ id: draft.opening.id, role: 'assistant', content: draft.opening.content }]
-      : [],
-  );
+  const [messages, setMessages] = useState<AiChatBubble[]>(() => seedBubbles(draft));
   const [generating, setGenerating] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const localIdRef = useRef(0);

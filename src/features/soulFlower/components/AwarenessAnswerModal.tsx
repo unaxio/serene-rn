@@ -82,6 +82,13 @@ function AwarenessAnswerModalComponent({
     }
   }, [hasCompleted, isResultView, onClose, onCompleted, onFinalize]);
 
+  const leaveForChat = useCallback(async () => {
+    if (!isResultView && hasCompleted) {
+      await onFinalize();
+    }
+    onClose();
+  }, [hasCompleted, isResultView, onClose, onFinalize]);
+
   return (
     <FullScreenModal
       visible={visible}
@@ -97,6 +104,7 @@ function AwarenessAnswerModalComponent({
             question={frozenQuestion}
             initialResult={frozenResult}
             onSubmit={handleSubmit}
+            onLeaveForChat={leaveForChat}
           />
         ) : (
           <Text style={styles.empty}>暂无可用题目</Text>
