@@ -13,12 +13,13 @@ import type { FollowUser } from '@/src/features/follow/types';
 interface AskInviteUserRowProps {
   user: FollowUser;
   invited: boolean;
+  inviting: boolean;
   onInvite: (userId: string) => void;
 }
 
 const AVATAR_SIZE = 40;
 
-export function AskInviteUserRow({ user, invited, onInvite }: AskInviteUserRowProps) {
+export function AskInviteUserRow({ user, invited, inviting, onInvite }: AskInviteUserRowProps) {
   return (
     <View style={styles.row}>
       <SquareUserAvatar
@@ -33,8 +34,8 @@ export function AskInviteUserRow({ user, invited, onInvite }: AskInviteUserRowPr
         {user.nickName || user.username || '用户'}
       </Text>
       <Pressable
-        style={[styles.invite, invited && styles.inviteDisabled]}
-        disabled={invited}
+        style={[styles.invite, (invited || inviting) && styles.inviteDisabled]}
+        disabled={invited || inviting}
         onPress={() => onInvite(user.userId)}>
         <Text style={[styles.inviteText, invited && styles.inviteTextDisabled]}>
           {invited ? ASK_INVITE_DONE : ASK_INVITE_ACTION}

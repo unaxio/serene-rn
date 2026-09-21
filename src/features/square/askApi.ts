@@ -119,3 +119,10 @@ export async function deleteAskAnswer(id: string): Promise<void> {
   );
   unwrapVoidResponse(response, '删除回答失败');
 }
+
+export async function inviteAskAnswer(askId: string, userId: string): Promise<void> {
+  const response = await request.post<
+    { invited: boolean } | ApiEnvelope<{ invited: boolean }>
+  >(`${API_PATHS.SQUARE_ASKS}/${askId}/invites`, { userId });
+  unwrapResponse(response, '邀请失败');
+}

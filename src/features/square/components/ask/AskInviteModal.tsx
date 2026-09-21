@@ -17,6 +17,9 @@ import {
 } from '@/src/features/square/constants';
 import { getFollowingList } from '@/src/features/follow/api';
 import type { FollowUser } from '@/src/features/follow/types';
+import { inviteAskAnswer } from '@/src/features/square/askApi';
+import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
+import { toastCaughtFailure } from '@/src/utils/requestError';
 
 interface AskInviteModalProps {
   visible: boolean;
@@ -27,7 +30,9 @@ interface AskInviteModalProps {
 const DIVIDER_HEIGHT = StyleSheet.hairlineWidth;
 
 export function AskInviteModal({ visible, askId, onClose }: AskInviteModalProps) {
+  const requireAuth = useRequireAuth();
   const [invitedIds, setInvitedIds] = useState<string[]>([]);
+  const [pendingId, setPendingId] = useState<string | null>(null);
   const query = useQuery({
     queryKey: ['follow', 'following'],
     queryFn: getFollowingList,
@@ -36,18 +41,28 @@ export function AskInviteModal({ visible, askId, onClose }: AskInviteModalProps)
   const items = query.data ?? [];
 
   const handleInvite = useCallback((userId: string) => {
-    setInvitedIds((prev) => (prev.includes(userId) ? prev : [...prev, userId]));
-  }, []);
+    if (!requireAuth() || invitedIds.includes(userId) || pendingId) {
+      return;
+    }
+    setPendingId(userId);
+    void inviteAskAnswer(askId, userId)
+      .then(() => {
+        setInvitedIds((prev) => (prev.includes(userId) ? prev : [...prev, userId]));
+      })
+      .catch(toastCaughtFailure)
+      .finally(() => setPendingId(null));
+  }, [askId, invitedIds, pendingId, requireAuth]);
 
   const renderItem = useCallback(
     ({ item }: { item: FollowUser }) => (
       <AskInviteUserRow
         user={item}
         invited={invitedIds.includes(item.userId)}
+        inviting={pendingId === item.userId}
         onInvite={handleInvite}
       />
     ),
-    [handleInvite, invitedIds],
+    [handleInvite, invitedIds, pendingId],
   );
 
   return (
