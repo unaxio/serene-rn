@@ -97,27 +97,14 @@ export function dispatchContentMoreAction(
 }
 
 function openContentEdit(ctx: ContentMoreActionContext): void {
-  if (ctx.contentKind === 'share' && ctx.shareSnapshot) {
+  if (ctx.contentKind !== 'share') {
+    return;
+  }
+  if (ctx.shareSnapshot) {
     ctx.queryClient.setQueryData(
       SQUARE_QUERY_KEYS.shareDetail(ctx.targetId),
       ctx.shareSnapshot,
     );
   }
-  if (ctx.contentKind === 'story') {
-    ctx.router.push(`/publish/story?editId=${ctx.targetId}`);
-    return;
-  }
-  if (ctx.contentKind === 'share') {
-    ctx.router.push(`/publish/share?editId=${ctx.targetId}`);
-    return;
-  }
-  if (ctx.contentKind === 'ask') {
-    ctx.router.push(`/publish/ask?editId=${ctx.targetId}`);
-    return;
-  }
-  if (!ctx.askId) {
-    showToast(COMING_SOON_MESSAGE);
-    return;
-  }
-  ctx.router.push(`/asks/${ctx.askId}/answer?editId=${ctx.targetId}`);
+  ctx.router.push(`/publish/share?editId=${ctx.targetId}`);
 }

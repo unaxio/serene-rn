@@ -38,6 +38,8 @@ export function patchAsk(ask: Ask, result: ToggleActionResponse): Ask {
     isResonated: result.isResonated ?? ask.isResonated,
     collectCount: result.collectCount ?? ask.collectCount,
     isCollected: result.isCollected ?? ask.isCollected,
+    flowerCount: result.flowerCount ?? ask.flowerCount,
+    isFlowered: result.isFlowered ?? ask.isFlowered,
   };
 }
 

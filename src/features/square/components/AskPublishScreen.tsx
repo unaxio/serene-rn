@@ -14,6 +14,7 @@ import {
   ASK_PUBLISH_TITLE,
   ASK_TITLE_MAX_LENGTH,
   PUBLISH_CONFIRM_EDIT_LABEL,
+  SHARE_TOPIC_OPTIONAL_LABEL,
   SQUARE_PAGE_BG,
 } from '@/src/features/square/constants';
 import { useAskDetail } from '@/src/features/square/hooks/useAskDetail';
@@ -45,18 +46,18 @@ export function AskPublishScreen() {
   }, [detail.ask, isEdit, prefilled]);
 
   const canSubmit = useMemo(
-    () => title.trim().length > 0 && Boolean(topicTag) && (!isEdit || prefilled),
-    [isEdit, prefilled, title, topicTag],
+    () => title.trim().length > 0 && (!isEdit || prefilled),
+    [isEdit, prefilled, title],
   );
 
   const handleSubmit = useCallback(async () => {
-    if (!canSubmit || !topicTag || isSubmitting) {
+    if (!canSubmit || isSubmitting) {
       return;
     }
     const ask = await submit({
       title: title.trim(),
       content: content.trim(),
-      topicTag,
+      topicTag: topicTag ?? undefined,
       isAnonymous,
     });
     if (!ask?.id) {
@@ -88,7 +89,12 @@ export function AskPublishScreen() {
           maxLength={ASK_TITLE_MAX_LENGTH}
           multiline
         />
-        <TopicTagPicker selectedId={topicTag} onSelect={setTopicTag} />
+        <TopicTagPicker
+          selectedId={topicTag}
+          onSelect={setTopicTag}
+          allowDeselect
+          label={SHARE_TOPIC_OPTIONAL_LABEL}
+        />
         <AskPublishTips />
         <AnonymousSwitchRow value={isAnonymous} onChange={setIsAnonymous} />
         <View style={styles.submitWrap}>

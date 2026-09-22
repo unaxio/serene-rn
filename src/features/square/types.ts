@@ -292,8 +292,10 @@ export interface Ask {
   commentCount: number;
   resonateCount: number;
   collectCount: number;
+  flowerCount: number;
   isResonated: boolean;
   isCollected: boolean;
+  isFlowered: boolean;
   answerSummary: string | null;
   answererAvatar: string | null;
   createdAt: string;
@@ -321,7 +323,7 @@ export interface AskAnswerDetail extends AskAnswer {
 export interface CreateAskPayload {
   title: string;
   content: string;
-  topicTag: string;
+  topicTag?: string;
   isAnonymous: boolean;
 }
 

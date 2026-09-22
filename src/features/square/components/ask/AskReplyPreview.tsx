@@ -7,12 +7,14 @@ import {
   ASK_VIEW_ALL_REPLIES_LABEL,
   COMMENT_HIGHLIGHT_COLOR,
   COMMENT_LONG_PRESS_DELAY_MS,
+  MUTED_TEXT_COLOR,
   TOP_REPLIES_PREVIEW_COUNT,
 } from '@/src/features/square/constants';
 import { useCommentReplies } from '@/src/features/square/hooks/useCommentReplies';
 import type { SquareComment } from '@/src/features/square/types';
 import { showCommentActionMenu } from '@/src/features/square/utils/commentActionMenu';
 import { getAuthorDisplayName } from '@/src/features/square/utils/displayAuthor';
+import { resolveParentReplyName } from '@/src/features/square/utils/resolveParentReplyName';
 
 interface AskReplyPreviewProps {
   comment: SquareComment;
@@ -29,6 +31,14 @@ export function AskReplyPreview({ comment, onReply, onViewAll }: AskReplyPreview
     }
     return comment.topReplies.slice(0, TOP_REPLIES_PREVIEW_COUNT);
   }, [comment.topReplies, expanded, repliesQuery.replies]);
+  const parentNameMap = useMemo(() => {
+    const map = new Map<string, string>();
+    map.set(comment.id, getAuthorDisplayName(comment.author));
+    previewReplies.forEach((reply) => {
+      map.set(reply.id, getAuthorDisplayName(reply.author));
+    });
+    return map;
+  }, [comment.author, comment.id, previewReplies]);
 
   if (previewReplies.length === 0 && comment.replyCount === 0) {
     return null;
@@ -46,18 +56,24 @@ export function AskReplyPreview({ comment, onReply, onViewAll }: AskReplyPreview
 
   return (
     <View style={styles.previewBox}>
-      {previewReplies.map((reply) => (
-        <Pressable
-          key={reply.id}
-          onPress={() => onReply(reply)}
-          onLongPress={() => showCommentActionMenu(reply.content)}
-          delayLongPress={COMMENT_LONG_PRESS_DELAY_MS}>
-          <Text style={styles.previewLine} numberOfLines={2}>
-            <Text style={styles.previewName}>{getAuthorDisplayName(reply.author)}</Text>
-            {`：${reply.content}`}
-          </Text>
-        </Pressable>
-      ))}
+      {previewReplies.map((reply) => {
+        const parentReplyName = resolveParentReplyName(reply, parentNameMap);
+        return (
+          <Pressable
+            key={reply.id}
+            onPress={() => onReply(reply)}
+            onLongPress={() => showCommentActionMenu(reply.content)}
+            delayLongPress={COMMENT_LONG_PRESS_DELAY_MS}>
+            <Text style={styles.previewLine} numberOfLines={2}>
+              <Text style={styles.previewName}>{getAuthorDisplayName(reply.author)}</Text>
+              {parentReplyName ? (
+                <Text style={styles.previewReplyHint}> 回复 {parentReplyName}</Text>
+              ) : null}
+              {`：${reply.content}`}
+            </Text>
+          </Pressable>
+        );
+      })}
       {showMore ? (
         <Pressable onPress={handleMore}>
           <Text style={styles.viewMore}>
@@ -86,6 +102,10 @@ const styles = StyleSheet.create({
   },
   previewName: {
     fontWeight: '600',
+  },
+  previewReplyHint: {
+    fontWeight: '400',
+    color: MUTED_TEXT_COLOR,
   },
   viewMore: {
     fontSize: 13,

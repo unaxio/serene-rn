@@ -42,23 +42,27 @@ const PROMOTE_ICON: ContentMoreSymbolName = {
 
 export function buildContentMoreActions({
   isOwn,
+  contentKind,
   isFollowing = false,
 }: BuildContentMoreActionsParams): ContentMoreAction[] {
   if (isOwn) {
-    return [
+    const actions: ContentMoreAction[] = [
       { id: 'promote', label: '推广', icon: PROMOTE_ICON },
       { id: 'share', label: '分享', icon: SHARE_ICON },
-      {
+    ];
+    if (contentKind === 'share') {
+      actions.push({
         id: 'edit',
         label: '编辑',
         icon: { ios: 'pencil', android: 'edit', web: 'edit' },
-      },
-      {
-        id: 'delete',
-        label: '删除',
-        icon: { ios: 'trash', android: 'delete', web: 'delete' },
-      },
-    ];
+      });
+    }
+    actions.push({
+      id: 'delete',
+      label: '删除',
+      icon: { ios: 'trash', android: 'delete', web: 'delete' },
+    });
+    return actions;
   }
 
   return [

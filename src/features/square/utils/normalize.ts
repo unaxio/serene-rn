@@ -213,8 +213,10 @@ export interface AskRaw {
   commentCount?: number;
   resonateCount?: number;
   collectCount?: number;
+  flowerCount?: number;
   isResonated?: boolean;
   isCollected?: boolean;
+  isFlowered?: boolean;
   answerSummary?: string | { content?: string } | null;
   answererAvatar?: string | SquareAuthor | null;
   createdAt?: string;
@@ -277,8 +279,10 @@ export function normalizeAsk(raw: AskRaw): Ask {
     commentCount: raw.commentCount ?? 0,
     resonateCount: raw.resonateCount ?? 0,
     collectCount: raw.collectCount ?? 0,
+    flowerCount: raw.flowerCount ?? 0,
     isResonated: raw.isResonated ?? false,
     isCollected: raw.isCollected ?? false,
+    isFlowered: raw.isFlowered ?? false,
     answerSummary: resolveAnswerSummary(raw.answerSummary),
     answererAvatar: resolveAnswererAvatar(raw.answererAvatar),
     createdAt: raw.createdAt ?? '',

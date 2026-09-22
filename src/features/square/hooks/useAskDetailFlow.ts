@@ -6,7 +6,7 @@ import { useCommentActions } from '@/src/features/square/hooks/useCommentActions
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 
 export interface AskFlowerTarget {
-  targetType: 'ask_answer' | 'comment';
+  targetType: 'ask' | 'ask_answer' | 'comment';
   targetId: string;
 }
 

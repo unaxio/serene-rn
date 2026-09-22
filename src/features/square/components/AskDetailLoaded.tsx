@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, RefreshControl, StyleSheet, View } from 'react-native';
 
+import { AskActionBar } from '@/src/features/square/components/ask/AskActionBar';
 import { AskAnswerItem } from '@/src/features/square/components/ask/AskAnswerItem';
 import { AskDetailOverlays } from '@/src/features/square/components/ask/AskDetailOverlays';
 import { AskListStatus } from '@/src/features/square/components/ask/AskListStatus';
@@ -91,9 +92,6 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
           <View>
             <AskQuestionBody
               ask={ask}
-              onCollect={() => {
-                void flow.runAction({ targetType: 'ask', targetId: askId, actionType: 'collect' });
-              }}
               onAnswer={handleAnswer}
               onInvite={() => flow.setInviteVisible(true)}
               onLayoutHeight={flow.setQuestionHeight}
@@ -120,6 +118,17 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
           <AskStickyBar title={ask.title} onAnswer={handleAnswer} />
         </View>
       ) : null}
+      <AskActionBar
+        flowerCount={ask.flowerCount}
+        collectCount={ask.collectCount}
+        isCollected={ask.isCollected}
+        isFlowered={ask.isFlowered}
+        onFlower={() => flow.openFlower({ targetType: 'ask', targetId: askId })}
+        onShare={() => setShareVisible(true)}
+        onCollect={() => {
+          void flow.runAction({ targetType: 'ask', targetId: askId, actionType: 'collect' });
+        }}
+      />
       <AskDetailOverlays flow={flow} askId={askId} />
       <SquareShareSheet
         visible={shareVisible}

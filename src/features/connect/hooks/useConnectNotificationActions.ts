@@ -77,6 +77,15 @@ export function useConnectNotificationActions(category: ConnectNotificationCateg
         openConnectLink(router, item.link, item.extra?.replyToId ?? item.link?.id);
         return;
       }
+      if (
+        category === 'mention-invite' &&
+        item.extra?.event === 'invite' &&
+        item.link?.type === 'ask' &&
+        item.link.id
+      ) {
+        router.push(`/asks/${item.link.id}/answer`);
+        return;
+      }
       openConnectLink(router, item.link);
     },
     [category, markRead, router, toggleFollow],

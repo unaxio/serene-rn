@@ -4,12 +4,7 @@ import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { AskCtaButtons } from '@/src/features/square/components/ask/AskCtaButtons';
 import { SquareUserAvatar } from '@/src/features/square/components/SquareUserAvatar';
 import { TopicTag } from '@/src/features/square/components/TopicTag';
-import { CommentActionButton } from '@/src/features/square/components/comments/CommentActionButton';
-import {
-  ASK_COLLECT_LABEL,
-  MUTED_TEXT_COLOR,
-  PAGE_SURFACE_COLOR,
-} from '@/src/features/square/constants';
+import { MUTED_TEXT_COLOR, PAGE_SURFACE_COLOR } from '@/src/features/square/constants';
 import type { Ask } from '@/src/features/square/types';
 import {
   getAuthorDisplayName,
@@ -19,7 +14,6 @@ import { formatRelativeTime } from '@/src/features/square/utils/formatRelativeTi
 
 interface AskQuestionBodyProps {
   ask: Ask;
-  onCollect: () => void;
   onAnswer: () => void;
   onInvite: () => void;
   onLayoutHeight: (height: number) => void;
@@ -29,7 +23,6 @@ const AUTHOR_AVATAR_SIZE = 40;
 
 export function AskQuestionBody({
   ask,
-  onCollect,
   onAnswer,
   onInvite,
   onLayoutHeight,
@@ -54,14 +47,6 @@ export function AskQuestionBody({
         {ask.topicTag ? <TopicTag label={ask.topicTag} /> : null}
       </View>
       <Text style={styles.title}>{ask.title}</Text>
-      <View style={styles.collectRow}>
-        <CommentActionButton
-          icon={{ ios: 'star', android: 'star_border', web: 'star_border' }}
-          label={`${ASK_COLLECT_LABEL} ${ask.collectCount}`}
-          active={ask.isCollected}
-          onPress={onCollect}
-        />
-      </View>
       <AskCtaButtons onAnswer={onAnswer} onInvite={onInvite} />
     </View>
   );
@@ -104,8 +89,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 30,
     color: APP_TEXT_COLOR,
-  },
-  collectRow: {
-    flexDirection: 'row',
   },
 });
