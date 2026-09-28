@@ -37,7 +37,7 @@ type InventoryRow =
 
 export function ProfileFlowerInventoryScreen() {
   const router = useRouter();
-  const [filter, setFilter] = useState<FlowerInventoryFilterId>("sendable");
+  const [filter, setFilter] = useState<FlowerInventoryFilterId>("all");
   const inventoryQuery = useQuery({
     queryKey: SQUARE_QUERY_KEYS.giftFlowerInventory,
     queryFn: getGiftFlowerInventory,
@@ -56,29 +56,45 @@ export function ProfileFlowerInventoryScreen() {
         item,
       }));
     }
-    return (inventoryQuery.data?.items ?? [])
-      .filter((item) => item.purchasedCount > 0)
-      .map((item) => ({
-        key: item.giftFlowerId,
-        kind: "sendable" as const,
-        item,
-      }));
+    const inventoryItems = inventoryQuery.data?.items ?? [];
+    const visibleItems =
+      filter === "all"
+        ? inventoryItems.filter(
+            (item) => item.purchasedCount > 0 || item.receivedCount > 0,
+          )
+        : inventoryItems.filter((item) => item.purchasedCount > 0);
+    return visibleItems.map((item) => ({
+      key: item.giftFlowerId,
+      kind: "sendable" as const,
+      item,
+    }));
   }, [filter, inventoryQuery.data?.items, receivedList.items]);
 
   const isLoading =
     filter === "received" ? receivedList.isLoading : inventoryQuery.isLoading;
 
-  const renderItem = useCallback(({ item: row }: { item: InventoryRow }) => {
-    if (row.kind === "received") {
-      return <FlowerInventoryReceivedRow item={row.item} />;
-    }
-    return (
-      <FlowerInventorySendableRow
-        item={row.item}
-        onSend={() => showToast(COMING_SOON_MESSAGE)}
-      />
-    );
-  }, []);
+  const emptyMessage =
+    filter === "received"
+      ? "暂无获赠花"
+      : filter === "all"
+        ? "花库还是空的"
+        : "暂无可送的花";
+
+  const renderItem = useCallback(
+    ({ item: row }: { item: InventoryRow }) => {
+      if (row.kind === "received") {
+        return <FlowerInventoryReceivedRow item={row.item} />;
+      }
+      return (
+        <FlowerInventorySendableRow
+          item={row.item}
+          showReceivedCount={filter === "all"}
+          onSend={() => showToast(COMING_SOON_MESSAGE)}
+        />
+      );
+    },
+    [filter],
+  );
 
   return (
     <SafeAreaView style={styles.safe} edges={[]}>
@@ -107,9 +123,7 @@ export function ProfileFlowerInventoryScreen() {
             filter === "received" ? receivedList.loadMore : undefined
           }
           ListEmptyComponent={
-            <Text style={styles.empty}>
-              {filter === "received" ? "暂无获赠花" : "暂无可送的花"}
-            </Text>
+            <Text style={styles.empty}>{emptyMessage}</Text>
           }
           ListFooterComponent={
             filter === "received" && receivedList.isFetchingMore ? (

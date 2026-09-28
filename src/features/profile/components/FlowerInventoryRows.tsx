@@ -11,11 +11,21 @@ const THUMB = 56;
 
 interface SendableRowProps {
   item: GiftFlowerInventoryItem;
+  showReceivedCount?: boolean;
   onSend: () => void;
 }
 
-export function FlowerInventorySendableRow({ item, onSend }: SendableRowProps) {
+export function FlowerInventorySendableRow({
+  item,
+  showReceivedCount = false,
+  onSend,
+}: SendableRowProps) {
   const uri = resolveCdnUrl(item.imagePath) ?? item.imagePath;
+  const canSend = item.purchasedCount > 0;
+  const countLabel = showReceivedCount
+    ? `可用 ${item.purchasedCount} · 获赠 ${item.receivedCount}`
+    : `可用 ${item.purchasedCount}`;
+
   return (
     <View style={styles.row}>
       {uri ? (
@@ -25,10 +35,13 @@ export function FlowerInventorySendableRow({ item, onSend }: SendableRowProps) {
       )}
       <View style={styles.meta}>
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.count}>可用 {item.purchasedCount}</Text>
+        <Text style={styles.count}>{countLabel}</Text>
       </View>
-      <Pressable style={styles.send} onPress={onSend}>
-        <Text style={styles.sendText}>送花</Text>
+      <Pressable
+        style={[styles.send, !canSend && styles.sendDisabled]}
+        disabled={!canSend}
+        onPress={onSend}>
+        <Text style={[styles.sendText, !canSend && styles.sendTextDisabled]}>送花</Text>
       </Pressable>
     </View>
   );
@@ -79,5 +92,9 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     backgroundColor: PROFILE_ACCENT,
   },
+  sendDisabled: {
+    backgroundColor: '#E2E8F0',
+  },
   sendText: { fontSize: 13, fontWeight: '600', color: '#FFFFFF' },
+  sendTextDisabled: { color: PROFILE_MUTED },
 });
