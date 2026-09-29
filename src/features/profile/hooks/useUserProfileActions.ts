@@ -7,6 +7,7 @@ import { getUserContents } from '@/src/features/profile/api';
 import { PROFILE_QUERY_KEYS } from '@/src/features/profile/constants';
 import { useProfileInfiniteQuery } from '@/src/features/profile/hooks/useProfileInfiniteQuery';
 import { useUserHomeData } from '@/src/features/profile/hooks/useUserHomeData';
+import type { ProfileShareItem } from '@/src/features/profile/types';
 import { useSquareAction } from '@/src/features/square/hooks/useSquareAction';
 import { toastCaughtFailure } from '@/src/utils/requestError';
 import { showToast } from '@/src/utils/toast';
@@ -29,6 +30,7 @@ export function useUserProfileActions(userId: string) {
   const homeQuery = useUserHomeData(userId);
   const [contentType, setContentType] = useState<ContentTab>('story');
   const [flowerOpen, setFlowerOpen] = useState(false);
+  const [detailShare, setDetailShare] = useState<ProfileShareItem | null>(null);
   const { runAction, isPending } = useSquareAction();
   const apiType = toApiType(contentType);
   const home = homeQuery.data;
@@ -70,6 +72,14 @@ export function useUserProfileActions(userId: string) {
     [runAction, userId],
   );
 
+  const handlePressShare = useCallback((share: ProfileShareItem) => {
+    setDetailShare(share);
+  }, []);
+
+  const closeShareDetail = useCallback(() => {
+    setDetailShare(null);
+  }, []);
+
   return {
     homeQuery,
     home,
@@ -83,5 +93,8 @@ export function useUserProfileActions(userId: string) {
     setFlowerOpen,
     isFlowerPending: isPending,
     handleSendFlower,
+    detailShare,
+    handlePressShare,
+    closeShareDetail,
   };
 }

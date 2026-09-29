@@ -63,8 +63,6 @@ export function ProfileHomeScreen() {
     setDetailShare(share);
   }, []);
 
-  const canOpenShareDetail = mainTab === 'resonate' && resonateSub === 'share';
-
   const header = (
     <ProfileHomeHeader onPressSettings={openSettings} />
   );
@@ -162,7 +160,7 @@ export function ProfileHomeScreen() {
             void content.refetch();
           }}
           onLoadMore={content.loadMore}
-          onPressShare={canOpenShareDetail ? handlePressShare : undefined}
+          onPressShare={content.kind === 'shares' ? handlePressShare : undefined}
           showPublishMoreMenu={mainTab === 'publish'}
         />
       </ScrollView>

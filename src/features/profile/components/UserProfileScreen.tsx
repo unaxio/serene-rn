@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ProfileContentPane } from '@/src/features/profile/components/ProfileContentPane';
 import { ProfileEmptyPane } from '@/src/features/profile/components/ProfileEmptyPane';
 import { ProfileInfoCard } from '@/src/features/profile/components/ProfileInfoCard';
+import { ProfileShareDetailModal } from '@/src/features/profile/components/ProfileShareDetailModal';
 import { ProfileStatsBar } from '@/src/features/profile/components/ProfileStatsBar';
 import { ProfileSubTabs } from '@/src/features/profile/components/ProfileSubTabs';
 import { UserProfileFooter } from '@/src/features/profile/components/UserProfileFooter';
@@ -54,6 +55,9 @@ export function UserProfileScreen({ userId }: UserProfileScreenProps) {
     setFlowerOpen,
     isFlowerPending,
     handleSendFlower,
+    detailShare,
+    handlePressShare,
+    closeShareDetail,
   } = useUserProfileActions(userId);
 
   return (
@@ -92,6 +96,7 @@ export function UserProfileScreen({ userId }: UserProfileScreenProps) {
                 void contents.refetch();
               }}
               onLoadMore={contents.loadMore}
+              onPressShare={apiType === 'shares' ? handlePressShare : undefined}
             />
           </ScrollView>
           <UserProfileFooter
@@ -116,6 +121,11 @@ export function UserProfileScreen({ userId }: UserProfileScreenProps) {
         isSubmitting={isFlowerPending}
         onClose={() => setFlowerOpen(false)}
         onSubmit={handleSendFlower}
+      />
+      <ProfileShareDetailModal
+        share={detailShare}
+        visible={detailShare !== null}
+        onClose={closeShareDetail}
       />
     </SafeAreaView>
   );

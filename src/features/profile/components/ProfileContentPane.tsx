@@ -30,7 +30,7 @@ interface ProfileContentPaneProps {
   hasNextPage?: boolean;
   onRetry: () => void;
   onLoadMore: () => void;
-  /** 仅「共鸣 → 分享」传入，用于打开分享详情弹窗 */
+  /** 分享列表点击后打开详情弹窗 */
   onPressShare?: (share: ProfileShareItem) => void;
   /** 「发布」下各类内容右上角肉串菜单 */
   showPublishMoreMenu?: boolean;
