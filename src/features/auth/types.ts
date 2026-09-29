@@ -34,6 +34,7 @@ export interface AuthUserData {
   bio?: string;
   avatarUrl?: string;
   region?: string | null;
+  cityCode?: string | null;
   relationshipStatus?: string | null;
 }
 

@@ -61,6 +61,15 @@ export const RELATIONSHIP_STATUS_OPTIONS = [
   { id: 'complicated', label: '一言难尽' },
 ] as const;
 
+export const REGION_PICKER_TITLE = '选择地区';
+export const REGION_FIELD_PLACEHOLDER = '请选择所在地区';
+export const REGION_BREADCRUMB_HINT = '请选择';
+export const REGION_EMPTY_MESSAGE = '暂无地区';
+export const REGION_LOAD_ERROR = '地区加载失败，点击重试';
+export const REGION_NOT_LEAF_MESSAGE = '请选择到最后一级';
+export const REGION_INVALID_MESSAGE = '地区数据无效';
+export const REGION_CLEAR_LABEL = '清除所在地区';
+
 export const PROFILE_QUERY_KEYS = {
   home: ['profile', 'me', 'home'] as const,
   userHome: (userId: string) => ['profile', 'user', userId, 'home'] as const,
@@ -88,6 +97,7 @@ export const PROFILE_QUERY_KEYS = {
     ['profile', 'me', 'notifications', category ?? 'all'] as const,
   unreadCount: ['profile', 'me', 'notifications', 'unread'] as const,
   membership: ['profile', 'me', 'membership'] as const,
+  regions: (parentCode?: string) => ['regions', parentCode ?? 'root'] as const,
 };
 
 export const PROFILE_PAGE_SIZE = 20;

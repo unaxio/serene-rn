@@ -13,6 +13,10 @@ import {
   type StoryRaw,
 } from '@/src/features/square/utils/normalize';
 import { resolveCdnUrl } from '@/src/utils/cdn';
+import {
+  normalizeProfileCity,
+  type ProfileCityRaw,
+} from '@/src/features/profile/utils/regionPath';
 
 import type {
   AccountDevice,
@@ -30,6 +34,7 @@ import type {
   ProfileAskItem,
   ProfileAuthor,
   ProfileCommentItem,
+  ProfileDetail,
   ProfileHomeData,
   ProfileNotificationItem,
   ProfileShareItem,
@@ -61,7 +66,17 @@ function asAuthor(raw: Partial<ProfileAuthor> | null | undefined): ProfileAuthor
   };
 }
 
-function normalizeHome(raw: ProfileHomeData): ProfileHomeData {
+interface ProfileDetailRaw extends Omit<ProfileDetail, 'city' | 'cityCode'> {
+  cityCode?: string | null;
+  city?: ProfileCityRaw | null;
+}
+
+interface ProfileHomeRaw extends Omit<ProfileHomeData, 'profile'> {
+  profile: ProfileDetailRaw;
+}
+
+function normalizeHome(raw: ProfileHomeRaw): ProfileHomeData {
+  const cityCode = raw.profile.cityCode?.trim() ?? '';
   return {
     profile: {
       ...raw.profile,
@@ -70,6 +85,8 @@ function normalizeHome(raw: ProfileHomeData): ProfileHomeData {
       identityTags: raw.profile.identityTags ?? [],
       bio: raw.profile.bio ?? '',
       region: raw.profile.region ?? null,
+      cityCode: cityCode.length > 0 ? cityCode : null,
+      city: normalizeProfileCity(raw.profile.city),
       relationshipStatus: raw.profile.relationshipStatus ?? null,
       ipLocation: raw.profile.ipLocation ?? null,
       level: raw.profile.level ?? null,
@@ -91,16 +108,16 @@ function normalizeHome(raw: ProfileHomeData): ProfileHomeData {
 }
 
 export async function getMeHome(): Promise<ProfileHomeData> {
-  const response = await request.get<ProfileHomeData | ApiEnvelope<ProfileHomeData>>(
+  const response = await request.get<ProfileHomeRaw | ApiEnvelope<ProfileHomeRaw>>(
     API_PATHS.PROFILE_ME_HOME,
   );
   return normalizeHome(unwrapResponse(response, '获取我的主页失败'));
 }
 
 export async function getUserHome(userId: string): Promise<UserHomeData> {
-  const response = await request.get<UserHomeData | ApiEnvelope<UserHomeData>>(
-    `${API_PATHS.PROFILE_USER_HOME}/${userId}/home`,
-  );
+  const response = await request.get<
+    (ProfileHomeRaw & Partial<UserHomeData>) | ApiEnvelope<ProfileHomeRaw & Partial<UserHomeData>>
+  >(`${API_PATHS.PROFILE_USER_HOME}/${userId}/home`);
   const data = unwrapResponse(response, '获取用户主页失败');
   return {
     ...normalizeHome(data),

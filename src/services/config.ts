@@ -63,6 +63,7 @@ export const API_PATHS = {
   GIFT_FLOWER_LEDGERS: '/soul-flower/app/actions/flowers',
   PROFILE_ME_HOME: '/soul-flower/app/me/home',
   PROFILE_ME_PROFILE: '/soul-flower/app/me/profile',
+  REGIONS: '/regions',
   PROFILE_USER_HOME: '/soul-flower/app/users',
   PROFILE_AVATAR_UPLOAD: '/upload/sf-avatar',
   PROFILE_RESONATE_RECEIVED: '/soul-flower/app/me/resonate-received',

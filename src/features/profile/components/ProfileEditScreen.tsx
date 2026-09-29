@@ -7,6 +7,7 @@ import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { ProfileBirthdaySelect } from '@/src/features/profile/components/ProfileBirthdaySelect';
 import { ProfileChipGroup } from '@/src/features/profile/components/ProfileChipGroup';
 import { ProfileEditAvatarField } from '@/src/features/profile/components/ProfileEditAvatarField';
+import { RegionPickerField } from '@/src/features/profile/components/RegionPickerField';
 import {
   PROFILE_ACCENT,
   PROFILE_BIO_MAX_LENGTH,
@@ -68,13 +69,7 @@ export function ProfileEditScreen() {
         <Text style={styles.label}>星座</Text>
         <Text style={styles.readOnly}>{form.constellation}</Text>
         <Text style={styles.label}>所在地区</Text>
-        <TextInput
-          style={styles.input}
-          value={form.region}
-          onChangeText={form.setRegion}
-          placeholder="例如：上海"
-          placeholderTextColor={PROFILE_MUTED}
-        />
+        <RegionPickerField value={form.regionLabel} onChange={form.handleCityChange} />
         <Text style={styles.label}>感情状态</Text>
         <ProfileChipGroup
           options={RELATIONSHIP_STATUS_OPTIONS}

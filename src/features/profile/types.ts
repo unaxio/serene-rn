@@ -1,4 +1,5 @@
 import type { UserGender } from '@/src/features/auth/types';
+import type { ProfileCity } from '@/src/features/profile/regionTypes';
 import type { FollowRelation } from '@/src/features/follow/types';
 import type { ProfileContentTabId } from '@/src/features/profile/constants';
 import type { Ask, Share, Story } from '@/src/features/square/types';
@@ -32,6 +33,8 @@ export interface ProfileDetail {
   gender: UserGender;
   birthday: string;
   region: string | null;
+  cityCode: string | null;
+  city: ProfileCity | null;
   relationshipStatus: string | null;
   ipLocation: string | null;
 }
@@ -66,6 +69,8 @@ export interface UpdateProfilePayload {
   bio?: string;
   avatarPath?: string;
   region?: string | null;
+  /** 最后一级行政区划代码；`null` 清空 cityCode 与 region */
+  cityCode?: string | null;
   relationshipStatus?: string | null;
 }
 
