@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import {
   ASK_COLLECT_LABEL,
+  ASK_RESONATE_LABEL,
   ASK_SHARE_LABEL,
   COMMENT_HIGHLIGHT_COLOR,
   MUTED_TEXT_COLOR,
@@ -15,10 +16,13 @@ import {
 type SymbolName = ComponentProps<typeof SymbolView>['name'];
 
 interface AskActionBarProps {
+  resonateCount: number;
   flowerCount: number;
   collectCount: number;
+  isResonated: boolean;
   isCollected: boolean;
   isFlowered: boolean;
+  onResonate: () => void;
   onFlower: () => void;
   onShare: () => void;
   onCollect: () => void;
@@ -46,10 +50,13 @@ function ActionItem({ icon, label, active = false, onPress }: ActionItemProps) {
 }
 
 export function AskActionBar({
+  resonateCount,
   flowerCount,
   collectCount,
+  isResonated,
   isCollected,
   isFlowered,
+  onResonate,
   onFlower,
   onShare,
   onCollect,
@@ -58,6 +65,12 @@ export function AskActionBar({
 
   return (
     <View style={[styles.bar, { paddingBottom: Math.max(insets.bottom, MIN_BOTTOM_INSET) }]}>
+      <ActionItem
+        icon={{ ios: 'heart', android: 'favorite_border', web: 'favorite_border' }}
+        label={`${ASK_RESONATE_LABEL} ${resonateCount}`}
+        active={isResonated}
+        onPress={onResonate}
+      />
       <ActionItem
         icon={{ ios: 'leaf', android: 'local_florist', web: 'local_florist' }}
         label={`${SHARE_ACTION_FLOWER_LABEL} ${flowerCount}`}

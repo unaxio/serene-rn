@@ -119,10 +119,15 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
         </View>
       ) : null}
       <AskActionBar
+        resonateCount={ask.resonateCount}
         flowerCount={ask.flowerCount}
         collectCount={ask.collectCount}
+        isResonated={ask.isResonated}
         isCollected={ask.isCollected}
         isFlowered={ask.isFlowered}
+        onResonate={() => {
+          void flow.runAction({ targetType: 'ask', targetId: askId, actionType: 'resonate' });
+        }}
         onFlower={() => flow.openFlower({ targetType: 'ask', targetId: askId })}
         onShare={() => setShareVisible(true)}
         onCollect={() => {

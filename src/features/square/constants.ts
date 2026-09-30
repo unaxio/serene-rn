@@ -308,6 +308,8 @@ export const ASK_ANSWER_DETAIL_ERROR = "回答加载失败";
 
 export const ASK_ANSWER_EMPTY = "暂无回答，来写第一条吧";
 
+export const ASK_RESONATE_LABEL = "共鸣";
+
 export const ASK_COLLECT_LABEL = "收藏";
 
 export const ASK_SHARE_LABEL = "分享";
