@@ -9,12 +9,10 @@ import { AnonymousSwitchRow } from '@/src/features/square/components/publish/Ano
 import { AskPublishTips } from '@/src/features/square/components/publish/AskPublishTips';
 import { CountedTextInput } from '@/src/features/square/components/publish/CountedTextInput';
 import { PublishSubmitButton } from '@/src/features/square/components/publish/PublishSubmitButton';
-import { TopicTagPicker } from '@/src/features/square/components/publish/TopicTagPicker';
 import {
   ASK_PUBLISH_TITLE,
   ASK_TITLE_MAX_LENGTH,
   PUBLISH_CONFIRM_EDIT_LABEL,
-  SHARE_TOPIC_OPTIONAL_LABEL,
   SQUARE_PAGE_BG,
 } from '@/src/features/square/constants';
 import { useAskDetail } from '@/src/features/square/hooks/useAskDetail';
@@ -30,7 +28,6 @@ export function AskPublishScreen() {
   const detail = useAskDetail(editId ?? '');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [topicTag, setTopicTag] = useState<string | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [prefilled, setPrefilled] = useState(false);
 
@@ -41,7 +38,6 @@ export function AskPublishScreen() {
     setTitle(detail.ask.title);
     // 保留原 content，避免编辑时误清空历史补充描述
     setContent(detail.ask.content);
-    setTopicTag(detail.ask.topicTag);
     setPrefilled(true);
   }, [detail.ask, isEdit, prefilled]);
 
@@ -57,7 +53,6 @@ export function AskPublishScreen() {
     const ask = await submit({
       title: title.trim(),
       content: content.trim(),
-      topicTag: topicTag ?? undefined,
       isAnonymous,
     });
     if (!ask?.id) {
@@ -71,7 +66,7 @@ export function AskPublishScreen() {
       return;
     }
     router.replace(`/asks/${ask.id}`);
-  }, [canSubmit, content, isAnonymous, isEdit, isSubmitting, router, submit, title, topicTag]);
+  }, [canSubmit, content, isAnonymous, isEdit, isSubmitting, router, submit, title]);
 
   return (
     <SafeAreaView style={styles.safe} edges={[]}>
@@ -88,12 +83,6 @@ export function AskPublishScreen() {
           placeholder="请输入问题（必填）"
           maxLength={ASK_TITLE_MAX_LENGTH}
           multiline
-        />
-        <TopicTagPicker
-          selectedId={topicTag}
-          onSelect={setTopicTag}
-          allowDeselect
-          label={SHARE_TOPIC_OPTIONAL_LABEL}
         />
         <AskPublishTips />
         <AnonymousSwitchRow value={isAnonymous} onChange={setIsAnonymous} />

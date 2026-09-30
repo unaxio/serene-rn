@@ -8,7 +8,6 @@ import { SquarePageHeader } from '@/src/features/square/components/SquarePageHea
 import { CountedTextInput } from '@/src/features/square/components/publish/CountedTextInput';
 import { PublishSubmitButton } from '@/src/features/square/components/publish/PublishSubmitButton';
 import { ShareImageUploader } from '@/src/features/square/components/publish/ShareImageUploader';
-import { TopicTagPicker } from '@/src/features/square/components/publish/TopicTagPicker';
 import { VisibleRangePicker } from '@/src/features/square/components/publish/VisibleRangePicker';
 import {
   PUBLISH_CONFIRM_EDIT_LABEL,
@@ -17,7 +16,6 @@ import {
   SHARE_CONTENT_PLACEHOLDER,
   SHARE_DEFAULT_VISIBLE_RANGE,
   SHARE_PUBLISH_TITLE,
-  SHARE_TOPIC_OPTIONAL_LABEL,
   SQUARE_PAGE_BG,
 } from '@/src/features/square/constants';
 import { useSaveShare } from '@/src/features/square/hooks/useSaveShare';
@@ -33,7 +31,6 @@ export function SharePublishScreen() {
   const detail = useShareDetail(editId ?? '');
   const [content, setContent] = useState('');
   const [images, setImages] = useState<string[]>([]);
-  const [topicTag, setTopicTag] = useState<string | null>(null);
   const [visibleRange, setVisibleRange] = useState<ShareVisibleRange>(
     SHARE_DEFAULT_VISIBLE_RANGE,
   );
@@ -46,7 +43,6 @@ export function SharePublishScreen() {
     }
     setContent(detail.share.content);
     setImages(detail.share.images);
-    setTopicTag(detail.share.topicTag);
     setVisibleRange(detail.share.visibleRange);
     setPrefilled(true);
   }, [detail.share, isEdit, prefilled]);
@@ -67,7 +63,6 @@ export function SharePublishScreen() {
       content: content.trim(),
       images,
       visibleRange,
-      topicTag: topicTag ?? undefined,
     });
     if (!share?.id) {
       return;
@@ -81,7 +76,6 @@ export function SharePublishScreen() {
     isUploadingImages,
     router,
     submit,
-    topicTag,
     visibleRange,
   ]);
 
@@ -106,12 +100,6 @@ export function SharePublishScreen() {
           images={images}
           onChange={setImages}
           onUploadingChange={setIsUploadingImages}
-        />
-        <TopicTagPicker
-          selectedId={topicTag}
-          onSelect={setTopicTag}
-          allowDeselect
-          label={SHARE_TOPIC_OPTIONAL_LABEL}
         />
         <VisibleRangePicker value={visibleRange} onChange={setVisibleRange} />
         <View style={styles.submitWrap}>

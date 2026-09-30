@@ -217,8 +217,6 @@ export const SHARE_CONTENT_PLACEHOLDER = "分享这一刻…";
 
 export const SHARE_VISIBLE_RANGE_LABEL = "可见范围";
 
-export const SHARE_TOPIC_OPTIONAL_LABEL = "话题标签（选填）";
-
 export const SHARE_IMAGE_UPLOAD_LABEL = "添加图片";
 
 export const SHARE_IMAGE_PREVIEW_TITLE = "图片";
