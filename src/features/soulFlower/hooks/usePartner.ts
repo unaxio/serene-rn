@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { searchUsersByNickName } from '@/src/features/follow/api';
 import type { FollowUser } from '@/src/features/follow/types';
 import {
+  dissolvePartner,
   getPartnerInvites,
   getPartnerStatus,
   handlePartnerInvite,
@@ -11,6 +12,7 @@ import {
 } from '@/src/features/soulFlower/api';
 import { SOUL_FLOWER_QUERY_KEYS } from '@/src/features/soulFlower/constants';
 import type { PartnerInviteAction } from '@/src/features/soulFlower/types';
+import { toastCaughtFailure } from '@/src/utils/requestError';
 import { showErrorToast, showToast } from '@/src/utils/toast';
 
 export function usePartnerStatus() {
@@ -147,5 +149,52 @@ export function usePartnerInvites(enabled: boolean) {
     isSearching: searchMutation.isPending,
     isSending: inviteMutation.isPending,
     isHandling: handleMutation.isPending,
+  };
+}
+
+const DISSOLVE_FAIL_MESSAGE = '离队失败';
+const DISSOLVE_SUCCESS_MESSAGE = '已离队';
+
+export function useDissolvePartner() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: dissolvePartner,
+    onSuccess: async (result) => {
+      if (!result.success) {
+        showErrorToast(result.message ?? DISSOLVE_FAIL_MESSAGE);
+        return;
+      }
+      showToast(result.message || DISSOLVE_SUCCESS_MESSAGE);
+      try {
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: SOUL_FLOWER_QUERY_KEYS.partnerStatus,
+          }),
+          queryClient.invalidateQueries({
+            queryKey: SOUL_FLOWER_QUERY_KEYS.checkInRecords,
+          }),
+        ]);
+      } catch (error) {
+        toastCaughtFailure(error);
+      }
+    },
+    onError: (error) => {
+      toastCaughtFailure(error);
+    },
+  });
+
+  const dissolve = useCallback(async (): Promise<boolean> => {
+    try {
+      const result = await mutation.mutateAsync();
+      return result.success;
+    } catch {
+      return false;
+    }
+  }, [mutation]);
+
+  return {
+    dissolve,
+    isDissolving: mutation.isPending,
   };
 }

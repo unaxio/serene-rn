@@ -157,6 +157,31 @@ export async function handlePartnerInvite(
 }
 
 /**
+ * 解除双人打卡 POST /soul-flower/app/partner/dissolve
+ */
+export async function dissolvePartner(): Promise<PartnerActionResponse> {
+  const response = await request.post<
+    PartnerActionResponse | ApiEnvelope<PartnerActionResponse>
+  >(API_PATHS.SOUL_FLOWER_PARTNER_DISSOLVE);
+  if (!isApiEnvelope<PartnerActionResponse>(response)) {
+    return {
+      success: response.success ?? true,
+      message: response.message,
+    };
+  }
+  if (response.statusCode !== API_SUCCESS_CODE) {
+    throw new Error(response.message || '离队失败');
+  }
+  if (!response.data) {
+    return { success: true, message: response.message };
+  }
+  return {
+    success: response.data.success !== false,
+    message: response.data.message ?? response.message,
+  };
+}
+
+/**
  * 获取花卡觉察记录 GET /soul-flower/app/flower-card/:id/answers
  */
 export async function getFlowerCardAnswers(

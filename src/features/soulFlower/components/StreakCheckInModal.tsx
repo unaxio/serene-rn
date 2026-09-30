@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FullScreenModal } from '@/src/components/FullScreenModal';
 import { DuoCheckInPanel } from '@/src/features/soulFlower/components/DuoCheckInPanel';
+import { DuoLeaveTeamButton } from '@/src/features/soulFlower/components/DuoLeaveTeamButton';
 import { PartnerInviteModal } from '@/src/features/soulFlower/components/PartnerInviteModal';
 import { PersonalCheckInPanel } from '@/src/features/soulFlower/components/PersonalCheckInPanel';
 import type { PartnerStatusResponse } from '@/src/features/soulFlower/types';
@@ -100,10 +101,13 @@ function StreakCheckInModalComponent({
 
           {activeTab === 'duo' ? (
             hasPartner ? (
-              <DuoCheckInPanel
-                partnerStatus={partnerStatus}
-                enabled={visible && activeTab === 'duo'}
-              />
+              <View style={styles.duoPane}>
+                <DuoCheckInPanel
+                  partnerStatus={partnerStatus}
+                  enabled={visible && activeTab === 'duo'}
+                />
+                <DuoLeaveTeamButton />
+              </View>
             ) : (
               <View style={styles.tabContent}>
                 <Pressable style={styles.inviteButton} onPress={handleOpenInvite}>
@@ -156,6 +160,9 @@ const styles = StyleSheet.create({
   },
   tabTextInactive: {
     color: TAB_INACTIVE_TEXT,
+  },
+  duoPane: {
+    flex: 1,
   },
   tabContent: {
     marginTop: TAB_CONTENT_TOP_GAP,
