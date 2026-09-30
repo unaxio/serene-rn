@@ -4,6 +4,10 @@ import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { ConnectAvatar } from '@/src/features/connect/components/ConnectAvatar';
 import { PARTNER_INVITE_REJECT_LABEL } from '@/src/features/connect/constants';
 import type { ConnectNotification } from '@/src/features/connect/types';
+import {
+  canRespondPartnerInvite,
+  settledPartnerInviteLabel,
+} from '@/src/features/connect/utils/partnerInviteNotice';
 import { ACCENT_COLOR, MUTED_TEXT_COLOR } from '@/src/features/square/constants';
 import { formatRelativeTime } from '@/src/features/square/utils/formatRelativeTime';
 
@@ -17,10 +21,6 @@ interface ConnectNotificationRowProps {
 const AVATAR_SIZE = 40;
 const DOT_SIZE = 8;
 const PARTNER_INVITE_ACCEPT_LABEL = '同意';
-
-function isPartnerInvite(item: ConnectNotification): boolean {
-  return item.link?.type === 'partner_invite' || item.extra?.event === 'partner_invite';
-}
 
 function actionText(item: ConnectNotification): string | null {
   if (item.actionLabel) {
@@ -44,7 +44,8 @@ export function ConnectNotificationRow({
   onReject,
 }: ConnectNotificationRowProps) {
   const label = actionText(item);
-  const partnerInvite = isPartnerInvite(item);
+  const showPartnerActions = canRespondPartnerInvite(item);
+  const settledLabel = settledPartnerInviteLabel(item);
   return (
     <Pressable style={styles.row} onPress={() => onPress(item)}>
       <ConnectAvatar
@@ -58,7 +59,7 @@ export function ConnectNotificationRow({
         {item.summary ? <Text style={styles.summary}>{item.summary}</Text> : null}
         <Text style={styles.time}>{formatRelativeTime(item.createdAt)}</Text>
       </View>
-      {partnerInvite ? (
+      {showPartnerActions ? (
         <View style={styles.actions}>
           <Pressable
             style={styles.action}
@@ -77,6 +78,8 @@ export function ConnectNotificationRow({
             <Text style={styles.rejectText}>{PARTNER_INVITE_REJECT_LABEL}</Text>
           </Pressable>
         </View>
+      ) : settledLabel ? (
+        <Text style={styles.status}>{settledLabel}</Text>
       ) : label ? (
         <Pressable
           style={styles.action}
@@ -128,6 +131,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F5F9',
   },
   rejectText: { color: MUTED_TEXT_COLOR, fontSize: 12, fontWeight: '600' },
+  status: {
+    alignSelf: 'center',
+    fontSize: 12,
+    fontWeight: '600',
+    color: MUTED_TEXT_COLOR,
+  },
   dot: {
     width: DOT_SIZE,
     height: DOT_SIZE,

@@ -13,6 +13,7 @@ import {
 } from '@/src/features/connect/constants';
 import type { ConnectNotification, ConnectNotificationCategory } from '@/src/features/connect/types';
 import { openConnectLink } from '@/src/features/connect/utils/openConnectLink';
+import { canRespondPartnerInvite } from '@/src/features/connect/utils/partnerInviteNotice';
 import { followUser, unfollowUser } from '@/src/features/follow/api';
 import { SOUL_FLOWER_QUERY_KEYS } from '@/src/features/soulFlower/constants';
 import { handlePartnerInvite } from '@/src/features/soulFlower/api';
@@ -125,6 +126,9 @@ export function useConnectNotificationActions(category: ConnectNotificationCateg
   const handleReject = useCallback(
     (item: ConnectNotification) => {
       void markRead(item);
+      if (!canRespondPartnerInvite(item)) {
+        return;
+      }
       const inviteId = partnerInviteId(item);
       if (!inviteId) {
         showErrorToast(PARTNER_INVITE_INVALID_MESSAGE);
@@ -154,6 +158,9 @@ export function useConnectNotificationActions(category: ConnectNotificationCateg
       }
       const inviteId = partnerInviteId(item);
       if (inviteId !== null) {
+        if (!canRespondPartnerInvite(item)) {
+          return;
+        }
         if (!inviteId) {
           showErrorToast(PARTNER_INVITE_INVALID_MESSAGE);
           return;

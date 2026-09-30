@@ -87,6 +87,8 @@ export interface ConnectNotificationExtra {
   hasDetail?: boolean;
 }
 
+export type ConnectInviteStatus = 'pending' | 'accepted' | 'rejected' | 'canceled';
+
 export interface ConnectActor {
   id: string;
   nickName: string;
@@ -103,6 +105,8 @@ export interface ConnectNotification {
   body: string;
   summary: string | null;
   actionLabel: string | null;
+  /** 组队邀请当前状态；@ 提醒和邀请回答为 null */
+  inviteStatus?: ConnectInviteStatus | null;
   link: ConnectLink | null;
   extra?: ConnectNotificationExtra;
 }
