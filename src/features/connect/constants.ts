@@ -14,6 +14,18 @@ export const CONNECT_HIGHLIGHT_MS = 2000;
 
 export const CONNECT_UNAVAILABLE_MESSAGE = '该内容暂不可查看';
 
+export const PARTNER_INVITE_INVALID_MESSAGE = '邀请信息无效';
+
+export const PARTNER_INVITE_ACCEPT_FAIL_MESSAGE = '同意组队失败';
+
+export const PARTNER_INVITE_ACCEPT_SUCCESS_MESSAGE = '已同意组队';
+
+export const PARTNER_INVITE_REJECT_LABEL = '拒绝';
+
+export const PARTNER_INVITE_REJECT_FAIL_MESSAGE = '拒绝组队失败';
+
+export const PARTNER_INVITE_REJECT_SUCCESS_MESSAGE = '已拒绝组队';
+
 export const CONNECT_COMING_SOON_MESSAGE = '功能开发中';
 
 export const DM_PEER_UNAVAILABLE_MESSAGE = '暂时无法发起私信';

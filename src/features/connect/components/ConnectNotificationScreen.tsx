@@ -34,7 +34,12 @@ export function ConnectNotificationScreen({ category }: ConnectNotificationScree
           data={list.items}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <ConnectNotificationRow item={item} onPress={actions.handlePress} onAction={actions.handleAction} />
+            <ConnectNotificationRow
+              item={item}
+              onPress={actions.handlePress}
+              onAction={actions.handleAction}
+              onReject={actions.handleReject}
+            />
           )}
           ListEmptyComponent={
             <Text style={styles.empty}>

@@ -1,7 +1,8 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { ConnectAvatar } from '@/src/features/connect/components/ConnectAvatar';
+import { PARTNER_INVITE_REJECT_LABEL } from '@/src/features/connect/constants';
 import type { ConnectNotification } from '@/src/features/connect/types';
 import { ACCENT_COLOR, MUTED_TEXT_COLOR } from '@/src/features/square/constants';
 import { formatRelativeTime } from '@/src/features/square/utils/formatRelativeTime';
@@ -10,10 +11,16 @@ interface ConnectNotificationRowProps {
   item: ConnectNotification;
   onPress: (item: ConnectNotification) => void;
   onAction: (item: ConnectNotification) => void;
+  onReject?: (item: ConnectNotification) => void;
 }
 
 const AVATAR_SIZE = 40;
 const DOT_SIZE = 8;
+const PARTNER_INVITE_ACCEPT_LABEL = '同意';
+
+function isPartnerInvite(item: ConnectNotification): boolean {
+  return item.link?.type === 'partner_invite' || item.extra?.event === 'partner_invite';
+}
 
 function actionText(item: ConnectNotification): string | null {
   if (item.actionLabel) {
@@ -26,8 +33,18 @@ function actionText(item: ConnectNotification): string | null {
   return null;
 }
 
-export function ConnectNotificationRow({ item, onPress, onAction }: ConnectNotificationRowProps) {
+function stopRowPress(event: GestureResponderEvent): void {
+  event.stopPropagation();
+}
+
+export function ConnectNotificationRow({
+  item,
+  onPress,
+  onAction,
+  onReject,
+}: ConnectNotificationRowProps) {
   const label = actionText(item);
+  const partnerInvite = isPartnerInvite(item);
   return (
     <Pressable style={styles.row} onPress={() => onPress(item)}>
       <ConnectAvatar
@@ -41,8 +58,32 @@ export function ConnectNotificationRow({ item, onPress, onAction }: ConnectNotif
         {item.summary ? <Text style={styles.summary}>{item.summary}</Text> : null}
         <Text style={styles.time}>{formatRelativeTime(item.createdAt)}</Text>
       </View>
-      {label ? (
-        <Pressable style={styles.action} onPress={() => onAction(item)}>
+      {partnerInvite ? (
+        <View style={styles.actions}>
+          <Pressable
+            style={styles.action}
+            onPress={(event) => {
+              stopRowPress(event);
+              onAction(item);
+            }}>
+            <Text style={styles.actionText}>{label || PARTNER_INVITE_ACCEPT_LABEL}</Text>
+          </Pressable>
+          <Pressable
+            style={styles.reject}
+            onPress={(event) => {
+              stopRowPress(event);
+              onReject?.(item);
+            }}>
+            <Text style={styles.rejectText}>{PARTNER_INVITE_REJECT_LABEL}</Text>
+          </Pressable>
+        </View>
+      ) : label ? (
+        <Pressable
+          style={styles.action}
+          onPress={(event) => {
+            stopRowPress(event);
+            onAction(item);
+          }}>
           <Text style={styles.actionText}>{label}</Text>
         </Pressable>
       ) : null}
@@ -65,6 +106,12 @@ const styles = StyleSheet.create({
   bodyText: { fontSize: 14, color: APP_TEXT_COLOR },
   summary: { fontSize: 12, color: MUTED_TEXT_COLOR },
   time: { fontSize: 11, color: MUTED_TEXT_COLOR },
+  actions: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   action: {
     alignSelf: 'center',
     paddingHorizontal: 10,
@@ -73,6 +120,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F3FF',
   },
   actionText: { color: ACCENT_COLOR, fontSize: 12, fontWeight: '600' },
+  reject: {
+    alignSelf: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 14,
+    backgroundColor: '#F1F5F9',
+  },
+  rejectText: { color: MUTED_TEXT_COLOR, fontSize: 12, fontWeight: '600' },
   dot: {
     width: DOT_SIZE,
     height: DOT_SIZE,

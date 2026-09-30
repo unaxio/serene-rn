@@ -12,6 +12,9 @@ export function openConnectLink(
   link: ConnectLink | null,
   replyToId?: string,
 ): void {
+  if (link?.type === 'partner_invite') {
+    return;
+  }
   if (!link?.id) {
     showToast(CONNECT_UNAVAILABLE_MESSAGE);
     return;

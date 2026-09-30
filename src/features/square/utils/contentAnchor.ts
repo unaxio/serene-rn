@@ -77,6 +77,9 @@ export function openContentAnchor(
 ): void {
   const targetId = anchor?.targetId?.trim() ?? '';
   const rootId = anchor?.rootId?.trim() ?? '';
+  if (anchor?.targetType === 'partner_invite') {
+    return;
+  }
   if (!anchor || (!targetId && !rootId)) {
     showToast(CONTENT_UNAVAILABLE_MESSAGE);
     return;

@@ -15,7 +15,8 @@ export type ConnectLinkType =
   | 'user'
   | 'system'
   | 'topic'
-  | 'dm';
+  | 'dm'
+  | 'partner_invite';
 
 export type ConnectFollowRelation = 'none' | 'following' | 'followed_by' | 'mutual';
 
@@ -72,7 +73,15 @@ export interface ConnectNotificationExtra {
   message?: string;
   actionId?: string;
   action?: 'resonate' | 'collect';
-  event?: 'follow' | 'visit' | 'mention' | 'invite' | 'comment' | 'answer' | 'reply';
+  event?:
+    | 'follow'
+    | 'visit'
+    | 'mention'
+    | 'invite'
+    | 'comment'
+    | 'answer'
+    | 'reply'
+    | 'partner_invite';
   relation?: ConnectFollowRelation;
   replyToId?: string;
   hasDetail?: boolean;
