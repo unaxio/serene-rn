@@ -33,6 +33,7 @@ export function usePartnerInvites(enabled: boolean) {
   const queryClient = useQueryClient();
   const [searchResults, setSearchResults] = useState<FollowUser[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [sentReceiverIds, setSentReceiverIds] = useState<string[]>([]);
 
   const query = useQuery({
     queryKey: SOUL_FLOWER_QUERY_KEYS.partnerInvites,
@@ -54,11 +55,14 @@ export function usePartnerInvites(enabled: boolean) {
 
   const inviteMutation = useMutation({
     mutationFn: (receiverUserId: string) => sendPartnerInvite(receiverUserId),
-    onSuccess: async (result) => {
+    onSuccess: async (result, receiverUserId) => {
       if (!result.success) {
         showErrorToast(result.message ?? '发送邀请失败');
         return;
       }
+      setSentReceiverIds((prev) =>
+        prev.includes(receiverUserId) ? prev : [...prev, receiverUserId],
+      );
       showToast(result.message ?? '邀请已发送');
       await queryClient.invalidateQueries({
         queryKey: SOUL_FLOWER_QUERY_KEYS.partnerInvites,
@@ -142,6 +146,7 @@ export function usePartnerInvites(enabled: boolean) {
     refetch: query.refetch,
     searchResults,
     hasSearched,
+    sentReceiverIds,
     searchByNickname,
     resetSearch,
     sendInvite,

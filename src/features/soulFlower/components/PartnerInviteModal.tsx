@@ -37,6 +37,7 @@ export function PartnerInviteModal({ visible, onClose }: PartnerInviteModalProps
     isSearching,
     isSending,
     isHandling,
+    sentReceiverIds,
   } = usePartnerInvites(visible);
 
   useEffect(() => {
@@ -49,6 +50,19 @@ export function PartnerInviteModal({ visible, onClose }: PartnerInviteModalProps
   const handleSearchSubmit = useCallback(() => {
     void searchByNickname(nickname);
   }, [nickname, searchByNickname]);
+
+  const invitedReceiverIds = useMemo(() => {
+    const ids = new Set(sentReceiverIds);
+    if (!currentUserId) {
+      return ids;
+    }
+    for (const invite of invites) {
+      if (invite.status === 'pending' && invite.senderId === currentUserId) {
+        ids.add(invite.receiverId);
+      }
+    }
+    return ids;
+  }, [currentUserId, invites, sentReceiverIds]);
 
   const receivedPendingInvites = useMemo(
     () =>
@@ -92,6 +106,7 @@ export function PartnerInviteModal({ visible, onClose }: PartnerInviteModalProps
                 <PartnerSearchUserRow
                   key={user.userId}
                   user={user}
+                  invited={invitedReceiverIds.has(user.userId)}
                   isSending={isSending}
                   onInvite={() => void sendInvite(user.userId)}
                 />
