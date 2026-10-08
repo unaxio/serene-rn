@@ -73,8 +73,12 @@ export function QuestionForm({
   );
   const [textAnswer, setTextAnswer] = useState(initialState.textAnswer);
   const [phase, setPhase] = useState<FormPhase>(initialState.phase);
-  const [aiResult, setAiResult] = useState<AiResult | null>(initialState.aiResult);
-  const [answerId, setAnswerId] = useState<string | null>(initialState.answerId);
+  const [aiResult, setAiResult] = useState<AiResult | null>(
+    initialState.aiResult,
+  );
+  const [answerId, setAnswerId] = useState<string | null>(
+    initialState.answerId,
+  );
 
   const isLocked = phase !== "idle";
 
@@ -152,8 +156,11 @@ export function QuestionForm({
               <Text style={styles.summary}>{aiResult.summary}</Text>
               <Text style={styles.explain}>{aiResult.explain}</Text>
               <View style={styles.actionLinks}>
-                <QuestionAiChatEntry answerId={answerId} onOpened={onLeaveForChat} />
-                <Text style={styles.actionLink}>AI众议厅→</Text>
+                <QuestionAiChatEntry
+                  answerId={answerId}
+                  onOpened={onLeaveForChat}
+                />
+                {/* <Text style={styles.actionLink}>AI众议厅→</Text> */}
               </View>
             </View>
           ) : null}
