@@ -1,6 +1,6 @@
 /**
  * Expo 应用配置。
- * Web 测试部署：EXPO_PUBLIC_WEB_DEPLOY=1 时启用子路径 /flower。
+ * Web 部署（test / prod）：EXPO_PUBLIC_WEB_DEPLOY=1 时启用子路径 /flower。
  */
 const IS_WEB_DEPLOY = process.env.EXPO_PUBLIC_WEB_DEPLOY === '1';
 

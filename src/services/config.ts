@@ -2,15 +2,18 @@
  * API 与网络相关配置
  */
 
-/** 本地开发默认；Web 测试构建通过 EXPO_PUBLIC_API_BASE_URL 注入 */
+/** 本地开发默认；Web 构建通过 EXPO_PUBLIC_API_BASE_URL 注入（test / prod） */
 export const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8000/api';
 
 /** 测试环境 Web 部署的 API 地址 */
 export const TEST_API_BASE_URL = 'https://test.serene.org.cn/api';
 
-/** 对外可访问的 Web 站点 origin，供复制链接使用 */
-export const WEB_PUBLIC_ORIGIN = 'https://test.serene.org.cn';
+const DEFAULT_WEB_ORIGIN = 'https://test.serene.org.cn';
+
+/** 对外可访问的 Web 站点 origin，供复制链接使用；构建时由 EXPO_PUBLIC_WEB_ORIGIN 注入 */
+export const WEB_PUBLIC_ORIGIN =
+  process.env.EXPO_PUBLIC_WEB_ORIGIN ?? DEFAULT_WEB_ORIGIN;
 
 /** 测试环境 Web 子路径（与 experiments.baseUrl 一致） */
 export const TEST_WEB_BASE_PATH = '/flower';
