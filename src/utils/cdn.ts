@@ -1,7 +1,8 @@
-/**
- * 测试环境 CDN 前缀；相对路径图片需自动拼接。
- */
-export const CDN_BASE_URL = "https://cdn.serene.org.cn/dev";
+const TEST_CDN_BASE_URL = "https://cdn.serene.org.cn/dev";
+
+/** 相对路径图片的 CDN 前缀；生产构建由 EXPO_PUBLIC_CDN_BASE_URL 注入 */
+export const CDN_BASE_URL =
+  process.env.EXPO_PUBLIC_CDN_BASE_URL ?? TEST_CDN_BASE_URL;
 
 const ABSOLUTE_URL_PATTERN = /^https?:\/\//i;
 
