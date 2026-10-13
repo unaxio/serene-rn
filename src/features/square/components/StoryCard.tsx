@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { memo, useCallback } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { SquareUserAvatar } from '@/src/features/square/components/SquareUserAvatar';
@@ -14,6 +14,7 @@ import { resolveCdnUrl } from '@/src/utils/cdn';
 interface StoryCardProps {
   story: Story;
   onPress: (storyId: string) => void;
+  onFrame?: (storyId: string, y: number, height: number) => void;
 }
 
 const AVATAR_SIZE = 36;
@@ -21,15 +22,22 @@ const TITLE_MAX_LINES = 2;
 const BODY_MAX_LINES = 3;
 const COVER_ASPECT_RATIO = 3 / 1;
 
-function StoryCardComponent({ story, onPress }: StoryCardProps) {
+function StoryCardComponent({ story, onPress, onFrame }: StoryCardProps) {
   const coverUri = resolveCdnUrl(story.coverImagePath);
   const handlePress = useCallback(() => {
     onPress(story.id);
   }, [onPress, story.id]);
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const { y, height } = event.nativeEvent.layout;
+      onFrame?.(story.id, y, height);
+    },
+    [onFrame, story.id],
+  );
   const levelLabel = story.author.level == null ? null : `Lv.${story.author.level}`;
 
   return (
-    <Pressable style={styles.card} onPress={handlePress}>
+    <Pressable style={styles.card} onPress={handlePress} onLayout={handleLayout}>
       <View style={styles.header}>
         <SquareUserAvatar author={story.author} size={AVATAR_SIZE} />
         <View style={styles.headerText}>

@@ -5,6 +5,7 @@ import { toggleSquareAction } from '@/src/features/square/api';
 import {
   GIFT_FLOWER_LEDGERS_QUERY_ROOT,
   SQUARE_QUERY_KEYS,
+  STORY_FEED_QUERY_ROOT,
 } from '@/src/features/square/constants';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import { toastCaughtFailure } from '@/src/utils/requestError';
@@ -45,7 +46,11 @@ export function useSquareAction() {
             SQUARE_QUERY_KEYS.storyDetail(payload.targetId),
             (old: Story | undefined) => (old ? patchStory(old, result) : old),
           );
-          await queryClient.invalidateQueries({ queryKey: ['square', 'stories'] });
+          queryClient.setQueriesData(
+            { queryKey: STORY_FEED_QUERY_ROOT },
+            (old: { pages: SquarePagedData<Story>[]; pageParams: unknown[] } | undefined) =>
+              patchPagedItems(old, payload.targetId, (item) => patchStory(item, result)),
+          );
         }
         if (payload.targetType === 'share') {
           queryClient.setQueriesData(

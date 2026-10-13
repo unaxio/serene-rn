@@ -3,6 +3,7 @@ import { isAxiosError } from 'axios';
 import { useCallback } from 'react';
 
 import { createStory, updateStory } from '@/src/features/square/api';
+import { refreshStoryFeedQueries } from '@/src/features/square/utils/storyFeedSession';
 import { EDIT_SUCCESS_MESSAGE, SQUARE_QUERY_KEYS } from '@/src/features/square/constants';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
 import type { CreateStoryPayload, Story } from '@/src/features/square/types';
@@ -28,7 +29,7 @@ export function useSaveStory(editId?: string | null) {
         if (story.id) {
           queryClient.setQueryData(SQUARE_QUERY_KEYS.storyDetail(story.id), story);
         }
-        await queryClient.invalidateQueries({ queryKey: ['square', 'stories'] });
+        await refreshStoryFeedQueries(queryClient);
         if (isEdit) {
           showToast(EDIT_SUCCESS_MESSAGE);
         }

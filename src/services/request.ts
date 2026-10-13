@@ -6,6 +6,13 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from 'axios';
 
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    /** 旁路上报失败时不弹 Toast，避免打断浏览 */
+    skipErrorToast?: boolean;
+  }
+}
+
 import {
   API_BASE_URL,
   AUTH_HEADER_PREFIX,
@@ -41,7 +48,7 @@ function attachAuthHeader(config: InternalAxiosRequestConfig): InternalAxiosRequ
 function handleResponseError(error: AxiosError): Promise<never> {
   if (error.response?.status === HTTP_STATUS.UNAUTHORIZED) {
     onUnauthorized?.();
-  } else {
+  } else if (error.config?.skipErrorToast !== true) {
     toastAxiosFailure(error);
   }
 

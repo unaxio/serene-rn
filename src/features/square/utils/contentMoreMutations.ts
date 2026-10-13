@@ -1,6 +1,7 @@
 import type { QueryClient } from '@tanstack/react-query';
 
 import { deleteStory } from '@/src/features/square/api';
+import { refreshStoryFeedQueries } from '@/src/features/square/utils/storyFeedSession';
 import { deleteAsk, deleteAskAnswer } from '@/src/features/square/askApi';
 import { SQUARE_QUERY_KEYS } from '@/src/features/square/constants';
 import { deleteShare } from '@/src/features/square/shareApi';
@@ -36,7 +37,7 @@ export async function invalidateAfterContentDelete(
   await queryClient.invalidateQueries({ queryKey: PROFILE_ME_CONTENTS_QUERY_ROOT });
   switch (contentKind) {
     case 'story':
-      await queryClient.invalidateQueries({ queryKey: ['square', 'stories'] });
+      await refreshStoryFeedQueries(queryClient);
       queryClient.removeQueries({ queryKey: SQUARE_QUERY_KEYS.storyDetail(targetId) });
       return;
     case 'share':

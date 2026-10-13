@@ -3,6 +3,7 @@ import { isAxiosError } from 'axios';
 import { useCallback } from 'react';
 
 import { createStory } from '@/src/features/square/api';
+import { refreshStoryFeedQueries } from '@/src/features/square/utils/storyFeedSession';
 import { SQUARE_QUERY_KEYS } from '@/src/features/square/constants';
 import type { CreateStoryPayload, Story } from '@/src/features/square/types';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
@@ -26,7 +27,7 @@ export function useCreateStory() {
         if (story.id) {
           queryClient.setQueryData(SQUARE_QUERY_KEYS.storyDetail(story.id), story);
         }
-        await queryClient.invalidateQueries({ queryKey: ['square', 'stories'] });
+        await refreshStoryFeedQueries(queryClient);
         return story;
       } catch (error) {
         if (!isAxiosError(error)) {

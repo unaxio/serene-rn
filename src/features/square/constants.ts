@@ -2,6 +2,22 @@ import type { AskAnswerSort, ShareVisibleRange, SquareSubTabId } from "./types";
 
 export const SQUARE_PAGE_SIZE = 20;
 
+/** 一次下拉刷新抽出的顺序大约保留这么久，超时后应重新从第 1 页拉 */
+export const STORY_FEED_WINDOW_MS = 10 * 60 * 1000;
+
+export const STORY_FEED_REFRESH_RETRY_MS = 3_000;
+
+/** 卡片约一半进入屏幕 */
+export const STORY_IMPRESSION_MIN_RATIO = 0.5;
+
+export const STORY_IMPRESSION_MIN_VISIBLE_MS = 1_000;
+
+export const STORY_EVENT_BATCH_SIZE = 50;
+
+export const STORY_EVENT_FLUSH_DELAY_MS = 400;
+
+export const STORY_FEED_QUERY_ROOT = ["square", "stories"] as const;
+
 export const STORY_SUMMARY_MAX_LENGTH = 100;
 
 export const FLOWER_QUANTITY_MIN = 1;
@@ -416,7 +432,8 @@ export const PUBLISH_MENU_ITEMS = [
 ] as const;
 
 export const SQUARE_QUERY_KEYS = {
-  stories: (category: string) => ["square", "stories", category] as const,
+  stories: (category: string) =>
+    [...STORY_FEED_QUERY_ROOT, "feed", category] as const,
   storyDetail: (id: string) => ["square", "story", id] as const,
   comments: (targetType: string, targetId: string) =>
     ["square", "comments", targetType, targetId] as const,

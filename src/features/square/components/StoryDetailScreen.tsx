@@ -9,6 +9,7 @@ import {
   SQUARE_PAGE_BG,
 } from '@/src/features/square/constants';
 import { useStoryDetail } from '@/src/features/square/hooks/useStoryDetail';
+import { useStoryReadEvent } from '@/src/features/square/hooks/useStoryReadEvent';
 
 interface StoryDetailScreenProps {
   storyId: string;
@@ -17,6 +18,7 @@ interface StoryDetailScreenProps {
 export function StoryDetailScreen({ storyId }: StoryDetailScreenProps) {
   const router = useRouter();
   const { story, isLoading, isError, refetch } = useStoryDetail(storyId);
+  useStoryReadEvent(storyId, story != null);
 
   return (
     <View style={styles.root}>

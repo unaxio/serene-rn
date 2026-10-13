@@ -13,6 +13,8 @@ import type {
   SquareComment,
   SquarePagedData,
   Story,
+  StoryFeedEventsPayload,
+  StoryFeedEventsResult,
   ToggleActionResponse,
   UploadSquareImageResponse,
 } from './types';
@@ -94,6 +96,31 @@ export async function getStories(
     },
   });
   return unwrapPagedItems(unwrapResponse(response, '获取故事列表失败'), normalizeStory);
+}
+
+export async function getStoryFeed(
+  params: GetStoriesParams,
+): Promise<SquarePagedData<Story>> {
+  const response = await request.get<
+    SquarePagedData<StoryRaw> | ApiEnvelope<SquarePagedData<StoryRaw>>
+  >(API_PATHS.SQUARE_STORY_FEED, {
+    params: {
+      category: params.category,
+      page: params.page,
+      pageSize: params.pageSize,
+    },
+  });
+  return unwrapPagedItems(unwrapResponse(response, '获取故事列表失败'), normalizeStory);
+}
+
+export async function reportStoryFeedEvents(
+  events: StoryFeedEventsPayload['events'],
+): Promise<StoryFeedEventsResult> {
+  const payload: StoryFeedEventsPayload = { events };
+  const response = await request.post<
+    StoryFeedEventsResult | ApiEnvelope<StoryFeedEventsResult>
+  >(API_PATHS.SQUARE_STORY_EVENTS, payload, { skipErrorToast: true });
+  return unwrapResponse(response, '上报故事行为失败');
 }
 
 export async function getStoryDetail(id: string): Promise<Story> {

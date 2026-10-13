@@ -22,7 +22,7 @@ export function SquareScreen() {
       <SquareSearchBar />
       <SquareSubTabs activeTab={activeTab} onChange={setActiveTab} />
       <View style={[styles.pane, activeTab !== 'story' && styles.hidden]}>
-        <StoryList />
+        <StoryList active={activeTab === 'story'} />
       </View>
       <View style={[styles.pane, activeTab !== 'share' && styles.hidden]}>
         <ShareList />

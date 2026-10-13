@@ -145,6 +145,24 @@ export interface GetStoriesParams {
   pageSize: number;
 }
 
+export type StoryFeedEventType = 'impression' | 'click' | 'read' | 'share';
+
+export interface StoryFeedEvent {
+  storyId: string;
+  type: StoryFeedEventType;
+  /** 仅 read。累计停留毫秒 */
+  dwellMs?: number;
+}
+
+export interface StoryFeedEventsPayload {
+  events: StoryFeedEvent[];
+}
+
+export interface StoryFeedEventsResult {
+  success: boolean;
+  accepted: number;
+}
+
 export interface GetCommentsParams {
   targetType: SquareTargetType;
   targetId: string;

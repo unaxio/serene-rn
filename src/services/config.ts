@@ -51,6 +51,8 @@ export const API_PATHS = {
   FOLLOW: '/follow',
   FOLLOW_SEARCH: '/follow/search',
   SQUARE_STORIES: '/soul-flower/app/stories',
+  SQUARE_STORY_FEED: '/soul-flower/app/stories/feed',
+  SQUARE_STORY_EVENTS: '/soul-flower/app/stories/events',
   SQUARE_SHARES: '/soul-flower/app/shares',
   SQUARE_ASKS: '/soul-flower/app/asks',
   SQUARE_ASK_ANSWERS: '/soul-flower/app/ask-answers',
