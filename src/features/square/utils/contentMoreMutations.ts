@@ -1,13 +1,37 @@
-import type { QueryClient } from '@tanstack/react-query';
+import type { InfiniteData, QueryClient } from '@tanstack/react-query';
 
 import { deleteStory } from '@/src/features/square/api';
 import { refreshStoryFeedQueries } from '@/src/features/square/utils/storyFeedSession';
 import { deleteAsk, deleteAskAnswer } from '@/src/features/square/askApi';
 import { SQUARE_QUERY_KEYS } from '@/src/features/square/constants';
 import { deleteShare } from '@/src/features/square/shareApi';
+import type { Share, SquarePagedData } from '@/src/features/square/types';
 import type { ContentMoreKind } from '@/src/features/square/utils/contentMoreActions';
 
 const PROFILE_ME_CONTENTS_QUERY_ROOT = ['profile', 'me', 'contents'] as const;
+
+export function removeShareFromFeed(queryClient: QueryClient, shareId: string): void {
+  queryClient.setQueryData<InfiniteData<SquarePagedData<Share>>>(
+    SQUARE_QUERY_KEYS.shares,
+    (current) => {
+      if (!current) {
+        return current;
+      }
+      return {
+        ...current,
+        pages: current.pages.map((page) => {
+          const items = page.items.filter((item) => item.id !== shareId);
+          const removed = items.length !== page.items.length;
+          return {
+            ...page,
+            items,
+            total: removed ? Math.max(0, page.total - 1) : page.total,
+          };
+        }),
+      };
+    },
+  );
+}
 
 export async function deleteContentByKind(
   contentKind: ContentMoreKind,

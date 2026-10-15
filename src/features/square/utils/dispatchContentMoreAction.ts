@@ -8,6 +8,7 @@ import {
   SQUARE_QUERY_KEYS,
 } from '@/src/features/square/constants';
 import type { Share } from '@/src/features/square/types';
+import { removeShareFromFeed } from '@/src/features/square/utils/contentMoreMutations';
 import { buildContentSharePath } from '@/src/features/square/utils/contentSharePath';
 import { copySquareLink } from '@/src/features/square/utils/copySquareLink';
 import type {
@@ -78,6 +79,9 @@ export function dispatchContentMoreAction(
   if (actionId === 'notInterested') {
     if (!ctx.requireAuth()) {
       return;
+    }
+    if (ctx.contentKind === 'share') {
+      removeShareFromFeed(ctx.queryClient, ctx.targetId);
     }
     void ctx
       .markNotInterested()
