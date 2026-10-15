@@ -8,6 +8,7 @@ import {
   MUTED_TEXT_COLOR,
   PLACEHOLDER_TEXT_COLOR,
 } from '@/src/features/square/constants';
+import { CoverRemoveButton } from '@/src/features/square/components/publish/CoverRemoveButton';
 import { uploadSquareImage } from '@/src/features/square/api';
 import { pickSquareImage } from '@/src/features/square/utils/pickSquareImage';
 import { resolveCdnUrl } from '@/src/utils/cdn';
@@ -57,6 +58,11 @@ export function CoverImageUploader({
     }
   }, [isUploading, onChange, onUploadingChange]);
 
+  const handleRemove = useCallback(() => {
+    setLocalPreview(null);
+    onChange(null);
+  }, [onChange]);
+
   if (previewUri) {
     return (
       <View style={styles.previewWrap}>
@@ -66,9 +72,12 @@ export function CoverImageUploader({
             <ActivityIndicator color="#FFFFFF" />
           </View>
         ) : (
-          <Pressable style={styles.replaceBtn} onPress={() => void handlePick()}>
-            <Text style={styles.replaceText}>更换图片</Text>
-          </Pressable>
+          <>
+            <CoverRemoveButton onPress={handleRemove} />
+            <Pressable style={styles.replaceBtn} onPress={() => void handlePick()}>
+              <Text style={styles.replaceText}>更换图片</Text>
+            </Pressable>
+          </>
         )}
       </View>
     );
