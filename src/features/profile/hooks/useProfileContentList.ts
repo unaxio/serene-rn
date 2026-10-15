@@ -12,15 +12,27 @@ import {
   getMyShares,
   getMyStories,
 } from '@/src/features/profile/api';
-import { PROFILE_QUERY_KEYS } from '@/src/features/profile/constants';
+import {
+  PROFILE_QUERY_KEYS,
+  type FlowerSentFilterId,
+  type FlowerSentType,
+  type ProfileContentTabId,
+} from '@/src/features/profile/constants';
 import { useProfileInfiniteQuery } from '@/src/features/profile/hooks/useProfileInfiniteQuery';
-import type { ProfileContentTabId } from '@/src/features/profile/constants';
 
 interface UseProfileContentListParams {
   main: ProfileContentTabId;
   publishSub: 'story' | 'share' | 'ask';
   collectSub: 'story' | 'ask' | 'comment';
   resonateSub: 'story' | 'ask' | 'share' | 'comment';
+  flowerSub: FlowerSentFilterId;
+}
+
+function toFlowerSentType(filter: FlowerSentFilterId): FlowerSentType | undefined {
+  if (filter === 'all') {
+    return undefined;
+  }
+  return filter;
 }
 
 export function useProfileContentList({
@@ -28,6 +40,7 @@ export function useProfileContentList({
   publishSub,
   collectSub,
   resonateSub,
+  flowerSub,
 }: UseProfileContentListParams) {
   const stories = useProfileInfiniteQuery(
     PROFILE_QUERY_KEYS.myStories,
@@ -50,8 +63,8 @@ export function useProfileContentList({
     main === 'comment',
   );
   const flowersSent = useProfileInfiniteQuery(
-    PROFILE_QUERY_KEYS.myFlowersSent,
-    getMyFlowersSent,
+    PROFILE_QUERY_KEYS.myFlowersSent(flowerSub),
+    (page, pageSize) => getMyFlowersSent(page, pageSize, toFlowerSentType(flowerSub)),
     main === 'flower',
   );
   const collectStories = useProfileInfiniteQuery(

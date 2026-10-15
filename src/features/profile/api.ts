@@ -13,6 +13,7 @@ import {
   type StoryRaw,
 } from '@/src/features/square/utils/normalize';
 import { resolveCdnUrl } from '@/src/utils/cdn';
+import type { FlowerSentType } from '@/src/features/profile/constants';
 import {
   normalizeProfileCity,
   type ProfileCityRaw,
@@ -304,10 +305,15 @@ export async function getMyComments(
 export async function getMyFlowersSent(
   page: number,
   pageSize: number,
+  type?: FlowerSentType,
 ): Promise<SquarePagedData<FlowerSentItem>> {
+  const params: { page: number; pageSize: number; type?: FlowerSentType } = { page, pageSize };
+  if (type) {
+    params.type = type;
+  }
   const response = await request.get<
     SquarePagedData<FlowerSentItem> | ApiEnvelope<SquarePagedData<FlowerSentItem>>
-  >(`${API_PATHS.PROFILE_ME_CONTENTS}/flowers-sent`, { params: { page, pageSize } });
+  >(`${API_PATHS.PROFILE_ME_CONTENTS}/flowers-sent`, { params });
   const data = unwrapResponse(response, '获取送花记录失败');
   return {
     ...data,

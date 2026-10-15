@@ -36,6 +36,26 @@ export const PROFILE_RESONATE_SUB_TABS = [
   { id: 'comment', label: '评论' },
 ] as const;
 
+export const PROFILE_FLOWER_SUB_TABS = [
+  { id: 'all', label: '全部' },
+  { id: 'story', label: '故事' },
+  { id: 'share', label: '分享' },
+  { id: 'ask', label: '问答' },
+  { id: 'comment', label: '评论' },
+  { id: 'user', label: '用户' },
+] as const;
+
+export type FlowerSentFilterId = (typeof PROFILE_FLOWER_SUB_TABS)[number]['id'];
+export type FlowerSentType = Exclude<FlowerSentFilterId, 'all'>;
+
+export const PROFILE_EMPTY_BY_TAB: Record<ProfileContentTabId, string> = {
+  publish: '还没有发布内容',
+  comment: '还没有发表评论',
+  flower: '还没有送出花朵',
+  collect: '还没有收藏',
+  resonate: '还没有共鸣记录',
+};
+
 export const FLOWER_INVENTORY_FILTERS = [
   { id: 'all', label: '全部' },
   { id: 'sendable', label: '可送的花' },
@@ -80,7 +100,8 @@ export const PROFILE_QUERY_KEYS = {
   myShares: ['profile', 'me', 'contents', 'shares'] as const,
   myAsks: ['profile', 'me', 'contents', 'asks'] as const,
   myComments: ['profile', 'me', 'contents', 'comments'] as const,
-  myFlowersSent: ['profile', 'me', 'contents', 'flowers-sent'] as const,
+  myFlowersSent: (type: FlowerSentFilterId) =>
+    ['profile', 'me', 'contents', 'flowers-sent', type] as const,
   myCollections: (kind: string) => ['profile', 'me', 'collections', kind] as const,
   myResonates: (kind: string) => ['profile', 'me', 'resonates', kind] as const,
   userContents: (userId: string, type: string) =>

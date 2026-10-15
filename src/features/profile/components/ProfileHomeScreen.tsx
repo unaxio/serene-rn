@@ -1,43 +1,26 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { ProfileContentPane } from '@/src/features/profile/components/ProfileContentPane';
 import { ProfileContentTabs } from '@/src/features/profile/components/ProfileContentTabs';
-import { ProfileEmptyPane } from '@/src/features/profile/components/ProfileEmptyPane';
 import { ProfileEntrySection } from '@/src/features/profile/components/ProfileEntrySection';
+import { ProfileHomeGate } from '@/src/features/profile/components/ProfileHomeGate';
 import { ProfileHomeHeader } from '@/src/features/profile/components/ProfileHomeHeader';
+import { ProfileHomeSubTabs } from '@/src/features/profile/components/ProfileHomeSubTabs';
 import { ProfileInfoCard } from '@/src/features/profile/components/ProfileInfoCard';
 import { ProfileShareDetailModal } from '@/src/features/profile/components/ProfileShareDetailModal';
 import { ProfileStatsBar } from '@/src/features/profile/components/ProfileStatsBar';
-import { ProfileSubTabs } from '@/src/features/profile/components/ProfileSubTabs';
 import {
-  PROFILE_ACCENT,
-  PROFILE_COLLECT_SUB_TABS,
+  PROFILE_EMPTY_BY_TAB,
   PROFILE_PAGE_BG,
-  PROFILE_PUBLISH_SUB_TABS,
-  PROFILE_RESONATE_SUB_TABS,
+  type FlowerSentFilterId,
   type ProfileContentTabId,
 } from '@/src/features/profile/constants';
 import { useProfileContentList } from '@/src/features/profile/hooks/useProfileContentList';
 import { useProfileHomeData } from '@/src/features/profile/hooks/useProfileHomeData';
 import type { ProfileShareItem } from '@/src/features/profile/types';
 import { useAuthStore } from '@/src/store/authStore';
-
-const EMPTY_BY_TAB: Record<ProfileContentTabId, string> = {
-  publish: '还没有发布内容',
-  comment: '还没有发表评论',
-  flower: '还没有送出花朵',
-  collect: '还没有收藏',
-  resonate: '还没有共鸣记录',
-};
 
 export function ProfileHomeScreen() {
   const router = useRouter();
@@ -47,12 +30,14 @@ export function ProfileHomeScreen() {
   const [publishSub, setPublishSub] = useState<'story' | 'share' | 'ask'>('story');
   const [collectSub, setCollectSub] = useState<'story' | 'ask' | 'comment'>('story');
   const [resonateSub, setResonateSub] = useState<'story' | 'ask' | 'share' | 'comment'>('story');
+  const [flowerSub, setFlowerSub] = useState<FlowerSentFilterId>('all');
   const [detailShare, setDetailShare] = useState<ProfileShareItem | null>(null);
   const content = useProfileContentList({
     main: mainTab,
     publishSub,
     collectSub,
     resonateSub,
+    flowerSub,
   });
 
   const openSettings = useCallback(() => {
@@ -68,36 +53,20 @@ export function ProfileHomeScreen() {
   );
 
   if (!user) {
-    return (
-      <View style={styles.root}>
-        {header}
-        <ProfileEmptyPane message="请先登录" />
-      </View>
-    );
+    return <ProfileHomeGate header={header} message="请先登录" />;
   }
 
   if (isLoading && !home) {
-    return (
-      <View style={styles.root}>
-        {header}
-        <ActivityIndicator style={styles.loading} color={PROFILE_ACCENT} />
-      </View>
-    );
+    return <ProfileHomeGate header={header} loading />;
   }
 
   if ((isError && !home) || !home) {
     return (
-      <View style={styles.root}>
-        {header}
-        <View style={styles.errorBox}>
-          <ProfileEmptyPane message={isError ? '主页加载失败' : '暂无主页数据'} />
-          {isError ? (
-            <Pressable onPress={refetch}>
-              <Text style={styles.retry}>重试</Text>
-            </Pressable>
-          ) : null}
-        </View>
-      </View>
+      <ProfileHomeGate
+        header={header}
+        message={isError ? '主页加载失败' : '暂无主页数据'}
+        onRetry={isError ? refetch : undefined}
+      />
     );
   }
 
@@ -128,33 +97,23 @@ export function ProfileHomeScreen() {
         />
         <View style={styles.gap} />
         <ProfileContentTabs activeId={mainTab} onChange={setMainTab} />
-        {mainTab === 'publish' ? (
-          <ProfileSubTabs
-            options={PROFILE_PUBLISH_SUB_TABS}
-            value={publishSub}
-            onChange={setPublishSub}
-          />
-        ) : null}
-        {mainTab === 'collect' ? (
-          <ProfileSubTabs
-            options={PROFILE_COLLECT_SUB_TABS}
-            value={collectSub}
-            onChange={setCollectSub}
-          />
-        ) : null}
-        {mainTab === 'resonate' ? (
-          <ProfileSubTabs
-            options={PROFILE_RESONATE_SUB_TABS}
-            value={resonateSub}
-            onChange={setResonateSub}
-          />
-        ) : null}
+        <ProfileHomeSubTabs
+          mainTab={mainTab}
+          publishSub={publishSub}
+          collectSub={collectSub}
+          resonateSub={resonateSub}
+          flowerSub={flowerSub}
+          onPublishSub={setPublishSub}
+          onCollectSub={setCollectSub}
+          onResonateSub={setResonateSub}
+          onFlowerSub={setFlowerSub}
+        />
         <ProfileContentPane
           kind={content.kind}
           items={content.items}
           isLoading={content.isLoading}
           isError={content.isError}
-          emptyMessage={EMPTY_BY_TAB[mainTab]}
+          emptyMessage={PROFILE_EMPTY_BY_TAB[mainTab]}
           hasNextPage={Boolean(content.hasNextPage)}
           onRetry={() => {
             void content.refetch();
@@ -178,7 +137,4 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 24 },
   gap: { height: 8 },
-  loading: { marginTop: 80 },
-  errorBox: { flex: 1, alignItems: 'center', gap: 8 },
-  retry: { fontSize: 14, fontWeight: '600', color: PROFILE_ACCENT },
 });
