@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
-import { searchUsersByNickName } from '@/src/features/follow/api';
+import { getAllFollowing, searchUsersByNickName } from '@/src/features/follow/api';
+import { FOLLOW_QUERY_KEYS } from '@/src/features/follow/constants';
 import type { FollowUser } from '@/src/features/follow/types';
 import {
   dissolvePartner,
@@ -38,6 +39,12 @@ export function usePartnerInvites(enabled: boolean) {
   const query = useQuery({
     queryKey: SOUL_FLOWER_QUERY_KEYS.partnerInvites,
     queryFn: getPartnerInvites,
+    enabled,
+  });
+
+  const followingQuery = useQuery({
+    queryKey: FOLLOW_QUERY_KEYS.following,
+    queryFn: getAllFollowing,
     enabled,
   });
 
@@ -144,6 +151,10 @@ export function usePartnerInvites(enabled: boolean) {
     isLoading: query.isLoading,
     isError: query.isError,
     refetch: query.refetch,
+    following: followingQuery.data ?? [],
+    isFollowingLoading: followingQuery.isLoading,
+    isFollowingError: followingQuery.isError,
+    refetchFollowing: followingQuery.refetch,
     searchResults,
     hasSearched,
     sentReceiverIds,

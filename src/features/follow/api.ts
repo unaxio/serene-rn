@@ -102,6 +102,9 @@ function toFollowPage(
   };
 }
 
+const FOLLOWING_PAGE_SIZE = 50;
+const FOLLOWING_MAX_PAGE = 20;
+
 /**
  * 我关注的列表 GET /follow/following
  */
@@ -110,6 +113,22 @@ export async function getFollowingList(): Promise<FollowUser[]> {
     FollowUserRaw[] | FollowPagedData | ApiEnvelope<FollowUserRaw[] | FollowPagedData>
   >(API_PATHS.FOLLOW_FOLLOWING);
   return extractFollowUsers(unwrapResponse(response, '获取关注列表失败'));
+}
+
+export async function getAllFollowing(): Promise<FollowUser[]> {
+  const collected: FollowUser[] = [];
+  let page = 1;
+  let total = 0;
+  do {
+    const result = await getFollowingPage(page, FOLLOWING_PAGE_SIZE);
+    collected.push(...result.items);
+    total = result.total;
+    page += 1;
+    if (result.items.length === 0) {
+      break;
+    }
+  } while (collected.length < total && page <= FOLLOWING_MAX_PAGE);
+  return collected;
 }
 
 export async function getFollowingPage(page: number, pageSize: number): Promise<FollowPage> {

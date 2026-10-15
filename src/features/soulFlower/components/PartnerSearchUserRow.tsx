@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { useCallback } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { FollowUser } from '@/src/features/follow/types';
@@ -9,7 +10,7 @@ interface PartnerSearchUserRowProps {
   user: FollowUser;
   invited: boolean;
   isSending: boolean;
-  onInvite: () => void;
+  onInvite: (userId: string) => void;
 }
 
 const AVATAR_SIZE = 40;
@@ -31,6 +32,9 @@ export function PartnerSearchUserRow({
   const avatarUri = resolveCdnUrl(
     user.avatarUrl ?? user.avatarPath ?? user.avatar,
   );
+  const handleInvite = useCallback(() => {
+    onInvite(user.userId);
+  }, [onInvite, user.userId]);
 
   return (
     <View style={styles.userRow}>
@@ -47,7 +51,7 @@ export function PartnerSearchUserRow({
       <Pressable
         style={[styles.inviteButton, invited && styles.inviteButtonSent]}
         disabled={invited || isSending}
-        onPress={onInvite}>
+        onPress={handleInvite}>
         <Text style={[styles.inviteButtonText, invited && styles.inviteButtonTextSent]}>
           {invited ? INVITE_SENT_LABEL : INVITE_LABEL}
         </Text>
