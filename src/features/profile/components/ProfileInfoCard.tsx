@@ -1,7 +1,7 @@
-import { Image } from 'expo-image';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
+import { ProfileAvatar } from '@/src/features/profile/components/ProfileAvatar';
 import { PROFILE_MUTED, PROFILE_SURFACE } from '@/src/features/profile/constants';
 import type { ProfileDetail } from '@/src/features/profile/types';
 import {
@@ -12,11 +12,16 @@ import {
 interface ProfileInfoCardProps {
   profile: ProfileDetail;
   onPressEdit?: () => void;
+  previewAvatar?: boolean;
 }
 
 const AVATAR_SIZE = 64;
 
-export function ProfileInfoCard({ profile, onPressEdit }: ProfileInfoCardProps) {
+export function ProfileInfoCard({
+  profile,
+  onPressEdit,
+  previewAvatar = false,
+}: ProfileInfoCardProps) {
   const age = calcAgeFromBirthday(profile.birthday);
   const metaParts = [
     formatGenderLabel(profile.gender),
@@ -27,11 +32,11 @@ export function ProfileInfoCard({ profile, onPressEdit }: ProfileInfoCardProps) 
   const body = (
     <>
       <View style={styles.row}>
-        {profile.avatarUrl ? (
-          <Image source={{ uri: profile.avatarUrl }} style={styles.avatar} contentFit="cover" />
-        ) : (
-          <View style={[styles.avatar, styles.avatarFallback]} />
-        )}
+        <ProfileAvatar
+          uri={profile.avatarUrl}
+          size={AVATAR_SIZE}
+          previewable={previewAvatar}
+        />
         <View style={styles.meta}>
           <View style={styles.nameRow}>
             <Text style={styles.name} numberOfLines={1}>
@@ -83,15 +88,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-  },
-  avatar: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
-    backgroundColor: '#E2E8F0',
-  },
-  avatarFallback: {
-    backgroundColor: '#CBD5E1',
   },
   meta: {
     flex: 1,

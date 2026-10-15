@@ -74,7 +74,7 @@ export function UserProfileScreen({ userId }: UserProfileScreenProps) {
       ) : (
         <>
           <ScrollView contentContainerStyle={styles.scroll}>
-            <ProfileInfoCard profile={home.profile} />
+            <ProfileInfoCard profile={home.profile} previewAvatar />
             <ProfileStatsBar stats={home.stats} />
             <Pressable style={styles.garden} onPress={() => showToast(COMING_SOON_MESSAGE)}>
               <Text style={styles.gardenText}>TA的花园</Text>
