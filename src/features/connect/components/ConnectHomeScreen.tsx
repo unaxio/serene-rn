@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { deleteConnectConversation, pinConnectConversation } from '@/src/features/connect/api';
+import { confirmDeleteConversation } from '@/src/features/connect/utils/confirmDeleteConversation';
 import { ConnectConversationRow } from '@/src/features/connect/components/ConnectConversationRow';
 import { ConnectHomeEntries } from '@/src/features/connect/components/ConnectHomeEntries';
 import { CONNECT_EMPTY_CONVERSATION, CONNECT_QUERY_KEYS } from '@/src/features/connect/constants';
@@ -64,6 +65,8 @@ export function ConnectHomeScreen() {
   const handleDelete = useCallback(
     (item: ConnectConversation) => {
       void (async () => {
+        const confirmed = await confirmDeleteConversation();
+        if (!confirmed) return;
         try {
           await deleteConnectConversation(item.id);
           await invalidate();
@@ -129,10 +132,7 @@ export function ConnectHomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: SQUARE_PAGE_BG,
-  },
+  root: { flex: 1, backgroundColor: SQUARE_PAGE_BG },
   header: {
     fontSize: 22,
     fontWeight: '700',
@@ -141,9 +141,5 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     backgroundColor: SQUARE_PAGE_BG,
   },
-  empty: {
-    textAlign: 'center',
-    color: MUTED_TEXT_COLOR,
-    paddingVertical: 32,
-  },
+  empty: { textAlign: 'center', color: MUTED_TEXT_COLOR, paddingVertical: 32 },
 });

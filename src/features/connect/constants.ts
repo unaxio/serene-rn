@@ -36,6 +36,14 @@ export const CONNECT_WITHDRAWN_MESSAGE = '该通知已撤回';
 
 export const CONNECT_EMPTY_CONVERSATION = '暂无会话';
 
+export const CONNECT_DELETE_TITLE = '删除会话？';
+
+export const CONNECT_DELETE_MESSAGE = '删除后将从列表中移除';
+
+export const CONNECT_DELETE_CONFIRM = '删除';
+
+export const CONNECT_DELETE_CANCEL = '取消';
+
 export const CONNECT_EMPTY_NOTIFICATION = '暂无消息';
 
 export const CONNECT_EMPTY_SEARCH = '没有找到相关消息';
