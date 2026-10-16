@@ -48,6 +48,14 @@ export const GIFT_FLOWER_SEND_SUCCESS = "赠送成功";
 
 export const GIFT_FLOWER_PURCHASE_SUCCESS = "购买成功";
 
+export const GIFT_FLOWER_PURCHASE_TITLE = "确认购买？";
+
+export const GIFT_FLOWER_PURCHASE_MESSAGE = "购买后将消耗花币，确认继续？";
+
+export const GIFT_FLOWER_PURCHASE_CONFIRM = "购买";
+
+export const GIFT_FLOWER_PURCHASE_CANCEL = "取消";
+
 export const FLOWER_LEDGER_PAGE_SIZE = 20;
 
 export const FLOWER_LEDGER_TITLE = "把温柔送给TA";

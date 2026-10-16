@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { SQUARE_QUERY_KEYS } from '@/src/features/square/constants';
 import { purchaseGiftFlower } from '@/src/features/square/giftFlowerApi';
 import { useRequireAuth } from '@/src/features/square/hooks/useRequireAuth';
+import { confirmPurchaseGiftFlower } from '@/src/features/square/utils/confirmPurchaseGiftFlower';
 import type { PurchaseGiftFlowerResponse } from '@/src/features/square/types';
 import { toastCaughtFailure } from '@/src/utils/requestError';
 
@@ -20,6 +21,10 @@ export function usePurchaseGiftFlower() {
       quantity: number,
     ): Promise<PurchaseGiftFlowerResponse | null> => {
       if (!requireAuth()) {
+        return null;
+      }
+      const confirmed = await confirmPurchaseGiftFlower();
+      if (!confirmed) {
         return null;
       }
       try {
