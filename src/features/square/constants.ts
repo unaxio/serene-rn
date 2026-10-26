@@ -172,6 +172,8 @@ export const TOPIC_POST_LOAD_ERROR = "加载失败，点击重试";
 
 export const TOPIC_HASH = "#";
 
+export const SEARCH_RELATED_TOPICS = "相关话题";
+
 export const TOPIC_CHIP_BG = "#EFEDFD";
 
 export const TOPIC_CHIP_FONT_SIZE = 12;
