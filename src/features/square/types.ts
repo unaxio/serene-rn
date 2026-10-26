@@ -56,6 +56,17 @@ export interface GetSquareSearchParams {
   pageSize: number;
 }
 
+export interface SearchHotItem {
+  rank: number;
+  id: string;
+  title: string;
+}
+
+export interface SearchHotBoard {
+  stories: SearchHotItem[];
+  asks: SearchHotItem[];
+}
+
 export interface SquareAuthor {
   id: string | null;
   nickName: string;
@@ -167,7 +178,7 @@ export interface StoryFeedEventsResult {
   accepted: number;
 }
 
-export type ContentEventTargetType = 'share' | 'ask_answer';
+export type ContentEventTargetType = 'share' | 'ask' | 'ask_answer';
 
 export type ContentEventType = StoryFeedEventType;
 

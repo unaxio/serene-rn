@@ -160,6 +160,26 @@ export const SEARCH_KEYWORD_EMPTY = "关键词不能为空";
 
 export const SEARCH_KEYWORD_TOO_LONG = "关键词最长 50 字符";
 
+export const SEARCH_HISTORY_LIMIT = 10;
+
+export const SEARCH_HISTORY_TITLE = "搜索历史";
+
+export const SEARCH_HISTORY_CLEAR = "清空";
+
+export const SEARCH_HOT_STORY_TITLE = "热门故事";
+
+export const SEARCH_HOT_ASK_TITLE = "热门问答";
+
+export const SEARCH_HOT_EMPTY = "暂无热门内容";
+
+export const SEARCH_HOT_LOAD_ERROR = "热门内容加载失败，点击重试";
+
+export const SEARCH_HOT_TOP_RANK = 3;
+
+export const SEARCH_HOT_RANK_TOP_COLOR = "#F97316";
+
+export const SEARCH_HOT_RANK_COLOR = "#94A3B8";
+
 export const SEARCH_TITLE_MAX_LINES = 2;
 
 export const SEARCH_CONTENT_MAX_LINES = 3;

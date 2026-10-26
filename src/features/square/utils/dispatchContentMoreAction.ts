@@ -12,6 +12,7 @@ import { removeShareFromFeed } from '@/src/features/square/utils/contentMoreMuta
 import { buildContentSharePath } from '@/src/features/square/utils/contentSharePath';
 import { enqueueContentEvent } from '@/src/features/square/utils/contentEvents';
 import { copySquareLink } from '@/src/features/square/utils/copySquareLink';
+import { enqueueStoryFeedEvent } from '@/src/features/square/utils/storyFeedEvents';
 import type {
   ContentMoreActionId,
   ContentMoreKind,
@@ -43,7 +44,11 @@ export function dispatchContentMoreAction(
 ): void {
   if (actionId === 'share') {
     void copySquareLink(buildContentSharePath(ctx.contentKind, ctx.targetId)).then((copied) => {
-      if (!copied || (ctx.contentKind !== 'share' && ctx.contentKind !== 'ask_answer')) {
+      if (!copied) {
+        return;
+      }
+      if (ctx.contentKind === 'story') {
+        enqueueStoryFeedEvent({ storyId: ctx.targetId, type: 'share' });
         return;
       }
       enqueueContentEvent({

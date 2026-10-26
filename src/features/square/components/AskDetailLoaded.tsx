@@ -148,6 +148,9 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
         visible={shareVisible}
         path={`/asks/${askId}`}
         onClose={() => setShareVisible(false)}
+        onCopied={() => {
+          enqueueContentEvent({ targetType: 'ask', targetId: askId, type: 'share' });
+        }}
       />
     </View>
   );

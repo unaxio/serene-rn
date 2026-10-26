@@ -15,6 +15,7 @@ import { StoryFlowerLedger } from '@/src/features/square/components/flowerLedger
 import { useBindCommentFocusScroll } from '@/src/features/square/hooks/useBindCommentFocusScroll';
 import { useStoryDetailComments } from '@/src/features/square/hooks/useStoryDetailComments';
 import type { SquareComment, Story } from '@/src/features/square/types';
+import { enqueueStoryFeedEvent } from '@/src/features/square/utils/storyFeedEvents';
 
 interface StoryDetailLoadedProps {
   storyId: string;
@@ -132,6 +133,9 @@ export function StoryDetailLoaded({ storyId, story }: StoryDetailLoadedProps) {
         visible={shareVisible}
         path={`/stories/${storyId}`}
         onClose={() => setShareVisible(false)}
+        onCopied={() => {
+          enqueueStoryFeedEvent({ storyId, type: 'share' });
+        }}
       />
     </View>
   );

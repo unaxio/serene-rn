@@ -8,7 +8,7 @@ import {
 import type { ContentEvent, ContentEventTargetType } from '@/src/features/square/types';
 import { useAuthStore } from '@/src/store/authStore';
 
-const TARGET_TYPES: readonly ContentEventTargetType[] = ['share', 'ask_answer'];
+const TARGET_TYPES: readonly ContentEventTargetType[] = ['share', 'ask', 'ask_answer'];
 
 const queue: ContentEvent[] = [];
 let flushTimer: ReturnType<typeof setTimeout> | null = null;
