@@ -21,6 +21,8 @@ import {
 } from '@/src/features/square/constants';
 import { useAskAnswers } from '@/src/features/square/hooks/useAskAnswers';
 import { useAskDetailFlow } from '@/src/features/square/hooks/useAskDetailFlow';
+import { useContentImpressions } from '@/src/features/square/hooks/useContentImpressions';
+import { enqueueContentEvent } from '@/src/features/square/utils/contentEvents';
 import type { Ask, AskAnswer, AskAnswerSort } from '@/src/features/square/types';
 
 interface AskDetailLoadedProps {
@@ -36,6 +38,10 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
   const [sort, setSort] = useState<AskAnswerSort>(ASK_DEFAULT_SORT);
   const answers = useAskAnswers(askId, sort);
   const [shareVisible, setShareVisible] = useState(false);
+  const impressions = useContentImpressions(answers.items, (item) => ({
+    targetType: 'ask_answer',
+    targetId: item.id,
+  }));
 
   const handleAnswer = useCallback(() => {
     router.push(`/asks/${askId}/answer`);
@@ -43,6 +49,7 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
 
   const openAnswerDetail = useCallback(
     (answerId: string) => {
+      enqueueContentEvent({ targetType: 'ask_answer', targetId: answerId, type: 'click' });
       router.push(`/ask-answers/${answerId}`);
     },
     [router],
@@ -75,6 +82,8 @@ export function AskDetailLoaded({ askId, ask }: AskDetailLoadedProps) {
         data={answers.items}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        onViewableItemsChanged={impressions.onViewableItemsChanged}
+        viewabilityConfig={impressions.viewabilityConfig}
         onEndReached={answers.loadMore}
         onEndReachedThreshold={ASK_LIST_END_REACHED_THRESHOLD}
         scrollEventThrottle={SCROLL_EVENT_THROTTLE}

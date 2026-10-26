@@ -13,6 +13,8 @@ import type {
   SquareComment,
   SquarePagedData,
   Story,
+  ContentEvent,
+  ContentEventsResult,
   StoryFeedEventsPayload,
   StoryFeedEventsResult,
   ToggleActionResponse,
@@ -121,6 +123,17 @@ export async function reportStoryFeedEvents(
     StoryFeedEventsResult | ApiEnvelope<StoryFeedEventsResult>
   >(API_PATHS.SQUARE_STORY_EVENTS, payload, { skipErrorToast: true });
   return unwrapResponse(response, '上报故事行为失败');
+}
+
+export async function reportContentEvents(
+  events: ContentEvent[],
+): Promise<ContentEventsResult> {
+  const response = await request.post<ContentEventsResult | ApiEnvelope<ContentEventsResult>>(
+    API_PATHS.SQUARE_CONTENT_EVENTS,
+    { events },
+    { skipErrorToast: true },
+  );
+  return unwrapResponse(response, '上报内容行为失败');
 }
 
 export async function getStoryDetail(id: string): Promise<Story> {

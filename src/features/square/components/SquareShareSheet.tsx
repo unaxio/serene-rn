@@ -17,6 +17,7 @@ interface SquareShareSheetProps {
   visible: boolean;
   path: string;
   onClose: () => void;
+  onCopied?: () => void;
 }
 
 const HANDLE_WIDTH = 36;
@@ -25,13 +26,14 @@ const ICON_SIZE = 18;
 const SHEET_MIN_BOTTOM = 12;
 const SHEET_RADIUS = 16;
 
-export function SquareShareSheet({ visible, path, onClose }: SquareShareSheetProps) {
+export function SquareShareSheet({ visible, path, onClose, onCopied }: SquareShareSheetProps) {
   const insets = useSafeAreaInsets();
 
   const handleCopyLink = async () => {
     try {
       await Clipboard.setStringAsync(buildSquareShareUrl(path));
       showToast(SHARE_SHEET_COPY_SUCCESS);
+      onCopied?.();
       onClose();
     } catch {
       showErrorToast(SHARE_SHEET_COPY_FAIL);

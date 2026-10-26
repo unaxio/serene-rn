@@ -12,6 +12,7 @@ import { StoryInlineComments } from '@/src/features/square/components/comments/S
 import { SendFlowerModal } from '@/src/features/square/components/SendFlowerModal';
 import { SquareShareSheet } from '@/src/features/square/components/SquareShareSheet';
 import { PAGE_SURFACE_COLOR } from '@/src/features/square/constants';
+import { enqueueContentEvent } from '@/src/features/square/utils/contentEvents';
 import { useBindCommentFocusScroll } from '@/src/features/square/hooks/useBindCommentFocusScroll';
 import { useStoryDetailComments } from '@/src/features/square/hooks/useStoryDetailComments';
 import type { AskAnswerDetail, SquareComment } from '@/src/features/square/types';
@@ -119,6 +120,13 @@ export function AskAnswerDetailLoaded({ detail }: AskAnswerDetailLoadedProps) {
         visible={shareVisible}
         path={`/ask-answers/${detail.id}`}
         onClose={() => setShareVisible(false)}
+        onCopied={() => {
+          enqueueContentEvent({
+            targetType: 'ask_answer',
+            targetId: detail.id,
+            type: 'share',
+          });
+        }}
       />
     </View>
   );

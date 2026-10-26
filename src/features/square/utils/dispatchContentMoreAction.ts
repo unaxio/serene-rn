@@ -10,6 +10,7 @@ import {
 import type { Share } from '@/src/features/square/types';
 import { removeShareFromFeed } from '@/src/features/square/utils/contentMoreMutations';
 import { buildContentSharePath } from '@/src/features/square/utils/contentSharePath';
+import { enqueueContentEvent } from '@/src/features/square/utils/contentEvents';
 import { copySquareLink } from '@/src/features/square/utils/copySquareLink';
 import type {
   ContentMoreActionId,
@@ -41,7 +42,16 @@ export function dispatchContentMoreAction(
   ctx: ContentMoreActionContext,
 ): void {
   if (actionId === 'share') {
-    void copySquareLink(buildContentSharePath(ctx.contentKind, ctx.targetId));
+    void copySquareLink(buildContentSharePath(ctx.contentKind, ctx.targetId)).then((copied) => {
+      if (!copied || (ctx.contentKind !== 'share' && ctx.contentKind !== 'ask_answer')) {
+        return;
+      }
+      enqueueContentEvent({
+        targetType: ctx.contentKind,
+        targetId: ctx.targetId,
+        type: 'share',
+      });
+    });
     return;
   }
   if (actionId === 'promote') {

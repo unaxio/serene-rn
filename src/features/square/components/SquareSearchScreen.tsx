@@ -4,9 +4,17 @@ import { StyleSheet, View } from 'react-native';
 
 import { SquareSearchHeader } from '@/src/features/square/components/search/SquareSearchHeader';
 import { SquareSearchList } from '@/src/features/square/components/search/SquareSearchList';
-import { PAGE_SURFACE_COLOR } from '@/src/features/square/constants';
+import {
+  PAGE_SURFACE_COLOR,
+  SEARCH_KEYWORD_EMPTY,
+  SEARCH_KEYWORD_MAX_LENGTH,
+  SEARCH_KEYWORD_TOO_LONG,
+} from '@/src/features/square/constants';
 import { useSquareSearch } from '@/src/features/square/hooks/useSquareSearch';
 import type { SquareSearchItem } from '@/src/features/square/types';
+import { armCommentFocus } from '@/src/features/square/utils/commentFocusCue';
+import { enqueueContentEvent } from '@/src/features/square/utils/contentEvents';
+import { showToast } from '@/src/utils/toast';
 
 export function SquareSearchScreen() {
   const router = useRouter();
@@ -15,18 +23,42 @@ export function SquareSearchScreen() {
   const search = useSquareSearch(keyword);
 
   const handleSubmit = useCallback(() => {
-    setKeyword(input.trim());
+    const trimmed = input.trim();
+    if (trimmed.length === 0) {
+      showToast(SEARCH_KEYWORD_EMPTY);
+      return;
+    }
+    if (trimmed.length > SEARCH_KEYWORD_MAX_LENGTH) {
+      showToast(SEARCH_KEYWORD_TOO_LONG);
+      return;
+    }
+    setKeyword(trimmed);
   }, [input]);
 
   const handlePressItem = useCallback(
     (item: SquareSearchItem) => {
       if (item.type === 'story') {
+        if (item.commentId) {
+          armCommentFocus({ highlightId: item.commentId });
+        }
         router.push(`/stories/${item.id}`);
         return;
       }
-      if (item.type === 'ask') {
-        router.push(`/asks/${item.id}`);
+      if (item.type === 'share') {
+        enqueueContentEvent({ targetType: 'share', targetId: item.id, type: 'click' });
+        router.push(`/shares/${item.id}`);
+        return;
       }
+      if (item.type === 'ask_answer') {
+        const askId = item.askId?.trim() ?? '';
+        if (askId.length === 0) {
+          return;
+        }
+        enqueueContentEvent({ targetType: 'ask_answer', targetId: item.id, type: 'click' });
+        router.push(`/asks/${askId}`);
+        return;
+      }
+      router.push(`/asks/${item.id}`);
     },
     [router],
   );

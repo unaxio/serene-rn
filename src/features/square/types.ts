@@ -28,28 +28,32 @@ export type SquareActionType = 'resonate' | 'collect' | 'flower';
 
 export type SquareSubTabId = 'story' | 'share' | 'ask';
 
-export type SquareSearchType = 'story' | 'share' | 'ask';
+export type SquareSearchType = 'story' | 'share' | 'ask_answer' | 'ask';
 
 export interface SquareSearchItem {
   type: SquareSearchType;
   id: string;
+  askId?: string;
   title: string;
   content: string;
-  coverImage: string | null;
+  coverImage: string;
   createdAt: string;
   author: SquareAuthor;
+  /** 故事命中一级评论时用来定位，未命中则没有 */
+  commentId?: string;
 }
 
 export interface SquareSearchPage {
   items: SquareSearchItem[];
-  size: number;
+  total: number;
+  page: number;
+  pageSize: number;
 }
 
 export interface GetSquareSearchParams {
   keyword: string;
-  size: number;
-  start?: string;
-  end?: string;
+  page: number;
+  pageSize: number;
 }
 
 export interface SquareAuthor {
@@ -159,6 +163,23 @@ export interface StoryFeedEventsPayload {
 }
 
 export interface StoryFeedEventsResult {
+  success: boolean;
+  accepted: number;
+}
+
+export type ContentEventTargetType = 'share' | 'ask_answer';
+
+export type ContentEventType = StoryFeedEventType;
+
+export interface ContentEvent {
+  targetType: ContentEventTargetType;
+  targetId: string;
+  type: ContentEventType;
+  /** 仅 read。累计停留毫秒 */
+  dwellMs?: number;
+}
+
+export interface ContentEventsResult {
   success: boolean;
   accepted: number;
 }

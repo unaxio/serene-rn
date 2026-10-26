@@ -14,6 +14,7 @@ import {
   SHARE_LIST_END_REACHED_THRESHOLD,
 } from '@/src/features/square/constants';
 import { useShareComposer } from '@/src/features/square/hooks/useShareComposer';
+import { useContentImpressions } from '@/src/features/square/hooks/useContentImpressions';
 import { useShares } from '@/src/features/square/hooks/useShares';
 import { useSquareAction } from '@/src/features/square/hooks/useSquareAction';
 import type { Share } from '@/src/features/square/types';
@@ -30,6 +31,10 @@ export function ShareList() {
   const composer = useShareComposer();
   const [flowerShareId, setFlowerShareId] = useState<string | null>(null);
   const [preview, setPreview] = useState<ImagePreviewState | null>(null);
+  const impressions = useContentImpressions(items, (item) => ({
+    targetType: 'share',
+    targetId: item.id,
+  }));
 
   const handleResonate = useCallback(
     (shareId: string) => {
@@ -97,6 +102,8 @@ export function ShareList() {
         data={items}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        onViewableItemsChanged={impressions.onViewableItemsChanged}
+        viewabilityConfig={impressions.viewabilityConfig}
         onEndReached={loadMore}
         onEndReachedThreshold={SHARE_LIST_END_REACHED_THRESHOLD}
         refreshControl={

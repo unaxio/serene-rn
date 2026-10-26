@@ -1,31 +1,36 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
-import { SEARCH_PAGE_SIZE, SQUARE_QUERY_KEYS } from '@/src/features/square/constants';
+import {
+  SEARCH_KEYWORD_MAX_LENGTH,
+  SEARCH_PAGE_SIZE,
+  SQUARE_QUERY_KEYS,
+} from '@/src/features/square/constants';
 import { getSquareSearch } from '@/src/features/square/searchApi';
 import type { SquareSearchPage } from '@/src/features/square/types';
 
-function getNextEndCursor(lastPage: SquareSearchPage): string | undefined {
-  if (lastPage.items.length < lastPage.size) {
-    return undefined;
+function getNextPage(lastPage: SquareSearchPage): number | undefined {
+  // 某页内容被删后 items 会短于 pageSize，是否还有下一页只看 total。
+  if (lastPage.page * lastPage.pageSize < lastPage.total) {
+    return lastPage.page + 1;
   }
-  const lastCreatedAt = lastPage.items[lastPage.items.length - 1]?.createdAt;
-  return lastCreatedAt && lastCreatedAt.length > 0 ? lastCreatedAt : undefined;
+  return undefined;
 }
 
 export function useSquareSearch(keyword: string) {
   const trimmed = keyword.trim();
+  const enabled = trimmed.length > 0 && trimmed.length <= SEARCH_KEYWORD_MAX_LENGTH;
   const query = useInfiniteQuery({
     queryKey: SQUARE_QUERY_KEYS.search(trimmed),
     queryFn: ({ pageParam }) =>
       getSquareSearch({
         keyword: trimmed,
-        size: SEARCH_PAGE_SIZE,
-        end: pageParam,
+        page: pageParam,
+        pageSize: SEARCH_PAGE_SIZE,
       }),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: getNextEndCursor,
-    enabled: trimmed.length > 0,
+    initialPageParam: 1,
+    getNextPageParam: getNextPage,
+    enabled,
   });
 
   const items = useMemo(

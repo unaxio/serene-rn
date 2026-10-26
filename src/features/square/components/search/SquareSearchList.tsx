@@ -4,6 +4,7 @@ import { ActivityIndicator, RefreshControl, StyleSheet, View } from 'react-nativ
 
 import { AskListStatus } from '@/src/features/square/components/ask/AskListStatus';
 import { SquareSearchResultItem } from '@/src/features/square/components/search/SquareSearchResultItem';
+import { useContentImpressions } from '@/src/features/square/hooks/useContentImpressions';
 import {
   ACCENT_COLOR,
   ASK_LIST_END_REACHED_THRESHOLD,
@@ -41,6 +42,12 @@ export function SquareSearchList({
   onRefresh,
   onRetry,
 }: SquareSearchListProps) {
+  const impressions = useContentImpressions(items, (item) => {
+    if (item.type !== 'share' && item.type !== 'ask_answer') {
+      return null;
+    }
+    return { targetType: item.type, targetId: item.id };
+  });
   const listEmpty = (() => {
     if (isIdle) {
       return <AskListStatus message={SEARCH_EMPTY_HINT} />;
@@ -66,7 +73,9 @@ export function SquareSearchList({
       <FlashList
         data={items}
         renderItem={renderItem}
-        keyExtractor={(item) => `${item.type}-${item.id}`}
+        keyExtractor={(item, index) => `${item.type}-${item.id}-${item.commentId ?? ''}-${index}`}
+        onViewableItemsChanged={impressions.onViewableItemsChanged}
+        viewabilityConfig={impressions.viewabilityConfig}
         onEndReached={onLoadMore}
         onEndReachedThreshold={ASK_LIST_END_REACHED_THRESHOLD}
         ItemSeparatorComponent={() => <View style={styles.separator} />}

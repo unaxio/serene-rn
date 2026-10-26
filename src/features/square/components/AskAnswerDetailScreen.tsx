@@ -10,6 +10,7 @@ import {
   PAGE_SURFACE_COLOR,
 } from '@/src/features/square/constants';
 import { useAskAnswerDetail } from '@/src/features/square/hooks/useAskAnswerDetail';
+import { useContentReadEvent } from '@/src/features/square/hooks/useContentReadEvent';
 
 interface AskAnswerDetailScreenProps {
   answerId: string;
@@ -18,6 +19,7 @@ interface AskAnswerDetailScreenProps {
 export function AskAnswerDetailScreen({ answerId }: AskAnswerDetailScreenProps) {
   const router = useRouter();
   const { detail, isLoading, isError, refetch } = useAskAnswerDetail(answerId);
+  useContentReadEvent('ask_answer', answerId, detail != null);
 
   return (
     <View style={styles.root}>

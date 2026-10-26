@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 
 import { COMING_SOON_MESSAGE } from '@/src/features/square/constants';
 import { armCommentFocus } from '@/src/features/square/utils/commentFocusCue';
+import { enqueueContentEvent } from '@/src/features/square/utils/contentEvents';
 import { showToast } from '@/src/utils/toast';
 
 export const CONTENT_UNAVAILABLE_MESSAGE = '该内容暂不可查看';
@@ -53,6 +54,7 @@ function pushContentPage(
     return 'pushed';
   }
   if (pageType === 'ask_answer') {
+    enqueueContentEvent({ targetType: 'ask_answer', targetId: pageId, type: 'click' });
     router.push(`/ask-answers/${pageId}`);
     return 'pushed';
   }
@@ -61,6 +63,7 @@ function pushContentPage(
     return 'pushed';
   }
   if (pageType === 'share') {
+    enqueueContentEvent({ targetType: 'share', targetId: pageId, type: 'click' });
     router.push(`/shares/${pageId}`);
     return 'pushed';
   }

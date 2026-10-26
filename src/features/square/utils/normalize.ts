@@ -316,26 +316,35 @@ export function normalizeAskAnswerDetail(raw: AskAnswerRaw): AskAnswerDetail {
   };
 }
 
-const SEARCH_TYPES: SquareSearchType[] = ['story', 'share', 'ask'];
+const SEARCH_TYPES: SquareSearchType[] = ['story', 'share', 'ask_answer', 'ask'];
 
 export interface SearchItemRaw {
   type?: string;
   id?: string;
   _id?: string;
+  askId?: string;
   title?: string;
   content?: string;
   coverImage?: string | null;
   createdAt?: string;
   author?: SquareAuthor | null;
+  commentId?: string;
 }
 
-interface SearchPageRaw {
+export interface SearchPageRaw {
   items?: SearchItemRaw[];
-  size?: number;
+  total?: number;
+  page?: number;
+  pageSize?: number;
 }
 
 function isSearchType(value: string): value is SquareSearchType {
   return SEARCH_TYPES.includes(value as SquareSearchType);
+}
+
+function optionalId(value: string | undefined): string | undefined {
+  const text = value?.trim() ?? '';
+  return text.length > 0 ? text : undefined;
 }
 
 export function normalizeSearchItem(raw: SearchItemRaw): SquareSearchItem | null {
@@ -347,25 +356,32 @@ export function normalizeSearchItem(raw: SearchItemRaw): SquareSearchItem | null
   if (id.length === 0) {
     return null;
   }
-  const coverImage = raw.coverImage?.trim();
+  const askId = optionalId(raw.askId);
+  const commentId = type === 'story' ? optionalId(raw.commentId) : undefined;
   return {
     type,
     id,
+    ...(askId ? { askId } : {}),
     title: raw.title ?? '',
     content: raw.content ?? '',
-    coverImage: coverImage && coverImage.length > 0 ? coverImage : null,
+    coverImage: raw.coverImage?.trim() ?? '',
     createdAt: raw.createdAt ?? '',
     author: normalizeAuthor(raw.author),
+    ...(commentId ? { commentId } : {}),
   };
 }
 
-export function normalizeSearchPage(raw: SearchPageRaw, fallbackSize: number): SquareSearchPage {
+export function normalizeSearchPage(raw: SearchPageRaw, fallbackPageSize: number): SquareSearchPage {
   const items = (raw.items ?? [])
     .map(normalizeSearchItem)
     .filter((item): item is SquareSearchItem => item !== null);
+  const pageSize = raw.pageSize && raw.pageSize > 0 ? raw.pageSize : fallbackPageSize;
+  const page = raw.page && raw.page > 0 ? raw.page : 1;
   return {
     items,
-    size: raw.size ?? fallbackSize,
+    total: raw.total ?? 0,
+    page,
+    pageSize,
   };
 }
 

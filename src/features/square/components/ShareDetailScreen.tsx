@@ -14,6 +14,7 @@ import {
 } from '@/src/features/square/constants';
 import { useBindCommentFocusScroll } from '@/src/features/square/hooks/useBindCommentFocusScroll';
 import { useShareComposer } from '@/src/features/square/hooks/useShareComposer';
+import { useContentReadEvent } from '@/src/features/square/hooks/useContentReadEvent';
 import { useShareDetail } from '@/src/features/square/hooks/useShareDetail';
 import { useSquareAction } from '@/src/features/square/hooks/useSquareAction';
 
@@ -31,6 +32,7 @@ interface ImagePreviewState {
 export function ShareDetailScreen({ shareId }: ShareDetailScreenProps) {
   const router = useRouter();
   const { share, isLoading, isError, refetch } = useShareDetail(shareId);
+  useContentReadEvent('share', shareId, share != null);
   const { runAction, isPending } = useSquareAction();
   const composer = useShareComposer();
   const [flowerOpen, setFlowerOpen] = useState(false);

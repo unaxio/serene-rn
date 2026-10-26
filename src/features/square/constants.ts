@@ -1,4 +1,9 @@
-import type { AskAnswerSort, ShareVisibleRange, SquareSubTabId } from "./types";
+import type {
+  AskAnswerSort,
+  ShareVisibleRange,
+  SquareSearchType,
+  SquareSubTabId,
+} from "./types";
 
 export const SQUARE_PAGE_SIZE = 20;
 
@@ -15,6 +20,10 @@ export const STORY_IMPRESSION_MIN_VISIBLE_MS = 1_000;
 export const STORY_EVENT_BATCH_SIZE = 50;
 
 export const STORY_EVENT_FLUSH_DELAY_MS = 400;
+
+export const CONTENT_EVENT_BATCH_SIZE = 50;
+
+export const CONTENT_EVENT_FLUSH_DELAY_MS = 400;
 
 export const STORY_FEED_QUERY_ROOT = ["square", "stories"] as const;
 
@@ -143,16 +152,23 @@ export const SEARCH_NO_RESULT = "没有找到相关内容";
 
 export const SEARCH_LOAD_ERROR = "搜索失败，请稍后重试";
 
-export const SEARCH_PAGE_SIZE = 10;
+export const SEARCH_PAGE_SIZE = 20;
+
+export const SEARCH_KEYWORD_MAX_LENGTH = 50;
+
+export const SEARCH_KEYWORD_EMPTY = "关键词不能为空";
+
+export const SEARCH_KEYWORD_TOO_LONG = "关键词最长 50 字符";
 
 export const SEARCH_TITLE_MAX_LINES = 2;
 
 export const SEARCH_CONTENT_MAX_LINES = 3;
 
-export const SEARCH_TYPE_LABELS: Record<SquareSubTabId, string> = {
+export const SEARCH_TYPE_LABELS: Record<SquareSearchType, string> = {
   story: "故事",
   share: "分享",
-  ask: "问答",
+  ask_answer: "回答",
+  ask: "问题",
 };
 
 export const CARD_BORDER_COLOR = "#EEEFF3";
