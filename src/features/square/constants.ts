@@ -160,6 +160,22 @@ export const SEARCH_KEYWORD_EMPTY = "关键词不能为空";
 
 export const SEARCH_KEYWORD_TOO_LONG = "关键词最长 50 字符";
 
+export const TOPIC_NAME_MAX_LENGTH = 32;
+
+export const TOPIC_NAME_EMPTY = "话题不能为空";
+
+export const TOPIC_NAME_TOO_LONG = "话题最长 32 字符";
+
+export const TOPIC_POST_EMPTY = "暂无相关内容";
+
+export const TOPIC_POST_LOAD_ERROR = "加载失败，点击重试";
+
+export const TOPIC_HASH = "#";
+
+export const TOPIC_CHIP_BG = "#EFEDFD";
+
+export const TOPIC_CHIP_FONT_SIZE = 12;
+
 export const SEARCH_HISTORY_LIMIT = 10;
 
 export const SEARCH_HISTORY_TITLE = "搜索历史";
@@ -495,4 +511,6 @@ export const SQUARE_QUERY_KEYS = {
   askAnswers: (id: string, sort: string) =>
     ["square", "askAnswers", id, sort] as const,
   search: (keyword: string) => ["square", "search", keyword] as const,
+  searchTopics: (keyword: string) => ["square", "searchTopics", keyword] as const,
+  topicPosts: (name: string) => ["square", "topicPosts", name] as const,
 };

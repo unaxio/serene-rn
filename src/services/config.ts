@@ -61,6 +61,8 @@ export const API_PATHS = {
   SQUARE_SEARCH: '/soul-flower/app/search',
   SQUARE_SEARCH_HISTORY: '/soul-flower/app/search/history',
   SQUARE_SEARCH_HOT: '/soul-flower/app/search/hot',
+  SQUARE_SEARCH_TOPICS: '/soul-flower/app/search/topics',
+  SQUARE_TOPIC_POSTS: '/soul-flower/app/topics/posts',
   SQUARE_COMMENTS: '/soul-flower/app/comments',
   SQUARE_ACTIONS: '/soul-flower/app/actions',
   SQUARE_REPORTS: '/soul-flower/app/reports',

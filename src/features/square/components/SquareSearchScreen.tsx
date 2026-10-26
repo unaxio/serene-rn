@@ -12,6 +12,7 @@ import {
   SEARCH_KEYWORD_TOO_LONG,
 } from '@/src/features/square/constants';
 import { useSearchDiscover } from '@/src/features/square/hooks/useSearchDiscover';
+import { useSearchTopics } from '@/src/features/square/hooks/useSearchTopics';
 import { useSquareSearch } from '@/src/features/square/hooks/useSquareSearch';
 import { useSquareSearchNavigation } from '@/src/features/square/hooks/useSquareSearchNavigation';
 import { showToast } from '@/src/utils/toast';
@@ -21,6 +22,7 @@ export function SquareSearchScreen() {
   const [input, setInput] = useState('');
   const [keyword, setKeyword] = useState('');
   const search = useSquareSearch(keyword);
+  const topicSearch = useSearchTopics(keyword);
   const discover = useSearchDiscover();
   const navigation = useSquareSearchNavigation(discover.removeHot);
 
@@ -91,18 +93,24 @@ export function SquareSearchScreen() {
       ) : (
         <SquareSearchList
           items={search.items}
+          topics={topicSearch.topics}
           isIdle={false}
           isLoading={search.isLoading}
           isError={search.isError}
           isRefreshing={search.isRefreshing}
           isFetchingMore={search.isFetchingMore}
           onPressItem={navigation.handlePressItem}
+          onPressTopic={(name) => {
+            router.push(`/topics/posts?name=${encodeURIComponent(name)}`);
+          }}
           onLoadMore={search.loadMore}
           onRefresh={() => {
             void search.refresh();
+            void topicSearch.refresh();
           }}
           onRetry={() => {
             void search.refresh();
+            void topicSearch.refresh();
           }}
         />
       )}

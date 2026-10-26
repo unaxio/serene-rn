@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { ActivityIndicator, RefreshControl, StyleSheet, View } from 'react-native';
 
 import { AskListStatus } from '@/src/features/square/components/ask/AskListStatus';
+import { SearchTopicRow } from '@/src/features/square/components/search/SearchTopicRow';
 import { SquareSearchResultItem } from '@/src/features/square/components/search/SquareSearchResultItem';
 import { useContentImpressions } from '@/src/features/square/hooks/useContentImpressions';
 import {
@@ -19,12 +20,14 @@ import type { SquareSearchItem } from '@/src/features/square/types';
 
 interface SquareSearchListProps {
   items: SquareSearchItem[];
+  topics: string[];
   isIdle: boolean;
   isLoading: boolean;
   isError: boolean;
   isRefreshing: boolean;
   isFetchingMore: boolean;
   onPressItem: (item: SquareSearchItem) => void;
+  onPressTopic: (name: string) => void;
   onLoadMore: () => void;
   onRefresh: () => void;
   onRetry: () => void;
@@ -32,12 +35,14 @@ interface SquareSearchListProps {
 
 export function SquareSearchList({
   items,
+  topics,
   isIdle,
   isLoading,
   isError,
   isRefreshing,
   isFetchingMore,
   onPressItem,
+  onPressTopic,
   onLoadMore,
   onRefresh,
   onRetry,
@@ -80,6 +85,9 @@ export function SquareSearchList({
         onEndReachedThreshold={ASK_LIST_END_REACHED_THRESHOLD}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         contentContainerStyle={styles.listContent}
+        ListHeaderComponent={
+          topics.length > 0 && !isIdle && !isLoading ? <SearchTopicRow topics={topics} onPress={onPressTopic} /> : null
+        }
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
