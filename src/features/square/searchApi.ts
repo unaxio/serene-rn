@@ -28,7 +28,7 @@ export async function getSquareSearch(
       },
     },
   );
-  return normalizeSearchPage(unwrapResponse(response, '搜索失败'), params.pageSize);
+  return normalizeSearchPage(unwrapResponse(response, '搜索失败'), params.pageSize, true);
 }
 
 interface HistoryRaw {

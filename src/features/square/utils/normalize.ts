@@ -13,6 +13,7 @@ import type {
   SquareSearchPage,
   SquareSearchType,
 } from '@/src/features/square/types';
+import { searchDisplayParts } from '@/src/features/square/utils/searchHighlight';
 import { resolveStorySummary } from '@/src/features/square/utils/storySummary';
 
 export interface StoryRaw {
@@ -329,6 +330,10 @@ export interface SearchItemRaw {
   createdAt?: string;
   author?: SquareAuthor | null;
   commentId?: string;
+  summary?: {
+    title?: string;
+    content?: string;
+  };
 }
 
 export interface SearchPageRaw {
@@ -347,7 +352,7 @@ function optionalId(value: string | undefined): string | undefined {
   return text.length > 0 ? text : undefined;
 }
 
-export function normalizeSearchItem(raw: SearchItemRaw): SquareSearchItem | null {
+export function normalizeSearchItem(raw: SearchItemRaw, useSummary = false): SquareSearchItem | null {
   const type = raw.type ?? '';
   if (!isSearchType(type)) {
     return null;
@@ -364,6 +369,9 @@ export function normalizeSearchItem(raw: SearchItemRaw): SquareSearchItem | null
     ...(askId ? { askId } : {}),
     title: raw.title ?? '',
     content: raw.content ?? '',
+    titleParts: searchDisplayParts(raw.summary?.title, raw.title ?? '', useSummary),
+    contentParts: searchDisplayParts(raw.summary?.content, raw.content ?? '', useSummary),
+    expanded: useSummary,
     coverImage: raw.coverImage?.trim() ?? '',
     createdAt: raw.createdAt ?? '',
     author: normalizeAuthor(raw.author),
@@ -371,9 +379,13 @@ export function normalizeSearchItem(raw: SearchItemRaw): SquareSearchItem | null
   };
 }
 
-export function normalizeSearchPage(raw: SearchPageRaw, fallbackPageSize: number): SquareSearchPage {
+export function normalizeSearchPage(
+  raw: SearchPageRaw,
+  fallbackPageSize: number,
+  useSummary = false,
+): SquareSearchPage {
   const items = (raw.items ?? [])
-    .map(normalizeSearchItem)
+    .map((item) => normalizeSearchItem(item, useSummary))
     .filter((item): item is SquareSearchItem => item !== null);
   const pageSize = raw.pageSize && raw.pageSize > 0 ? raw.pageSize : fallbackPageSize;
   const page = raw.page && raw.page > 0 ? raw.page : 1;

@@ -30,12 +30,21 @@ export type SquareSubTabId = 'story' | 'share' | 'ask';
 
 export type SquareSearchType = 'story' | 'share' | 'ask_answer' | 'ask';
 
+export interface SearchTextPart {
+  text: string;
+  highlighted: boolean;
+}
+
 export interface SquareSearchItem {
   type: SquareSearchType;
   id: string;
   askId?: string;
   title: string;
   content: string;
+  titleParts: SearchTextPart[];
+  contentParts: SearchTextPart[];
+  /** 搜索摘要展示全文；话题列表仍按行数截断 */
+  expanded: boolean;
   coverImage: string;
   createdAt: string;
   author: SquareAuthor;
