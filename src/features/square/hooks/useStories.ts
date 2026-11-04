@@ -4,7 +4,6 @@ import { AppState } from 'react-native';
 
 import { getStoryFeed } from '@/src/features/square/api';
 import {
-  SQUARE_PAGE_SIZE,
   SQUARE_QUERY_KEYS,
   STORY_FEED_REFRESH_RETRY_MS,
   STORY_FEED_WINDOW_MS,
@@ -21,13 +20,15 @@ interface RefreshOptions {
   manual?: boolean;
 }
 
-function getNextPageParam(lastPage: {
-  page: number;
-  pageSize: number;
-  total: number;
-}): number | undefined {
-  const loaded = lastPage.page * lastPage.pageSize;
-  return loaded < lastPage.total ? lastPage.page + 1 : undefined;
+function getNextPageParam(
+  lastPage: SquarePagedData<Story>,
+  _allPages: SquarePagedData<Story>[],
+  lastPageParam: number,
+): number | undefined {
+  if (lastPage.items.length === 0) {
+    return undefined;
+  }
+  return lastPageParam + 1;
 }
 
 export function useStories(category: string) {
@@ -39,11 +40,7 @@ export function useStories(category: string) {
   const query = useInfiniteQuery({
     queryKey,
     queryFn: async ({ pageParam }) => {
-      const page = await getStoryFeed({
-        category,
-        page: pageParam,
-        pageSize: SQUARE_PAGE_SIZE,
-      });
+      const page = await getStoryFeed(category);
       if (pageParam === 1) {
         markStoryFeedWindow(category);
       }

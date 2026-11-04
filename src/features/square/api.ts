@@ -100,19 +100,24 @@ export async function getStories(
   return unwrapPagedItems(unwrapResponse(response, '获取故事列表失败'), normalizeStory);
 }
 
-export async function getStoryFeed(
-  params: GetStoriesParams,
-): Promise<SquarePagedData<Story>> {
+export async function getStoryFeed(category: string): Promise<SquarePagedData<Story>> {
   const response = await request.get<
-    SquarePagedData<StoryRaw> | ApiEnvelope<SquarePagedData<StoryRaw>>
+    | SquarePagedData<StoryRaw>
+    | StoryRaw[]
+    | ApiEnvelope<SquarePagedData<StoryRaw> | StoryRaw[]>
   >(API_PATHS.SQUARE_STORY_FEED, {
-    params: {
-      category: params.category,
-      page: params.page,
-      pageSize: params.pageSize,
-    },
+    params: { category },
   });
-  return unwrapPagedItems(unwrapResponse(response, '获取故事列表失败'), normalizeStory);
+  const data = unwrapResponse(response, '获取故事列表失败');
+  if (Array.isArray(data)) {
+    return {
+      items: data.map(normalizeStory),
+      total: 0,
+      page: 1,
+      pageSize: 0,
+    };
+  }
+  return unwrapPagedItems(data, normalizeStory);
 }
 
 export async function reportStoryFeedEvents(
