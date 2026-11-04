@@ -32,6 +32,7 @@ export function StoryList({ active = true }: StoryListProps) {
     isRefreshing,
     isFetchingMore,
     loadMore,
+    releaseFeedHold,
     refresh,
     refetch,
   } = useStories(category);
@@ -51,11 +52,14 @@ export function StoryList({ active = true }: StoryListProps) {
   const handleScroll = useCallback(
     (offsetY: number, viewportHeight: number, contentHeight: number) => {
       updateViewport(offsetY, viewportHeight);
-      if (offsetY + viewportHeight >= contentHeight - LOAD_MORE_OFFSET) {
-        loadMore();
+      const distanceToEnd = contentHeight - (offsetY + viewportHeight);
+      if (distanceToEnd > LOAD_MORE_OFFSET) {
+        releaseFeedHold();
+        return;
       }
+      loadMore();
     },
-    [loadMore, updateViewport],
+    [loadMore, releaseFeedHold, updateViewport],
   );
 
   const listEmpty = (() => {

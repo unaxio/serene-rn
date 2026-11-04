@@ -36,13 +36,20 @@ export function useStories(category: string) {
   const queryKey = SQUARE_QUERY_KEYS.stories(category);
   const refreshingRef = useRef(false);
   const lastFailedAtRef = useRef(0);
+  const feedHoldRef = useRef(false);
 
   const query = useInfiniteQuery({
     queryKey,
     queryFn: async ({ pageParam }) => {
+      const before = queryClient.getQueryData<InfiniteData<SquarePagedData<Story>>>(queryKey);
+      const knownIds = new Set(flattenStoryFeedPages(before?.pages).map((item) => item.id));
       const page = await getStoryFeed(category);
+      const newCount = page.items.filter((item) => item.id.length > 0 && !knownIds.has(item.id)).length;
       if (pageParam === 1) {
+        feedHoldRef.current = false;
         markStoryFeedWindow(category);
+      } else if (page.items.length > 0 && newCount === 0) {
+        feedHoldRef.current = true;
       }
       return page;
     },
@@ -65,6 +72,7 @@ export function useStories(category: string) {
         return;
       }
       refreshingRef.current = true;
+      feedHoldRef.current = false;
       const previous = queryClient.getQueryData<InfiniteData<SquarePagedData<Story>>>(queryKey);
       try {
         queryClient.setQueryData<InfiniteData<SquarePagedData<Story>>>(queryKey, (current) =>
@@ -92,7 +100,14 @@ export function useStories(category: string) {
   const refreshRef = useRef(refresh);
   refreshRef.current = refresh;
 
+  const releaseFeedHold = useCallback(() => {
+    feedHoldRef.current = false;
+  }, []);
+
   const loadMore = useCallback(() => {
+    if (feedHoldRef.current) {
+      return;
+    }
     if (isStoryFeedWindowExpired(category)) {
       void refreshRef.current();
       return;
@@ -103,6 +118,7 @@ export function useStories(category: string) {
   }, [category, query]);
 
   useEffect(() => {
+    feedHoldRef.current = false;
     if (isStoryFeedWindowExpired(category)) {
       void refreshRef.current();
     }
@@ -130,6 +146,7 @@ export function useStories(category: string) {
     isFetchingMore: query.isFetchingNextPage,
     hasNextPage: query.hasNextPage,
     loadMore,
+    releaseFeedHold,
     refresh,
     refetch: query.refetch,
   };
