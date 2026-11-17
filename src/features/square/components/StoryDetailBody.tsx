@@ -30,6 +30,13 @@ export function StoryDetailBody({ story }: StoryDetailBodyProps) {
       </View>
       {coverUri ? <StoryCoverImage uri={coverUri} /> : null}
       <Text style={styles.body}>{story.content}</Text>
+      {story.topics.length > 0 ? (
+        <View style={styles.topics}>
+          {story.topics.map((topic) => (
+            <TopicTag key={topic} label={topic} />
+          ))}
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -68,5 +75,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 26,
     color: APP_TEXT_COLOR,
+  },
+  topics: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
   },
 });

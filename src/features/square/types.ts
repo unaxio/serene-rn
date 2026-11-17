@@ -97,6 +97,7 @@ export interface Story {
   summary: string;
   topicTag: string | null;
   tags: string[];
+  topics: string[];
   coverImagePath: string | null;
   author: SquareAuthor;
   resonateCount: number;
