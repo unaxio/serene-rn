@@ -33,7 +33,9 @@ export function StoryDetailBody({ story }: StoryDetailBodyProps) {
       {story.topics.length > 0 ? (
         <View style={styles.topics}>
           {story.topics.map((topic) => (
-            <TopicTag key={topic} label={topic} />
+            <View key={topic} style={styles.topic}>
+              <Text style={styles.topicText}>{topic}</Text>
+            </View>
           ))}
         </View>
       ) : null}
@@ -80,5 +82,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
+  },
+  topic: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    backgroundColor: '#F1F5F9',
+  },
+  topicText: {
+    fontSize: 12,
+    color: MUTED_TEXT_COLOR,
   },
 });
