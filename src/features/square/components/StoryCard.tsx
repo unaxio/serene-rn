@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   topics: {
     fontSize: 12,
     lineHeight: 17,
-    color: '#94A3B8',
+    color: '#FF6666',
   },
   cover: {
     width: '100%',
