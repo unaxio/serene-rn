@@ -64,6 +64,11 @@ function StoryCardComponent({ story, onPress, onFrame }: StoryCardProps) {
           {story.content}
         </Text>
       ) : null}
+      {story.topics.length > 0 ? (
+        <Text style={styles.topics} numberOfLines={1}>
+          {story.topics.join('  ')}
+        </Text>
+      ) : null}
       {coverUri ? (
         <Image source={{ uri: coverUri }} style={styles.cover} contentFit="cover" />
       ) : null}
@@ -128,6 +133,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 17,
     color: MUTED_TEXT_COLOR,
+  },
+  topics: {
+    fontSize: 12,
+    lineHeight: 17,
+    color: '#94A3B8',
   },
   cover: {
     width: '100%',
