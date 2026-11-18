@@ -122,3 +122,4 @@ export const PROFILE_QUERY_KEYS = {
 };
 
 export const PROFILE_PAGE_SIZE = 20;
+export const MAX_INTEREST_TOPICS = 10;

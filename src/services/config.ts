@@ -84,6 +84,7 @@ export const API_PATHS = {
   PROFILE_PROMOTE_PLANS: '/soul-flower/app/promote/plans',
   PROFILE_PROMOTE_ORDERS: '/soul-flower/app/promote/orders',
   PROFILE_PRIVACY_SETTINGS: '/soul-flower/app/me/privacy-settings',
+  PROFILE_INTERESTS: '/soul-flower/app/me/interests',
   PROFILE_NOTIFICATION_SETTINGS: '/soul-flower/app/me/notification-settings',
   PROFILE_BLACKLIST: '/soul-flower/app/me/blacklist',
   PROFILE_USER_REPORTS: '/soul-flower/app/user-reports',

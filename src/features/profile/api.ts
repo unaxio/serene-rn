@@ -19,6 +19,7 @@ import {
   type ProfileCityRaw,
 } from '@/src/features/profile/utils/regionPath';
 
+import { normalizeInterests, type InterestBoard, type InterestSavePayload } from '@/src/features/profile/interests';
 import type {
   AccountDevice,
   AccountSecurityInfo,
@@ -473,6 +474,29 @@ export async function putPrivacySettings(payload: PrivacySettings): Promise<void
     payload,
   );
   unwrapVoidResponse(response, '保存隐私设置失败');
+}
+
+export async function getInterests(): Promise<InterestBoard> {
+  try {
+    const response = await request.get<InterestBoard | ApiEnvelope<InterestBoard>>(
+      API_PATHS.PROFILE_INTERESTS,
+    );
+    return normalizeInterests(unwrapResponse(response, '获取内容偏好失败'));
+  } catch (error) {
+    throw error instanceof Error ? error : new Error('获取内容偏好失败');
+  }
+}
+
+export async function putInterests(payload: InterestSavePayload): Promise<InterestBoard> {
+  try {
+    const response = await request.put<InterestBoard | ApiEnvelope<InterestBoard>>(
+      API_PATHS.PROFILE_INTERESTS,
+      payload,
+    );
+    return normalizeInterests(unwrapResponse(response, '保存内容偏好失败'));
+  } catch (error) {
+    throw error instanceof Error ? error : new Error('保存内容偏好失败');
+  }
 }
 
 export async function getNotificationSettings(): Promise<NotificationSettings> {

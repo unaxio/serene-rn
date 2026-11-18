@@ -14,6 +14,7 @@ import { APP_TEXT_COLOR } from '@/constants/Colors';
 import { AppSwitch } from '@/src/components/AppSwitch';
 import { getPrivacySettings, putPrivacySettings } from '@/src/features/profile/api';
 import { MessagePermissionField } from '@/src/features/profile/components/MessagePermissionField';
+import { PrivacyInterestsEntry } from '@/src/features/profile/components/PrivacyInterestsEntry';
 import {
   PROFILE_ACCENT,
   PROFILE_MUTED,
@@ -78,10 +79,12 @@ export function ProfilePrivacyScreen() {
   return (
     <SafeAreaView style={styles.safe} edges={[]}>
       <SquarePageHeader title="隐私设置" onBack={() => router.back()} />
-      {query.isLoading ? (
-        <ActivityIndicator style={styles.loading} color={PROFILE_ACCENT} />
-      ) : (
-        <View style={styles.body}>
+      <View style={styles.body}>
+        <PrivacyInterestsEntry />
+        {query.isLoading ? (
+          <ActivityIndicator style={styles.loading} color={PROFILE_ACCENT} />
+        ) : (
+          <>
           <View style={styles.card}>
             <Text style={styles.hint}>资料可见：{draft.profileVisibility}</Text>
             <Text style={styles.hint}>动态可见：{draft.feedVisibility}</Text>
@@ -110,15 +113,16 @@ export function ProfilePrivacyScreen() {
             onPress={handleSave}>
             <Text style={styles.saveText}>保存</Text>
           </Pressable>
-        </View>
-      )}
+          </>
+        )}
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: PROFILE_PAGE_BG },
-  loading: { marginTop: 40 },
+  loading: { marginTop: 8 },
   body: { paddingHorizontal: 16, gap: 12 },
   card: {
     backgroundColor: '#FFFFFF',
