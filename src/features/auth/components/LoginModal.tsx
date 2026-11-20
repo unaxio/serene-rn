@@ -17,6 +17,9 @@ import { showErrorToast } from '@/src/utils/toast';
 
 const PLACEHOLDER_COLOR = '#999999';
 const PRIMARY_COLOR = '#7B6CF9';
+const TEST_ACCOUNT_USERNAME = 'test';
+const TEST_ACCOUNT_PASSWORD = '123456';
+const TEST_ACCOUNT_HINT = `测试账号用户名密码 ${TEST_ACCOUNT_USERNAME} ${TEST_ACCOUNT_PASSWORD}`;
 
 function reloadCurrentPage(): void {
   if (Platform.OS !== 'web') {
@@ -64,6 +67,7 @@ export function LoginModal() {
         <View style={styles.container}>
           <Text style={styles.title}>登录</Text>
           <Text style={styles.subtitle}>请登录后继续使用</Text>
+          <Text style={styles.hint}>{TEST_ACCOUNT_HINT}</Text>
 
           <TextInput
             style={styles.input}
@@ -124,7 +128,12 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 15,
     color: '#666666',
-    marginBottom: 32,
+    marginBottom: 8,
+  },
+  hint: {
+    fontSize: 13,
+    color: '#888888',
+    marginBottom: 24,
   },
   input: {
     height: 48,
